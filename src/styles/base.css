@@ -1,0 +1,85 @@
+/* ---------------- reset ---------------- */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html, body, #root { height: 100%; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  color-scheme: dark;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.45;
+  letter-spacing: var(--track-ui);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-on-glass);
+  background: var(--abyss);
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button, input, textarea, select { font: inherit; letter-spacing: inherit; color: inherit; }
+button { background: none; border: 0; padding: 0; cursor: inherit; }
+img, svg { display: block; max-width: 100%; }
+/* line glyphs carry no intrinsic size; without this an unsized one falls back
+   to the SVG default of 300x150 and blows out its container */
+.gly { width: 16px; height: 16px; flex: none; }
+ul, ol { list-style: none; padding: 0; }
+h1, h2, h3, h4 { font-weight: 600; line-height: 1.15; letter-spacing: var(--track-tight); text-wrap: balance; }
+
+/* ------------- browser surfaces we still own ------------- */
+::selection {
+  background: color-mix(in oklab, var(--accent) 55%, var(--violet));
+  color: var(--abyss);
+}
+
+:where(input, textarea) { caret-color: var(--accent); }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--r-xs);
+}
+:focus:not(:focus-visible) { outline: none; }
+
+* { scrollbar-width: thin; scrollbar-color: var(--chrome-400) transparent; }
+::-webkit-scrollbar { width: 13px; height: 13px; }
+::-webkit-scrollbar-track {
+  background: linear-gradient(90deg, rgba(120,116,170,.10), rgba(120,116,170,.05));
+  border-radius: var(--r-pill);
+}
+::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  border-radius: var(--r-pill);
+  background-color: var(--chrome-400);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6);
+}
+::-webkit-scrollbar-thumb:hover { background-color: var(--chrome-500); }
+::-webkit-scrollbar-corner { background: transparent; }
+
+/* ------------- cursors -------------
+   The real Aero pointers: white body, thin dark outline, one soft
+   drop shadow down-right. Nothing trails them, nothing glows.
+   ------------------------------------ */
+:root {
+  --cur-arrow: url("/cursors/arrow.svg") 3 2, default;
+  --cur-hand:  url("/cursors/hand.svg") 10 2, pointer;
+  --cur-text:  url("/cursors/text.svg") 8 12, text;
+}
+html { cursor: var(--cur-arrow); }
+/* Windows shows the hand for hyperlinks only — buttons keep the arrow. */
+a[href], .clickable { cursor: var(--cur-hand); }
+:where(input[type='text'], input[type='search'], input[type='password'], textarea, [contenteditable]) { cursor: var(--cur-text); }
+
+/* ------------- utility ------------- */
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+.no-select { user-select: none; -webkit-user-select: none; }

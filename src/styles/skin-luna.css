@@ -1,0 +1,426 @@
+/* ============================================================
+   SKIN: LUNA — Windows XP
+   Values lifted from the installed `xp.css` (botoxparty), which is a
+   pixel-level recreation of the Luna theme: the caption gradient, the
+   six-stop inset frame, #ece9d8 client area, 8px top corners.
+   Rewritten as scoped rules rather than imported, because xp.css and
+   7.css both target bare `.window`/`button` and would collide.
+   ============================================================ */
+
+:root[data-skin='luna'] {
+  /* XP shipped Tahoma for UI and Trebuchet MS for captions */
+  --font-ui: Tahoma, 'Segoe UI', var(--font-ui-fallback, system-ui), sans-serif;
+  --font-caption: 'Trebuchet MS', Tahoma, sans-serif;
+
+  /* Bliss: a lighter sky over a lot of green */
+  --sky-deep: #1e6fc4;
+  --sky: #4a9fe0;
+  --sky-lite: #86c6ee;
+  --aqua: #bfe4f6;
+  --aqua-lite: #dcf1fb;
+  --foam: #eaf6fd;
+  --daylight: #ffffff;
+  --leaf: #7cb342;
+  --leaf-lite: #a5d363;
+  --violet-lite: #9ecbf0;
+  --periwinkle: #7fb5e8;
+
+  --chrome-050: #ffffff;
+  --chrome-100: #f4f3ee;
+  --chrome-200: #ece9d8;
+  --chrome-300: #d4d0c8;
+  --chrome-400: #aca899;
+  --chrome-500: #808080;
+
+  --ink-strong: #000000;
+  --ink: #1b1b1b;
+  --ink-soft: #45464a;
+  --ink-faint: #5c5d61;
+
+  --accent: #316ac5;
+  --accent-lite: #7da2ce;
+  --accent-deep: #0a246a;
+  --accent-edge: #0831d9;
+
+  --r-xs: 0px;
+  --r-sm: 0px;
+  --r-md: 3px;
+  --r-lg: 8px;
+
+  --taskbar-h: 30px;
+  --titlebar-h: 27px;
+  --frame: 4px;
+}
+
+/* ---------------- window ---------------- */
+:root[data-skin='luna'] .win {
+  padding: 0 var(--frame) var(--frame);
+  border: 0;
+  border-radius: 8px 8px 0 0;
+  background: #0831d9;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  /* the six-step inset frame xp.css uses, outermost first */
+  box-shadow: inset -1px -1px #00138c, inset 1px 1px #0831d9, inset -2px -2px #001ea0,
+    inset 2px 2px #166aee, inset -3px -3px #003bda, inset 3px 3px #0855dd,
+    2px 3px 10px 1px rgba(0, 20, 70, 0.42);
+  color: #ffffff;
+}
+:root[data-skin='luna'] .win::before {
+  display: none;
+}
+:root[data-skin='luna'] .win[data-active='false'] {
+  background: #7a96df;
+  box-shadow: inset -1px -1px #4f6ea8, inset 1px 1px #7a96df, inset -2px -2px #5f7fc0,
+    inset 2px 2px #9db4e8, inset -3px -3px #6e8ccf, inset 3px 3px #8ba6e4,
+    1px 2px 7px rgba(0, 20, 70, 0.3);
+}
+
+/* ---------------- caption ---------------- */
+:root[data-skin='luna'] .win__title {
+  height: var(--titlebar-h);
+  padding: 0 2px 0 4px;
+  gap: 4px;
+  border-radius: 8px 7px 0 0;
+  background: linear-gradient(
+    180deg,
+    #0997ff 0%,
+    #0053ee 8%,
+    #0050ee 40%,
+    #0066ff 88%,
+    #0066ff 93%,
+    #005bff 95%,
+    #003dd7 96%,
+    #003dd7 100%
+  );
+  border-top: 1px solid #0831d9;
+  border-left: 1px solid #0831d9;
+  border-right: 1px solid #001ea0;
+}
+:root[data-skin='luna'] .win[data-active='false'] .win__title {
+  background: linear-gradient(180deg, #9db9eb 0%, #7a96df 8%, #7a96df 40%, #90aae4 88%, #6d8bd4 96%, #6d8bd4 100%);
+  border-color: #93aee6 #7d97cf #7d97cf #93aee6;
+}
+:root[data-skin='luna'] .win__label {
+  font-family: var(--font-caption);
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 1px 1px #0f1089;
+  letter-spacing: 0;
+}
+:root[data-skin='luna'] .win[data-active='false'] .win__label {
+  color: #dbe5f7;
+  text-shadow: 1px 1px #6a86c8;
+}
+:root[data-skin='luna'] .win__icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* XP keeps the caption buttons inline in the bar, not welded to the corner */
+:root[data-skin='luna'] .win__ctrls {
+  position: static;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  gap: 2px;
+  margin: 0;
+  align-items: center;
+}
+:root[data-skin='luna'] .win__title {
+  padding-right: 3px;
+}
+:root[data-skin='luna'] .wctl {
+  width: 21px;
+  height: 21px;
+  border: 1px solid #f0f4fd;
+  border-radius: 3px;
+  color: #ffffff;
+  background: linear-gradient(180deg, #5f9dfa 0%, #3d7ce8 46%, #2f6fd8 47%, #4a8bee 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+:root[data-skin='luna'] .wctl:hover {
+  background: linear-gradient(180deg, #8ec0ff 0%, #5f9dfa 46%, #4a8bee 47%, #74aef7 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+:root[data-skin='luna'] .wctl:active {
+  background: linear-gradient(180deg, #2f6fd8 0%, #2a63c4 46%, #2f6fd8 47%, #3d7ce8 100%);
+}
+:root[data-skin='luna'] .wctl--close {
+  width: 21px;
+  background: linear-gradient(180deg, #f1836b 0%, #e0523a 46%, #d6472f 47%, #ea6a52 100%);
+  border-color: #ffd7cd;
+}
+:root[data-skin='luna'] .wctl--close:hover {
+  background: linear-gradient(180deg, #ffa38d 0%, #ef6a51 46%, #e45a41 47%, #f78b73 100%);
+}
+:root[data-skin='luna'] .wctl svg,
+:root[data-skin='luna'] .wctl--close svg {
+  width: 9px;
+  height: 9px;
+}
+:root[data-skin='luna'] .win[data-active='false'] .win__ctrls {
+  opacity: 0.85;
+}
+
+/* ---------------- client area ---------------- */
+:root[data-skin='luna'] .win__body {
+  border-radius: 0;
+  border: 1px solid #0831d9;
+  border-top: 0;
+  background: var(--chrome-200);
+  box-shadow: none;
+}
+:root[data-skin='luna'] .win__body--flush {
+  background: transparent;
+}
+
+/* 7.css controls, retinted to XP */
+:root[data-skin='luna'] .win7 {
+  --w7-surface: #ece9d8;
+  --w7-el-bg: #ece9d8;
+  --w7-el-bg-d: #f3f1e6;
+  --w7-el-bg-s-1: #e3dfc9;
+  --w7-el-bg-s-2: #cfcab0;
+  --w7-el-bd: #aca899;
+  --w7-el-bd-h: #316ac5;
+  --w7-el-bd-a: #808080;
+  --w7-el-bdr: 3px;
+  --w7-el-c: #000;
+  --w7-li-bd-hl: #316ac5;
+}
+
+/* ---------------- taskbar ---------------- */
+:root[data-skin='luna'] .taskbar {
+  padding-left: 92px;
+  background: linear-gradient(
+    180deg,
+    #3f8cf3 0%,
+    #245edb 9%,
+    #3f8cf3 18%,
+    #4993f5 50%,
+    #2b6ee0 51%,
+    #2361d8 90%,
+    #3a86ee 100%
+  );
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-top: 1px solid #1941a5;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+/* the green Start button */
+:root[data-skin='luna'] .orb {
+  left: 0;
+  bottom: 0;
+  width: 88px;
+  height: var(--taskbar-h);
+  border: 0;
+  border-radius: 0 8px 8px 0;
+  background: linear-gradient(
+    180deg,
+    #43a12b 0%,
+    #3c9a25 8%,
+    #379320 40%,
+    #2f8a1a 60%,
+    #298418 82%,
+    #257c15 100%
+  );
+  box-shadow: inset -2px -2px 3px rgba(0, 0, 0, 0.25), inset 2px 2px 3px rgba(255, 255, 255, 0.3),
+    1px 0 3px rgba(0, 0, 0, 0.35);
+  place-items: center;
+  gap: 6px;
+  grid-auto-flow: column;
+  display: grid;
+  padding-left: 6px;
+}
+:root[data-skin='luna'] .orb::after {
+  content: 'start';
+  font-family: var(--font-caption);
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.45);
+  padding-right: 10px;
+}
+:root[data-skin='luna'] .orb svg {
+  width: 20px;
+  height: 20px;
+}
+:root[data-skin='luna'] .orb:hover {
+  background: linear-gradient(180deg, #55b83a 0%, #4aad30 8%, #43a52b 40%, #3b9a24 60%, #35931f 82%, #2f8a1a 100%);
+  box-shadow: inset -2px -2px 3px rgba(0, 0, 0, 0.2), inset 2px 2px 3px rgba(255, 255, 255, 0.4),
+    1px 0 3px rgba(0, 0, 0, 0.35);
+}
+
+/* task buttons: XP's raised blue chips */
+:root[data-skin='luna'] .taskbtn {
+  width: auto;
+  min-width: 40px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 3px;
+  border: 1px solid #1941a5;
+  background: linear-gradient(180deg, #4f96f0 0%, #3277e0 48%, #2a6ad4 49%, #3f88ea 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32);
+}
+:root[data-skin='luna'] .taskbtn[data-focused='true'] {
+  background: linear-gradient(180deg, #1e51ab 0%, #2861c2 48%, #2f6bcd 49%, #3b7ada 100%);
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.35);
+}
+:root[data-skin='luna'] .taskbtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* tray */
+:root[data-skin='luna'] .tray {
+  padding-left: 12px;
+  background: linear-gradient(180deg, #18a0e8 0%, #109cdc 9%, #12a6e8 18%, #16b0f0 50%, #0e93d6 51%, #0d8ccd 90%, #16a5e6 100%);
+  border-left: 1px solid #1941a5;
+}
+:root[data-skin='luna'] .tray::before {
+  display: none;
+}
+:root[data-skin='luna'] .clock__date {
+  display: none;
+}
+:root[data-skin='luna'] .clock__time {
+  font-size: 11px;
+  font-weight: 400;
+}
+:root[data-skin='luna'] .showdesk {
+  border-left-color: rgba(255, 255, 255, 0.35);
+}
+
+/* ---------------- start menu ---------------- */
+:root[data-skin='luna'] .start {
+  border-radius: 8px 8px 0 0;
+  border: 1px solid #0831d9;
+  background: #ffffff;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 2px -2px 10px 1px rgba(0, 20, 70, 0.45);
+  padding: 0;
+  gap: 0;
+  grid-template-columns: 1fr 190px;
+  overflow: hidden;
+}
+:root[data-skin='luna'] .start::before {
+  content: '';
+  grid-column: 1 / -1;
+  height: 54px;
+  background: linear-gradient(180deg, #0997ff 0%, #0053ee 12%, #0050ee 60%, #0066ff 100%);
+  border-bottom: 2px solid #4a8ff0;
+}
+:root[data-skin='luna'] .start__left {
+  background: #ffffff;
+  padding: 8px 6px;
+}
+:root[data-skin='luna'] .start__right {
+  background: #d3e5fa;
+  border: 0;
+  border-left: 1px solid #b0cdf0;
+  border-radius: 0;
+  padding: 8px 6px;
+}
+:root[data-skin='luna'] .start__name {
+  color: #0b2f6b;
+}
+:root[data-skin='luna'] .start__desc {
+  color: #4a678f;
+}
+:root[data-skin='luna'] .start__item:hover {
+  background: #2f6fd8;
+  border-color: #2f6fd8;
+  border-radius: 0;
+}
+:root[data-skin='luna'] .start__item:hover .start__name,
+:root[data-skin='luna'] .start__item:hover .start__desc {
+  color: #ffffff;
+}
+:root[data-skin='luna'] .start__place {
+  color: #0b2f6b;
+  font-weight: 700;
+}
+:root[data-skin='luna'] .start__place:hover {
+  background: #2f6fd8;
+  color: #ffffff;
+  border-radius: 0;
+}
+:root[data-skin='luna'] .start__user {
+  position: absolute;
+  top: 6px;
+  left: 12px;
+  flex-direction: row;
+  padding: 0;
+  gap: 9px;
+  align-items: center;
+}
+:root[data-skin='luna'] .start__avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 3px;
+  padding: 2px;
+  background: #b8d0f0;
+  box-shadow: none;
+}
+:root[data-skin='luna'] .start__avatar svg {
+  border-radius: 2px;
+}
+:root[data-skin='luna'] .start__username {
+  font-size: 14px;
+  text-shadow: 1px 1px #0f1089;
+}
+:root[data-skin='luna'] .start__foot {
+  grid-column: 1 / -1;
+  padding: 6px 10px;
+  background: linear-gradient(180deg, #4993f5 0%, #2b6ee0 50%, #2361d8 100%);
+  border-top: 1px solid #1941a5;
+}
+:root[data-skin='luna'] .start__search {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: #1941a5;
+  border-radius: 2px;
+  color: #45464a;
+}
+:root[data-skin='luna'] .start__search input {
+  color: #000;
+}
+:root[data-skin='luna'] .start__power {
+  border-radius: 3px;
+  background: linear-gradient(180deg, #f1836b, #d6472f);
+  border-color: #ffd7cd;
+  color: #fff;
+}
+
+/* ---------------- desktop ---------------- */
+:root[data-skin='luna'] .dicon[data-selected='true'] {
+  background: rgba(49, 106, 197, 0.55);
+  border-color: rgba(49, 106, 197, 0.85);
+  border-radius: 0;
+}
+:root[data-skin='luna'] .dicon:hover {
+  background: rgba(49, 106, 197, 0.28);
+  border-color: rgba(49, 106, 197, 0.5);
+  border-radius: 0;
+}
+:root[data-skin='luna'] .marquee {
+  border-color: #316ac5;
+  background: rgba(49, 106, 197, 0.28);
+}
+:root[data-skin='luna'] .menu {
+  border-radius: 0;
+  background: #ece9d8;
+  border: 1px solid #aca899;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.35);
+  backdrop-filter: none;
+}
+:root[data-skin='luna'] .menu__item:hover:not(:disabled) {
+  background: #316ac5;
+  color: #fff;
+  border-radius: 0;
+}

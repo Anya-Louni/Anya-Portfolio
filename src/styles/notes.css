@@ -1,0 +1,257 @@
+/* ============================================================
+   GUESTBOOK — visitor side. Write only, never a thread.
+   ============================================================ */
+.gb {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  padding: 16px;
+  background: var(--chrome-050);
+  overflow-y: auto;
+}
+.gb__lead {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  max-width: 46ch;
+}
+
+.gb__note {
+  position: relative;
+  flex: 1;
+  min-height: 150px;
+  border-radius: 2px 10px 3px 8px;
+  padding: 14px 14px 22px;
+  box-shadow: 0 6px 14px -8px rgba(6, 24, 54, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: background 160ms linear;
+}
+.gb__note[data-tint='yellow'] { background: linear-gradient(155deg, #fdf6c8, #f6e58f); color: #4a3d0c; }
+.gb__note[data-tint='blue']   { background: linear-gradient(155deg, #dcf1ff, #b5def9); color: #12405c; }
+.gb__note[data-tint='green']  { background: linear-gradient(155deg, #ddf7dd, #b3e9b7); color: #17491f; }
+.gb__note[data-tint='violet'] { background: linear-gradient(155deg, #efeafd, #d7cef5); color: #332a63; }
+
+.gb__text {
+  width: 100%;
+  height: 100%;
+  min-height: 120px;
+  border: 0;
+  background: none;
+  resize: none;
+  outline: none;
+  font-family: var(--font-display);
+  font-size: 15px;
+  line-height: 1.5;
+  color: inherit;
+}
+.gb__text::placeholder {
+  color: currentColor;
+  opacity: 0.42;
+}
+.gb__count {
+  position: absolute;
+  right: 10px;
+  bottom: 6px;
+  font-size: 11px;
+  opacity: 0.5;
+  font-variant-numeric: tabular-nums;
+}
+
+.gb__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.gb__label {
+  width: 46px;
+  flex: none;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.gb__swatches {
+  display: flex;
+  gap: 6px;
+}
+.gb__swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 3px;
+  border: 1px solid rgba(6, 24, 54, 0.28);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: transform 110ms linear, box-shadow 110ms linear;
+}
+.gb__swatch[data-tint='yellow'] { background: linear-gradient(155deg, #fdf6c8, #f2de74); }
+.gb__swatch[data-tint='blue']   { background: linear-gradient(155deg, #dcf1ff, #a2d4f5); }
+.gb__swatch[data-tint='green']  { background: linear-gradient(155deg, #ddf7dd, #9adf9f); }
+.gb__swatch[data-tint='violet'] { background: linear-gradient(155deg, #efeafd, #cec4f0); }
+.gb__swatch[data-on='true'] {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 0 0 2px var(--accent-edge);
+}
+.gb__from {
+  flex: 1;
+  min-width: 0;
+}
+.gb__error {
+  font-size: 12px;
+  color: #b4231b;
+}
+.gb__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* delivered */
+.gb--done {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 14px;
+}
+.gb__stamp {
+  width: 76px;
+  height: 76px;
+  animation: stampIn 520ms var(--e-spring) both;
+}
+.gb__stamp[data-tint='yellow'] { color: #efd35a; }
+.gb__stamp[data-tint='blue']   { color: #7ec5ef; }
+.gb__stamp[data-tint='green']  { color: #7fd48a; }
+.gb__stamp[data-tint='violet'] { color: #a89ae4; }
+.gb__stamp svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 4px 8px rgba(6, 24, 54, 0.28));
+}
+@keyframes stampIn {
+  from { opacity: 0; transform: scale(0.4) rotate(-12deg); }
+  to { opacity: 1; transform: scale(1) rotate(0); }
+}
+.gb__doneTitle {
+  font-family: var(--font-display);
+  font-size: 24px;
+  color: var(--ink-strong);
+}
+.gb__doneBody {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  max-width: 34ch;
+}
+
+/* ============================================================
+   PINBOARD — the owner's private route at /notes
+   ============================================================ */
+.pin {
+  min-height: 100vh;
+  padding: 26px clamp(16px, 5vw, 54px) 60px;
+  background: radial-gradient(ellipse 90% 70% at 50% 0%, #2b80e6 0%, #12459c 55%, #041634 100%);
+  color: var(--ink-on-glass);
+}
+.pin--wait,
+.pin--gate {
+  display: grid;
+  place-items: center;
+}
+.pin__gate {
+  display: grid;
+  gap: 10px;
+  width: min(340px, 90vw);
+  padding: 26px;
+  border-radius: var(--r-md);
+  background: rgba(250, 252, 255, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 2px 3px 16px 2px rgba(0, 0, 0, 0.45);
+  color: var(--ink);
+}
+.pin__title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: inherit;
+}
+.pin--gate .pin__title {
+  color: var(--ink-strong);
+}
+.pin__sub {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+.pin__error {
+  font-size: 12.5px;
+  color: #ffb4ad;
+}
+.pin--gate .pin__error {
+  color: #b4231b;
+}
+
+.pin__bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+.pin__count,
+.pin__badge {
+  font-size: 12px;
+  color: rgba(226, 238, 255, 0.75);
+}
+.pin__badge {
+  padding: 3px 9px;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+.pin__spacer {
+  flex: 1;
+}
+.pin__empty {
+  color: rgba(226, 238, 255, 0.72);
+}
+
+.pin__board {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(212px, 1fr));
+  gap: 20px;
+}
+.pin__note {
+  position: relative;
+  padding: 24px 16px 14px;
+  border-radius: 2px 10px 3px 8px;
+  transform: rotate(var(--rot, 0deg));
+  box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: transform 140ms var(--e-out);
+}
+.pin__note:hover {
+  transform: rotate(0deg) translateY(-3px);
+  z-index: 2;
+}
+.pin__note[data-tint='yellow'] { background: linear-gradient(155deg, #fdf6c8, #f2de74); color: #4a3d0c; }
+.pin__note[data-tint='blue']   { background: linear-gradient(155deg, #dcf1ff, #a2d4f5); color: #12405c; }
+.pin__note[data-tint='green']  { background: linear-gradient(155deg, #ddf7dd, #9adf9f); color: #17491f; }
+.pin__note[data-tint='violet'] { background: linear-gradient(155deg, #efeafd, #cec4f0); color: #332a63; }
+.pin__pin {
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #ffffff, #d64a3e 55%, #94271e);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
+}
+.pin__msg {
+  font-family: var(--font-display);
+  font-size: 14.5px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.pin__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 11px;
+  opacity: 0.72;
+}

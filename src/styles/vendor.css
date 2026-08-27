@@ -1,0 +1,6 @@
+/* 7.css supplies authentic Windows 7 controls, but its `.win7 button`
+   selectors outrank a single class of ours. Parking it in a layer makes
+   every unlayered rule in this project win by default, so our components
+   stay ours and a plain unclassed <button> still gets real Aero chrome. */
+@layer vendor;
+@import '7.css/dist/7.scoped.css' layer(vendor);

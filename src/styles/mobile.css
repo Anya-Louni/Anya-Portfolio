@@ -1,0 +1,204 @@
+/* ============================================================
+   Adapted desktop — the OS gets smaller, it does not go away.
+   ============================================================ */
+
+@media (max-width: 900px) {
+  .start {
+    width: calc(100vw - 12px);
+    grid-template-columns: 1fr;
+  }
+  .start__right {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: center;
+  }
+  .start__user {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    padding: 4px 8px 8px;
+  }
+  .start__avatar {
+    width: 42px;
+    height: 42px;
+  }
+  .cpl__split,
+  .fin__split {
+    grid-template-columns: 1fr;
+  }
+  .cpl__nav,
+  .fin__side {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 9px 10px;
+    border-right: 0;
+    border-bottom: 1px solid var(--chrome-300);
+  }
+  .cpl__navHead,
+  .fin__sideHead {
+    display: none;
+  }
+  .cpl__navItem,
+  .fin__place {
+    width: auto;
+    flex: none;
+    margin: 0;
+    white-space: nowrap;
+  }
+  .cpl__navDesc {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --taskbar-h: 54px;
+    --titlebar-h: 38px;
+  }
+
+  .desktop__field {
+    grid-auto-flow: row;
+    grid-template-rows: none;
+    grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+    grid-auto-columns: auto;
+    padding: 14px 10px;
+    gap: 4px;
+  }
+
+  /* stickies would cover the icons at this width — they stack under them */
+  .stickies {
+    position: static;
+  }
+  .sticky {
+    display: none;
+  }
+
+  .win {
+    padding: 5px;
+  }
+  .win__title {
+    padding-right: 138px;
+  }
+  .wctl {
+    width: 38px;
+    height: 26px;
+  }
+  .wctl--close {
+    width: 56px;
+  }
+  .resize-handle {
+    display: none;
+  }
+
+  .taskbar {
+    padding-left: 56px;
+  }
+  .orb {
+    width: 46px;
+    height: 46px;
+  }
+  .taskbtn {
+    width: 48px;
+    height: 44px;
+  }
+  .taskbtn svg {
+    width: 26px;
+    height: 26px;
+  }
+  .clock {
+    padding: 0 9px;
+  }
+  .clock__date {
+    display: none;
+  }
+  .clock__time {
+    font-size: 13.5px;
+  }
+  .showdesk {
+    width: 9px;
+  }
+
+  .toasts {
+    left: 12px;
+    right: 12px;
+  }
+  .toast {
+    max-width: none;
+  }
+
+  .doc__title {
+    font-size: 24px;
+  }
+  .doc__head {
+    padding: 20px 18px 17px;
+  }
+  .doc__scroll {
+    padding: 18px;
+  }
+  .cpl__pane {
+    padding: 18px;
+  }
+  .fin__grid {
+    padding: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
+  }
+  .fin__search {
+    width: 44px;
+  }
+  .fin__searchInput {
+    display: none;
+  }
+  .fin__nav {
+    display: none;
+  }
+
+  .login__input {
+    width: min(58vw, 240px);
+  }
+  .login__tile {
+    width: 104px;
+    height: 104px;
+  }
+  .login__prompt {
+    font-size: 21px;
+  }
+}
+
+@media (max-width: 420px) {
+  .desktop__field {
+    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+  }
+  .dicon__label {
+    font-size: 11px;
+  }
+  .cmp__spec > div {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .cmp__spec dd {
+    text-align: left;
+  }
+}
+
+/* Touch devices get the system cursor; the Aero pointers are a mouse affordance. */
+@media (pointer: coarse) {
+  html,
+  html :where(button, a, input, textarea, label) {
+    cursor: auto;
+  }
+}
+
+/* Calm mode, set from Control Panel ▸ Motion */
+html[data-calm="true"] {
+  --t-fast: 60ms;
+  --t-base: 90ms;
+  --t-slow: 120ms;
+}
+html[data-calm="true"] .bub,
+html[data-calm="true"] .wall__aurora,
+html[data-calm="true"] .wall__flare,
+html[data-calm="true"] .wall__rays,
+html[data-calm="true"] .wall__glints {
+  animation: none !important;
+  opacity: 0.25;
+}

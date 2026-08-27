@@ -1,0 +1,182 @@
+/* ============================================================
+   7.css retheme — authentic Windows 7 controls, Aero-kawaii palette.
+   Everything inside a window body carries .win7, so 7.css's
+   scoped build only ever touches app content, never our chrome.
+   ============================================================ */
+
+.win7 {
+  --w7-font: 13px var(--font-ui);
+  --w7-surface: var(--chrome-100);
+  --w7-el-bg: #f8f7fe;
+  --w7-el-bg-d: #fcfbff;
+  --w7-el-bg-s-1: #eeebfa;
+  --w7-el-bg-s-2: #d5d0ee;
+  --w7-el-sd: inset 0 0 0 1px rgba(255,255,255,.85);
+  --w7-el-sd-a: inset 1px 1px 0 rgba(40,34,90,.22), inset -1px 1px 0 rgba(40,34,90,.08);
+  --w7-el-bd: #a8a2ca;
+  --w7-el-bd-h: var(--accent-deep);
+  --w7-el-bd-a: #7a73ae;
+  --w7-el-bd-d: #c8c4dd;
+  --w7-el-bdr: 7px;
+  --w7-el-c: var(--ink);
+  --w7-el-c-d: var(--ink-faint);
+  --w7-el-grad: linear-gradient(var(--w7-el-bg) 45%, var(--w7-el-bg-s-1) 45%, var(--w7-el-bg-s-2));
+  --w7-el-grad-h: linear-gradient(#f0fbff 45%, #ccedff 0, #a9dcfa);
+  --w7-el-grad-a: linear-gradient(#e3f6ff, #bfe8fb 30% 50%, #90d2f3 50%, #58b3e2);
+  --w7-li-bd-hl: #b7e6fb;
+  --w7-li-bg-hl: linear-gradient(rgba(255,255,255,.8), rgba(226,232,255,.8) 90%, rgba(255,255,255,.8));
+  --w7-bl-bd: rgba(30,24,80,.42);
+
+  color: var(--ink);
+  font: var(--w7-font);
+  letter-spacing: var(--track-ui);
+}
+
+/* soften every 7.css control a couple of px past authentic Aero */
+.win7 :where(button, input, select, textarea) { border-radius: var(--r-sm); }
+.win7 :where(button):not(:disabled):active { transform: translateY(.5px); }
+.win7 :where(button, input, select) { transition: box-shadow var(--t-fast) var(--e-out), background var(--t-fast) var(--e-out); }
+.win7 :where(button):focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.win7 fieldset { border-radius: var(--r-md); }
+.win7 ::selection { background: color-mix(in oklab, var(--accent) 45%, var(--violet)); color: #fff; }
+
+/* ------------------------------------------------------------
+   Shared app-content primitives, in the same Aero material.
+   ------------------------------------------------------------ */
+.aero-pane {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.9), rgba(246,245,255,.72)),
+    var(--chrome-100);
+  border: 1px solid var(--chrome-300);
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-inset-top);
+}
+
+.aero-btn {
+  --btn-face: linear-gradient(180deg, #fdfdff 0%, #f2f0fd 46%, #e4e0f6 47%, #d9d4f0 100%);
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 15px;
+  border-radius: var(--r-sm);
+  background: var(--btn-face);
+  border: 1px solid var(--chrome-400);
+  color: var(--ink);
+  font-weight: 500;
+  box-shadow: var(--sh-inset-top), 0 1px 2px rgba(24,18,70,.14);
+  transition: transform var(--t-fast) var(--e-spring), box-shadow var(--t-fast) var(--e-out), border-color var(--t-fast) var(--e-out);
+}
+.aero-btn:hover {
+  --btn-face: linear-gradient(180deg, #f5fdff 0%, #dff5ff 46%, #c3ebff 47%, #a9deff 100%);
+  border-color: var(--accent-deep);
+  box-shadow: var(--sh-inset-top), 0 2px 8px -1px rgba(30,147,214,.4);
+}
+.aero-btn:active { transform: translateY(1px) scale(.985); }
+.aero-btn--primary {
+  --btn-face: linear-gradient(180deg, #7ce6ff 0%, #45c6f5 46%, #2ba6e8 47%, #1d86c9 100%);
+  color: #04222f; border-color: #1b7fbe;
+  text-shadow: 0 1px 0 rgba(255,255,255,.45);
+}
+.aero-btn--primary:hover {
+  --btn-face: linear-gradient(180deg, #9fefff 0%, #62d6ff 46%, #38b8f2 47%, #2495d6 100%);
+}
+
+.aero-field {
+  width: 100%;
+  padding: 9px 13px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--chrome-400);
+  background: linear-gradient(180deg, #f4f3fc, #fff 22%);
+  box-shadow: inset 0 2px 4px rgba(36,30,90,.13);
+  color: var(--ink-strong);
+}
+.aero-field::placeholder { color: var(--ink-faint); }
+.aero-field:focus {
+  outline: none;
+  border-color: var(--accent-deep);
+  box-shadow: inset 0 2px 4px rgba(36,30,90,.1), 0 0 0 3px rgba(95,220,255,.35);
+}
+
+.aero-divider {
+  height: 1px; border: 0;
+  background: linear-gradient(90deg, transparent, var(--chrome-300) 12%, var(--chrome-300) 88%, transparent);
+}
+
+/* ------------------------------------------------------------
+   7.css controls, retinted. Its stock checkbox is grey with a
+   Unicode tick; ours is a drawn mark on the accent.
+   ------------------------------------------------------------ */
+.win7 input[type='checkbox'] + label,
+.win7 input[type='radio'] + label {
+  gap: 0;
+  cursor: var(--cur-hand);
+  color: var(--ink);
+}
+.win7 input[type='checkbox'] + label::before,
+.win7 input[type='radio'] + label::before {
+  width: 16px;
+  height: 16px;
+  margin-right: 9px;
+  border-radius: 5px;
+  background: linear-gradient(180deg, #ffffff, #ebe8f7);
+  border: 1px solid var(--chrome-400);
+  box-shadow: inset 0 1px 3px rgba(36, 30, 90, 0.16);
+  transition: background var(--t-fast) var(--e-out), border-color var(--t-fast) var(--e-out),
+    box-shadow var(--t-fast) var(--e-out);
+}
+.win7 input[type='radio'] + label::before {
+  border-radius: 50%;
+}
+.win7 input[type='checkbox'] + label:hover::before,
+.win7 input[type='radio'] + label:hover::before {
+  background: linear-gradient(180deg, #eaf7fe, #d3edfc);
+  border-color: #3c7fb1;
+  box-shadow: inset 0 0 0 1px #def9fa, inset 1px 1px 0 1px #79c6f9, inset -1px -1px 0 1px #c6e9fc;
+}
+.win7 input[type='checkbox']:checked + label::before,
+.win7 input[type='radio']:checked + label::before {
+  background: linear-gradient(180deg, #7ce6ff, #2ba6e8 55%, #1a7cbb);
+  border-color: #1b7fbe;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 1px 5px -1px rgba(30, 147, 214, 0.6);
+}
+.win7 input[type='checkbox']:checked + label::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin-top: -7px;
+  background-color: #ffffff;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.4 8.5 6.5 11.6 12.6 4.8' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 14px 14px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.4 8.5 6.5 11.6 12.6 4.8' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 14px 14px no-repeat;
+  animation: tickIn 260ms var(--e-spring) both;
+}
+@keyframes tickIn {
+  from { opacity: 0; transform: scale(0.4) rotate(-16deg); }
+  to { opacity: 1; transform: scale(1) rotate(0); }
+}
+.win7 input[type='radio']:checked + label::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+}
+.win7 input[type='checkbox']:focus-visible + label::before,
+.win7 input[type='radio']:focus-visible + label::before {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.win7 input[type='checkbox']:disabled + label,
+.win7 input[type='radio']:disabled + label {
+  color: var(--ink-faint);
+  cursor: default;
+}
+.win7 :where(button, .aero-btn):disabled {
+  opacity: 0.5;
+  cursor: default;
+}

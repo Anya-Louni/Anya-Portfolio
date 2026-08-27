@@ -1,0 +1,161 @@
+/* ============================================================
+   FRUTIGER AERO TOKEN SYSTEM
+
+   The real aesthetic is white / green / blue and *luminous* —
+   glossy surfaces, cloudy skies, water, bubbles, lens flare,
+   aurora, bloom. Not a dark restrained palette. Windows 7's own
+   default Aero glass is a light blue-white pane, and that is what
+   the chrome is built from.
+
+   Theme A "Aero"           — the default, bright and saturated.
+   Theme B "Deep Field"     — the same world at night.
+   Skin  "Luna"             — Windows XP, via xp.css.
+   ============================================================ */
+
+:root {
+  /* ---- WORLD: sky, water, nature -------------------------------- */
+  --sky-deep:   #0a4bc4;
+  --sky:        #2b80e6;
+  --sky-lite:   #5cb9f4;
+  --aqua:       #67e4ef;
+  --aqua-lite:  #a6f4f8;
+  --foam:       #d3fbff;
+  --daylight:   #f4feff;
+
+  --violet:     #6a4fe6;
+  --violet-lite:#9b86ff;
+  --periwinkle: #7fa2ff;
+  --leaf:       #3fcb85;
+  --leaf-lite:  #86eaa8;
+  --lime:       #a9e94f;
+
+  /* kept so the night theme and deep shadows have somewhere to go */
+  --abyss:      #041634;
+  --night:      #0a2a63;
+  --indigo:     #12459c;
+  --indigo-lift:#1c5fc9;
+
+  /* ---- CHROME: Windows 7's light blue-white glass ---------------- */
+  --chrome-050: #fbfdff;
+  --chrome-100: #eef5fd;
+  --chrome-200: #dfeafa;
+  --chrome-300: #c7d9f1;
+  --chrome-400: #a6c2e5;
+  --chrome-500: #7fa0c8;
+  --chrome-600: #5b7aa4;
+  --chrome-700: #3d587e;
+  --chrome-800: #24384f;
+
+  /* ---- INK ------------------------------------------------------- */
+  --ink-strong: #0e2440;
+  --ink:        #17395e;
+  --ink-soft:   #416287;
+  --ink-faint:  #52738f;
+  --ink-on-glass:      #f6fbff;
+  --ink-on-glass-soft: #c9ddf4;
+
+  /* ---- ACCENT: Windows 7's own selection blue -------------------- */
+  --accent:      #2ba6e8;
+  --accent-lite: #7fdcff;
+  --accent-deep: #1b7fbe;
+  --accent-edge: #3c7fb1;
+  --accent-violet: #7b5cf0;
+
+  --danger:      #e8574f;
+  --danger-deep: #c22f2f;
+  --positive:    #4fd48a;
+
+  /* ---- GLASS: the Aero pane --------------------------------------
+     4px backdrop blur, a light blue-white tinted pane, ONE thin light
+     band across the caption, a 1px dark outer border and a 1px white
+     inner ring. No all-over sheen, no coloured halo.
+     ---------------------------------------------------------------- */
+  --glass-tint:          rgba(152, 194, 240, 0.5);
+  --glass-tint-inactive: rgba(186, 206, 232, 0.42);
+  --glass-rim:           rgba(6, 22, 48, 0.58);
+  --glass-rim-inactive:  rgba(12, 30, 58, 0.4);
+  --glass-inner:         rgba(255, 255, 255, 0.72);
+  --glass-inner-inactive:rgba(255, 255, 255, 0.45);
+  --glass-blur:          4px;
+
+  --glass-band: linear-gradient(transparent 20%, rgba(255, 255, 255, 0.7) 40%, transparent 41%);
+  --glass-shade: linear-gradient(90deg, rgba(255,255,255,.32), rgba(0,0,0,.09) 55%, rgba(255,255,255,.18));
+
+  /* the Frutiger gloss: a hard specular break, then a wet lower half */
+  --gloss: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.78) 0%,
+    rgba(255, 255, 255, 0.42) 48%,
+    rgba(255, 255, 255, 0.06) 49%,
+    rgba(255, 255, 255, 0.22) 100%
+  );
+
+  /* ---- TASKBAR / DARK GLASS -------------------------------------- */
+  --bar-top:    rgba(255, 255, 255, 0.18);
+  --bar-body:   rgba(14, 40, 84, 0.56);
+  --bar-body-2: rgba(8, 26, 60, 0.66);
+  --bar-edge:   rgba(178, 214, 255, 0.42);
+
+  /* ---- RADII: real Aero values ----------------------------------- */
+  --r-xs: 3px;
+  --r-sm: 5px;
+  --r-md: 7px;
+  --r-lg: 6px;
+  --r-xl: 10px;
+  --r-pill: 999px;
+
+  /* ---- ELEVATION: tight and offset, never a bloom ---------------- */
+  --sh-1: 0 1px 2px rgba(6, 24, 54, 0.14);
+  --sh-2: 0 1px 3px rgba(6, 24, 54, 0.2), 0 4px 10px -4px rgba(6, 24, 54, 0.22);
+  --sh-window: 2px 3px 11px 1px rgba(2, 14, 38, 0.55), 0 14px 34px -14px rgba(2, 14, 38, 0.45);
+  --sh-window-idle: 1px 2px 7px 0 rgba(2, 14, 38, 0.38);
+  --sh-inset-top: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+
+  /* ---- MOTION ---------------------------------------------------- */
+  --e-out:    cubic-bezier(.16, 1, .3, 1);
+  --e-spring: cubic-bezier(.34, 1.46, .5, 1);
+  --e-snap:   cubic-bezier(.22, 1.4, .36, 1);
+  --e-inout:  cubic-bezier(.62, 0, .28, 1);
+  --t-fast:   140ms;
+  --t-base:   240ms;
+  --t-slow:   420ms;
+
+  /* ---- TYPE ------------------------------------------------------- */
+  --font-ui: 'Hanken Grotesk Variable', 'Hanken Grotesk', 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Fredoka Variable', 'Fredoka', var(--font-ui);
+  --font-mono: 'Azeret Mono Variable', 'Azeret Mono', ui-monospace, monospace;
+  --track-ui: -0.012em;
+  --track-tight: -0.022em;
+
+  /* ---- METRICS ---------------------------------------------------- */
+  --taskbar-h: 40px;
+  --titlebar-h: 28px;
+  --frame: 6px;
+}
+
+/* ============================================================
+   THEME B — "Deep Field": the same world after dark.
+   ============================================================ */
+:root[data-theme='night'] {
+  --sky-deep:   #050b2e;
+  --sky:        #12246e;
+  --sky-lite:   #2b46b4;
+  --aqua:       #4fc6e0;
+  --aqua-lite:  #7fe0ee;
+  --foam:       #b6ecfb;
+  --daylight:   #dff4ff;
+  --violet:     #4a3bc0;
+  --violet-lite:#7f6cf0;
+  --periwinkle: #5f74e6;
+  --leaf:       #2f9a68;
+  --leaf-lite:  #4cc189;
+
+  --glass-tint:          rgba(118, 140, 208, 0.5);
+  --glass-tint-inactive: rgba(140, 152, 194, 0.42);
+  --bar-body:   rgba(10, 20, 58, 0.62);
+  --bar-body-2: rgba(5, 12, 40, 0.72);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --t-fast: 1ms; --t-base: 1ms; --t-slow: 1ms; }
+}
