@@ -31,13 +31,16 @@ export interface AvatarSpec {
 export const SKIN = ['#f6d9c2', '#efc4a0', '#dda87c', '#c1855a', '#95603c', '#6b4429']
 export const HAIR_COLOUR = ['#2b1f18', '#5c3a1e', '#a8672c', '#d9a441', '#e8e2d4', '#6a4bd8', '#e0559b', '#2fb6c4']
 export const SHIRT = ['#39a8f0', '#4fd48a', '#ff8f2e', '#e256c0', '#8b5cf6', '#ffd23f', '#f4f7fb', '#2b3550']
+/* Two close, pale tones each. Windows 7's account pictures sit on plain
+   near-white grounds; a saturated gradient behind the figure is what made
+   these read as generated rather than drawn. */
 export const BG = [
-  ['#7fe0ff', '#2b80e6'],
-  ['#b8f5c8', '#25b06a'],
-  ['#ffd6f0', '#c14fd0'],
-  ['#ffe9a8', '#ef8c2e'],
-  ['#d9d2ff', '#6a4fe6'],
-  ['#c9fbff', '#0f8fa8'],
+  ['#f6fbff', '#d9ebf8'],
+  ['#f6fcf4', '#dcefd6'],
+  ['#fdf6fc', '#f1dced'],
+  ['#fffbf2', '#f8ead3'],
+  ['#f8f6ff', '#e2dcf4'],
+  ['#f4f6f9', '#dde4ec'],
 ]
 
 export const DEFAULT_AVATAR: AvatarSpec = {
@@ -130,12 +133,6 @@ export function Avatar({
           <stop offset="0" stopColor={bg1} />
           <stop offset="1" stopColor={bg2} />
         </linearGradient>
-        <linearGradient id={`${id}gloss`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#ffffff" stopOpacity="0.62" />
-          <stop offset="0.48" stopColor="#ffffff" stopOpacity="0.16" />
-          <stop offset="0.49" stopColor="#ffffff" stopOpacity="0.03" />
-          <stop offset="1" stopColor="#ffffff" stopOpacity="0.18" />
-        </linearGradient>
         {/* light from above, in front and slightly left — so the highlight
             sits on the upper left of the forehead and the colour deepens
             toward the lower right */}
@@ -149,27 +146,17 @@ export function Avatar({
           <stop offset="0.4" stopColor={shirt} />
           <stop offset="1" stopColor={shade(shirt, -0.24)} />
         </linearGradient>
-        <linearGradient id={`${id}aurora`} x1="0" y1="0" x2="1" y2="0.4">
-          <stop offset="0" stopColor="#ffffff" stopOpacity="0" />
-          <stop offset="0.5" stopColor="#ffffff" stopOpacity="0.4" />
-          <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
-        </linearGradient>
         <clipPath id={`${id}clip`}>
-          <rect x="0" y="0" width="96" height="96" rx="14" />
+          <rect x="4" y="4" width="88" height="88" rx="1" />
         </clipPath>
       </defs>
 
       <g clipPath={`url(#${id}clip)`}>
         <rect width="96" height="96" fill={`url(#${id}bg)`} />
 
-        {/* aurora sweep + bokeh, the two things that date it correctly */}
-        <path d="M-10 62 C 20 40, 50 74, 106 44 L106 96 L-10 96 Z" fill={`url(#${id}aurora)`} />
-        <g opacity="0.5">
-          <circle cx="76" cy="18" r="11" fill="#fff" opacity="0.3" />
-          <circle cx="88" cy="34" r="6" fill="#fff" opacity="0.28" />
-          <circle cx="14" cy="16" r="7" fill="#fff" opacity="0.24" />
-          <circle cx="24" cy="30" r="3.4" fill="#fff" opacity="0.35" />
-        </g>
+        {/* scaled about the bottom centre, so the shoulders stay pinned to the
+            bottom edge and the head grows into the frame */}
+        <g transform="translate(48 96) scale(1.1) translate(-48 -96)">
 
         {/* shoulders: a rounded trapezoid, wide at the cut, narrow at the neck */}
         <path d={TORSO} fill={`url(#${id}shirt)`} />
@@ -250,13 +237,15 @@ export function Avatar({
             strokeWidth="1"
           />
         ) : null}
-
-        {/* one restrained pane of glass. It used to be much stronger, which
-            made the whole tile read as plastic rather than as a photograph
-            behind glass. */}
-        <rect width="96" height="96" fill={`url(#${id}gloss)`} opacity="0.55" />
-        <rect x="0.5" y="0.5" width="95" height="95" rx="13.5" fill="none" stroke="#ffffff" strokeOpacity="0.65" />
+        </g>
       </g>
+
+      {/* The frame Windows 7 puts around an account picture: a white mat, a
+          grey line outside it, and a hairline of shadow inside. It is what
+          makes the tile read as a framed picture rather than as a sticker. */}
+      <rect x="2" y="2" width="92" height="92" rx="2" fill="none" stroke="#ffffff" strokeWidth="4" />
+      <rect x="0.5" y="0.5" width="95" height="95" rx="3" fill="none" stroke="#9aa6b4" />
+      <rect x="4.5" y="4.5" width="87" height="87" rx="1" fill="none" stroke="#000000" strokeOpacity="0.16" />
     </svg>
   )
 }
