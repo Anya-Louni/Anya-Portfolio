@@ -7,7 +7,7 @@
  * Start menu and 128px on the login screen, and lit with the same specular
  * filter the icons use.
  */
-import { useSyncExternalStore } from 'react'
+import { useId, useSyncExternalStore } from 'react'
 
 export interface AvatarSpec {
   skin: number
@@ -89,7 +89,9 @@ export function Avatar({
 }) {
   const live = useAvatar()
   const a = spec ?? live
-  const id = `av${a.bg}${a.shirt}${a.hairColour}${a.skin}`
+  /* ids must be unique per instance: several avatars sit on screen at once
+     and the browser resolves url(#id) to whichever appeared first */
+  const id = useId().replace(/:/g, '')
   const [bg1, bg2] = BG[a.bg % BG.length]
   const skin = SKIN[a.skin % SKIN.length]
   const hair = HAIR_COLOUR[a.hairColour % HAIR_COLOUR.length]

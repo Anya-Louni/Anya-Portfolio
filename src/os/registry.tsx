@@ -21,6 +21,8 @@ import TerminalApp from '../apps/Terminal'
 import SynthApp from '../apps/Synth'
 import ContactsApp from '../apps/Contacts'
 import AvatarMaker from '../apps/AvatarMaker'
+import PhotoBooth from '../apps/PhotoBooth'
+import WordPad from '../apps/WordPad'
 import { byslug } from '../content/projects'
 
 export interface AppDef {
@@ -173,6 +175,28 @@ export const APPS: AppDef[] = [
     minW: 560,
     minH: 460,
     Component: AvatarMaker,
+  },
+  {
+    id: 'photobooth',
+    title: 'Photo Booth',
+    icon: 'camera',
+    blurb: 'Camera, filters, nothing uploaded',
+    w: 620,
+    h: 700,
+    minW: 460,
+    minH: 520,
+    Component: PhotoBooth,
+  },
+  {
+    id: 'wordpad',
+    title: 'WordPad',
+    icon: 'wordpad',
+    blurb: 'Text, but with formatting',
+    w: 820,
+    h: 620,
+    minW: 520,
+    minH: 400,
+    Component: WordPad,
   },
   {
     id: 'notepad',

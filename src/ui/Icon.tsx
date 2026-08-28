@@ -35,6 +35,8 @@ export type IconName =
   | 'calculator'
   | 'sticky'
   | 'synth'
+  | 'camera'
+  | 'wordpad'
   | 'contacts'
 
 export function IconDefs() {
@@ -70,6 +72,36 @@ export function IconDefs() {
           <stop offset="0" stopColor="#4d4880" />
           <stop offset="0.5" stopColor="#252047" />
           <stop offset="1" stopColor="#100d28" />
+        </linearGradient>
+        <linearGradient id="gGold" x1="0" y1="0" x2="0.35" y2="1">
+          <stop offset="0" stopColor="#fff3b0" />
+          <stop offset="0.48" stopColor="#ffc82e" />
+          <stop offset="1" stopColor="#c07d05" />
+        </linearGradient>
+        <linearGradient id="gOrange" x1="0" y1="0" x2="0.35" y2="1">
+          <stop offset="0" stopColor="#ffd0a3" />
+          <stop offset="0.48" stopColor="#ff8a2e" />
+          <stop offset="1" stopColor="#c04e08" />
+        </linearGradient>
+        <linearGradient id="gGreen" x1="0" y1="0" x2="0.35" y2="1">
+          <stop offset="0" stopColor="#c8f8cf" />
+          <stop offset="0.48" stopColor="#4fcc6a" />
+          <stop offset="1" stopColor="#158a3a" />
+        </linearGradient>
+        <linearGradient id="gTeal" x1="0" y1="0" x2="0.35" y2="1">
+          <stop offset="0" stopColor="#b9f6ee" />
+          <stop offset="0.48" stopColor="#33c9b8" />
+          <stop offset="1" stopColor="#0c7a70" />
+        </linearGradient>
+        <linearGradient id="gMagenta" x1="0" y1="0" x2="0.35" y2="1">
+          <stop offset="0" stopColor="#ffc4f0" />
+          <stop offset="0.48" stopColor="#e256c0" />
+          <stop offset="1" stopColor="#8f1a78" />
+        </linearGradient>
+        <linearGradient id="gSteel" x1="0" y1="0" x2="0.3" y2="1">
+          <stop offset="0" stopColor="#e8eef6" />
+          <stop offset="0.5" stopColor="#9fadc0" />
+          <stop offset="1" stopColor="#5d6b80" />
         </linearGradient>
         <linearGradient id="gRose" x1="0" y1="0" x2="0.35" y2="1">
           <stop offset="0" stopColor="#ffc2d4" />
@@ -152,14 +184,14 @@ const Folder = ({ className }: P) =>
     <>
       <path
         d="M4 13.5A3.5 3.5 0 0 1 7.5 10h10.2c1.1 0 2.1.5 2.8 1.4l2.1 2.6H40a3.5 3.5 0 0 1 3.5 3.5v3H4Z"
-        fill="url(#gPeri)"
-        stroke="#2b2680"
+        fill="url(#gGold)"
+        stroke="#8a5c04"
         strokeWidth="0.9"
       />
       <path
         d="M4.6 19.5h38.8a2.6 2.6 0 0 1 2.55 3.14l-2.9 14.2A3.6 3.6 0 0 1 39.5 39.7h-31a3.6 3.6 0 0 1-3.53-2.9L2.05 22.6A2.6 2.6 0 0 1 4.6 19.5Z"
-        fill="url(#gAqua)"
-        stroke="#1a6f96"
+        fill="url(#gOrange)"
+        stroke="#a85708"
         strokeWidth="0.9"
       />
       <path d="M5 20.6h38l-1.3 6.6c-9.5 3.4-26 3.4-35.4 0Z" fill="url(#gSheen)" />
@@ -282,13 +314,13 @@ const Notes = ({ className }: P) =>
 const Guestbook = ({ className }: P) =>
   box(
     <>
-      <rect x="5" y="12" width="38" height="26" rx="4.5" fill="url(#gPeri)" stroke="#2b2680" strokeWidth="1" />
+      <rect x="5" y="12" width="38" height="26" rx="4.5" fill="url(#gGreen)" stroke="#0f6b30" strokeWidth="1" />
       <path d="M5.8 14.4 24 27.2l18.2-12.8" fill="none" stroke="#eaf0ff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M6 13h36v6.2c-8.6 3.2-27.4 3.2-36 0Z" fill="url(#gSheen)" />
       <path
         d="M31 6.2c1.9-2 5-1.9 6.7.2 1.6-2.1 4.8-2.2 6.7-.2 2 2.1 1.7 5.3-.5 7.3l-6.2 5.6-6.2-5.6c-2.2-2-2.5-5.2-.5-7.3Z"
-        fill="url(#gAqua)"
-        stroke="#1a6f96"
+        fill="url(#gRose)"
+        stroke="#8f1c36"
         strokeWidth="0.9"
       />
     </>,
@@ -298,7 +330,7 @@ const Guestbook = ({ className }: P) =>
 const Arcade = ({ className }: P) =>
   box(
     <>
-      <rect x="3.5" y="17" width="41" height="22" rx="9.5" fill="url(#gViolet)" stroke="#241a72" strokeWidth="1" />
+      <rect x="3.5" y="17" width="41" height="22" rx="9.5" fill="url(#gMagenta)" stroke="#6d1259" strokeWidth="1" />
       <path d="M5 19h38v7.5c-9 3.6-29 3.6-38 0Z" fill="url(#gSheen)" />
       <path d="M12.5 24v8M8.5 28h8" stroke="#f2f6ff" strokeWidth="2.6" strokeLinecap="round" />
       <circle cx="33.5" cy="25.5" r="2.9" fill="#5fdcff" />
@@ -354,8 +386,8 @@ const Pet = ({ className }: P) =>
     <>
       <path
         d="M11 22c0-7.2 5.8-12.5 13-12.5S37 14.8 37 22v7.5c0 6-5.8 10.5-13 10.5S11 35.5 11 29.5Z"
-        fill="url(#gPeri)"
-        stroke="#2b2680"
+        fill="url(#gTeal)"
+        stroke="#0a6a61"
         strokeWidth="1"
       />
       <path d="M12.5 20c2-6 20-6 23 0-4.5 4-18.5 4-23 0Z" fill="url(#gSheen)" />
@@ -377,8 +409,8 @@ const Recycle = ({ className }: P) =>
     <>
       <path
         d="M11 14h26l-2.4 24.2A4 4 0 0 1 30.6 42H17.4a4 4 0 0 1-4-3.8Z"
-        fill="url(#gAqua)"
-        stroke="#12617f"
+        fill="url(#gGreen)"
+        stroke="#0f6b30"
         strokeWidth="1"
         opacity="0.9"
       />
@@ -395,8 +427,8 @@ const Star = ({ className }: P) =>
     <>
       <path
         d="M24 5.5 29.6 18l13.4 1.8-9.8 9.4L35.6 42 24 35.6 12.4 42l2.4-12.8L5 19.8 18.4 18Z"
-        fill="url(#gAqua)"
-        stroke="#12617f"
+        fill="url(#gGold)"
+        stroke="#8a5c04"
         strokeWidth="1"
         strokeLinejoin="round"
       />
@@ -427,7 +459,7 @@ const User = ({ className }: P) =>
 const Games = ({ className }: P) =>
   box(
     <>
-      <rect x="4" y="9" width="40" height="30" rx="4" fill="url(#gViolet)" stroke="#241a72" strokeWidth="1" />
+      <rect x="4" y="9" width="40" height="30" rx="4" fill="url(#gOrange)" stroke="#8f3a05" strokeWidth="1" />
       <path d="M5.5 10.5h37v8.5c-9 3.4-28 3.4-37 0Z" fill="url(#gSheen)" />
       <circle cx="15" cy="24" r="3.1" fill="#f2f6ff" />
       <circle cx="15" cy="31.5" r="3.1" fill="#f2f6ff" />
@@ -568,9 +600,9 @@ const ContactsIcon = ({ className }: P) =>
   box(
     <>
       <rect x="8" y="4" width="33" height="40" rx="4" fill="url(#gLav)" stroke="#5a6b82" strokeWidth="1" />
-      <rect x="5" y="9" width="7" height="4" rx="2" fill="url(#gPeri)" />
-      <rect x="5" y="22" width="7" height="4" rx="2" fill="url(#gPeri)" />
-      <rect x="5" y="35" width="7" height="4" rx="2" fill="url(#gPeri)" />
+      <rect x="5" y="9" width="7" height="4" rx="2" fill="url(#gTeal)" />
+      <rect x="5" y="22" width="7" height="4" rx="2" fill="url(#gOrange)" />
+      <rect x="5" y="35" width="7" height="4" rx="2" fill="url(#gGreen)" />
       <circle cx="24" cy="19" r="7" fill="url(#gBlue)" />
       <path d="M14 38c1.4-6.4 5.4-9.6 10-9.6s8.6 3.2 10 9.6Z" fill="url(#gBlue)" />
       <path d="M9 5.5h31v5c-9 2.4-22 2.4-31 0Z" fill="url(#gSheen)" />
@@ -578,7 +610,34 @@ const ContactsIcon = ({ className }: P) =>
     className,
   )
 
+const Camera = ({ className }: P) =>
+  box(
+    <>
+      <path d="M4 16a4 4 0 0 1 4-4h5l3-4h8l3 4h5a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4Z" fill="url(#gSlate)" stroke="#0e131f" strokeWidth="1" />
+      <path d="M5.5 14h37v6c-9 2.6-28 2.6-37 0Z" fill="url(#gSheen)" />
+      <circle cx="24" cy="25" r="10" fill="url(#gTeal)" stroke="#0a6a61" strokeWidth="1" />
+      <circle cx="24" cy="25" r="5.4" fill="#0d2230" />
+      <circle cx="21" cy="22" r="2.2" fill="#ffffff" opacity="0.8" />
+      <circle cx="37" cy="17" r="1.8" fill="#ff6b5c" />
+    </>,
+    className,
+  )
+
+const WordPadIcon = ({ className }: P) =>
+  box(
+    <>
+      <path d="M9 6.5a2.5 2.5 0 0 1 2.5-2.5h20.5L40 13.2V39.5a2.5 2.5 0 0 1-2.5 2.5H11.5A2.5 2.5 0 0 1 9 39.5Z" fill="#ffffff" stroke="#5a6b82" strokeWidth="1" />
+      <path d="M32.5 4 40 13.2h-7.5Z" fill="#cfdcea" stroke="#5a6b82" strokeWidth="1" strokeLinejoin="round" />
+      <path d="M15 19h13" stroke="#e0553a" strokeWidth="2.6" strokeLinecap="round" />
+      <path d="M15 25h18M15 31h18M15 36h11" stroke="#7fa0c8" strokeWidth="2" strokeLinecap="round" />
+      <path d="M10 5.5h22v4.2c-6 2-16 2-22 0Z" fill="url(#gSheen)" />
+    </>,
+    className,
+  )
+
 const registry: Record<IconName, (p: P) => ReactElement> = {
+  camera: Camera,
+  wordpad: WordPadIcon,
   synth: SynthIcon,
   contacts: ContactsIcon,
   notepad: Notepad,

@@ -9,6 +9,8 @@ import { LoginScreen } from './boot/LoginScreen'
 import { Toasts } from './ui/Toasts'
 import { ContextMenu } from './os/ContextMenu'
 import { Switcher } from './os/Switcher'
+import { Pet } from './os/Pet'
+import { Gadgets } from './os/Gadgets'
 import { IconDefs } from './ui/Icon'
 import { sound } from './os/sound'
 
@@ -61,6 +63,8 @@ export default function App() {
               <Win key={w.id} win={w} />
             ))}
           </div>
+          <Gadgets />
+          <Pet />
           <Taskbar />
           <Toasts />
           <Switcher />

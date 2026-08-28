@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Avatar,
   BG,
@@ -20,12 +20,16 @@ const ACCESSORY = ['None', 'Glasses', 'Headphones', 'Sparkle']
 export default function AvatarMaker() {
   const saved = useAvatar()
   const [spec, setSpec] = useState<AvatarSpec>(saved)
-  const [done, setDone] = useState(false)
   const pushToast = useOS((s) => s.pushToast)
+
+  /* every change lands immediately — the sign-in tile, Start menu and
+     Contacts all read the same store, so they update as you click */
+  useEffect(() => {
+    saveAvatar(spec)
+  }, [spec])
 
   const set = <K extends keyof AvatarSpec>(k: K, v: AvatarSpec[K]) => {
     setSpec((s) => ({ ...s, [k]: v }))
-    setDone(false)
     sound.click(1.2)
   }
 
@@ -39,18 +43,15 @@ export default function AvatarMaker() {
       bg: Math.floor(Math.random() * BG.length),
       accessory: Math.floor(Math.random() * ACCESSORY.length),
     })
-    setDone(false)
     sound.click(0.9)
   }
 
-  const apply = () => {
-    saveAvatar(spec)
-    setDone(true)
+  const confirm = () => {
     sound.chime()
     pushToast({
       icon: 'user',
-      title: 'Picture changed',
-      body: 'It shows on the Start menu and the sign-in screen.',
+      title: 'That is you now',
+      body: 'It is already on the Start menu and the sign-in screen.',
     })
   }
 
@@ -103,7 +104,10 @@ export default function AvatarMaker() {
           <Avatar spec={spec} size={28} />
           <Avatar spec={spec} size={16} />
         </div>
-        <p className="am__note">How it looks on the sign-in tile, the Start menu and the taskbar.</p>
+        <p className="am__note">
+          Changes apply straight away — this is already the picture on the sign-in tile and the
+          Start menu.
+        </p>
       </div>
 
       <div className="am__panel">
@@ -141,8 +145,8 @@ export default function AvatarMaker() {
             Reset
           </button>
           <span className="game__spacer" />
-          <button className="aero-btn aero-btn--primary" onClick={apply}>
-            {done ? 'Saved' : 'Use this picture'}
+          <button className="aero-btn aero-btn--primary" onClick={confirm}>
+            Done
           </button>
         </div>
       </div>

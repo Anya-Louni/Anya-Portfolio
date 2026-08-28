@@ -1,52 +1,80 @@
 /* ============================================================
-   iPOD
+   iPOD — brushed aluminium body, colour screen, chrome wheel
    ============================================================ */
 .ipod {
   display: grid;
   place-items: center;
   height: 100%;
-  padding: 10px;
-  background: linear-gradient(180deg, #dde4ee, #c3ccda);
+  padding: 12px;
+  background: radial-gradient(ellipse 90% 70% at 50% 0%, #4a5568 0%, #232b38 55%, #141922 100%);
 }
 .ipod__body {
-  width: 268px;
-  padding: 16px 16px 20px;
-  border-radius: 26px;
-  background: linear-gradient(180deg, #ffffff 0%, #f4f6fa 40%, #e2e7ef 100%);
-  border: 1px solid #b1bac8;
-  box-shadow: 0 10px 24px -12px rgba(10, 30, 60, 0.55), inset 0 1px 0 #ffffff;
+  position: relative;
+  width: 264px;
+  padding: 14px 14px 18px;
+  border-radius: 22px;
+  background: linear-gradient(160deg, #fdfdfe 0%, #eef1f6 18%, #dfe4ec 52%, #f2f4f8 78%, #d7dce6 100%);
+  border: 1px solid #a8b2c2;
+  box-shadow:
+    0 18px 34px -16px rgba(0, 0, 0, 0.75),
+    0 2px 0 rgba(255, 255, 255, 0.9) inset,
+    0 -2px 0 rgba(120, 135, 160, 0.25) inset;
 }
+/* the highlight running down the aluminium */
+.ipod__body::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 21px;
+  background: linear-gradient(105deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 26%);
+  pointer-events: none;
+}
+
 .ipod__screen {
   position: relative;
-  height: 200px;
-  padding: 0;
-  border-radius: 5px;
+  height: 196px;
+  border-radius: 4px;
   overflow: hidden;
-  background: linear-gradient(180deg, #c9d6c2, #b4c3ad);
-  border: 2px solid #7d8a78;
-  box-shadow: inset 0 2px 6px rgba(20, 40, 20, 0.35);
+  background: #0d1420;
+  border: 3px solid #2a3244;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.55),
+    inset 0 2px 10px rgba(0, 0, 0, 0.7);
+  color: #eaf1fb;
   font-family: var(--font-ui);
-  color: #16210f;
 }
+/* glass reflection across the screen */
+.ipod__screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(158deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.03) 34%, rgba(255, 255, 255, 0) 46%);
+  pointer-events: none;
+}
+
 .ipod__bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 3px 7px;
+  padding: 4px 8px;
   font-size: 11px;
   font-weight: 600;
-  background: linear-gradient(180deg, #eef3ea, #cbd8c4);
-  border-bottom: 1px solid #7d8a78;
+  letter-spacing: 0.01em;
+  color: #dbe6f5;
+  background: linear-gradient(180deg, #46536e, #2c3549);
+  border-bottom: 1px solid #131a26;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
 }
 .ipod__battery {
   width: 20px;
   height: 9px;
-  border: 1px solid #46543f;
+  border: 1px solid #b9c6da;
   border-radius: 2px;
-  background: linear-gradient(90deg, #6fae4f 70%, transparent 70%);
+  background: linear-gradient(90deg, #7ce06a 72%, transparent 72%);
 }
+
 .ipod__list {
-  height: calc(100% - 22px);
+  height: calc(100% - 23px);
   overflow: hidden;
 }
 .ipod__item {
@@ -54,13 +82,16 @@
   align-items: center;
   justify-content: space-between;
   gap: 6px;
-  padding: 5px 8px;
+  padding: 6px 9px;
   font-size: 12.5px;
-  border-bottom: 1px solid rgba(70, 84, 63, 0.16);
+  color: #dfe8f5;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 .ipod__item[data-on='true'] {
-  background: linear-gradient(180deg, #7fb3ee, #2f6fd8);
+  background: linear-gradient(180deg, #6fb8ff 0%, #2f7fe0 48%, #2468c8 49%, #3d8ae8 100%);
   color: #ffffff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.28);
+  border-bottom-color: rgba(0, 0, 0, 0.2);
 }
 .ipod__item b {
   font-weight: 600;
@@ -80,7 +111,7 @@
 .ipod__song em {
   font-style: normal;
   font-size: 10.5px;
-  opacity: 0.7;
+  opacity: 0.72;
 }
 .ipod__drop {
   width: 16px;
@@ -89,61 +120,77 @@
   font-size: 13px;
   line-height: 1;
   color: inherit;
-  opacity: 0.6;
+  opacity: 0.55;
 }
 .ipod__drop:hover {
   opacity: 1;
-  background: rgba(200, 40, 40, 0.25);
+  background: rgba(232, 87, 79, 0.4);
 }
+
 .ipod__empty {
   display: grid;
   place-content: center;
-  gap: 7px;
-  height: calc(100% - 22px);
-  padding: 14px;
+  gap: 8px;
+  height: calc(100% - 23px);
+  padding: 16px;
   text-align: center;
   font-size: 12.5px;
+  color: #cfdcee;
 }
 .ipod__emptySub {
   font-size: 11px;
-  opacity: 0.7;
-  line-height: 1.35;
+  color: #8ba0bd;
+  line-height: 1.4;
 }
 .ipod__addBtn {
   justify-self: center;
-  padding: 4px 12px;
-  border-radius: 3px;
-  border: 1px solid #46543f;
-  background: linear-gradient(180deg, #eef3ea, #cbd8c4);
+  padding: 5px 14px;
+  border-radius: 4px;
+  border: 1px solid #4d6180;
+  background: linear-gradient(180deg, #6fb8ff, #2f7fe0 49%, #2468c8 50%, #3d8ae8);
+  color: #fff;
   font-size: 12px;
 }
+
 .ipod__now {
   display: grid;
   justify-items: center;
-  gap: 4px;
-  padding: 10px 14px;
+  gap: 3px;
+  padding: 12px 16px;
+  height: calc(100% - 23px);
+  align-content: start;
 }
+/* album art, not a record */
 .ipod__art {
-  width: 86px;
-  height: 86px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 50% 50%, #d8e2d2 0 14%, #46543f 15% 17%, #2b3527 18%);
-  border: 1px solid #46543f;
+  width: 84px;
+  height: 84px;
+  border-radius: 4px;
   display: grid;
   place-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  background: linear-gradient(150deg, #7c5cf0 0%, #3aa8f0 45%, #35d0c0 100%);
+  box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  position: relative;
+  overflow: hidden;
 }
-.ipod__art[data-spin='true'] {
-  animation: spin 3.6s linear infinite;
+.ipod__art::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0) 48%);
+}
+.ipod__art span {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  box-shadow: inset 0 0 0 9px rgba(255, 255, 255, 0.18);
+}
+.ipod__art[data-spin='true'] span {
+  animation: spin 3.2s linear infinite;
 }
 @keyframes spin {
   to { transform: rotate(360deg); }
-}
-.ipod__art span {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  border: 1px dashed rgba(216, 226, 210, 0.35);
 }
 .ipod__title {
   font-size: 13px;
@@ -156,80 +203,92 @@
 }
 .ipod__artist {
   font-size: 11px;
-  opacity: 0.72;
+  color: #93a8c6;
 }
 .ipod__scrub {
   width: 100%;
-  height: 7px;
-  margin-top: 6px;
-  border: 1px solid #46543f;
+  height: 6px;
+  margin-top: 10px;
   border-radius: 3px;
-  background: rgba(255, 255, 255, 0.32);
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
   overflow: hidden;
 }
 .ipod__scrub i {
   display: block;
   height: 100%;
-  background: linear-gradient(180deg, #7fb3ee, #2f6fd8);
+  border-radius: 3px;
+  background: linear-gradient(180deg, #8fd0ff, #2f7fe0);
 }
 .ipod__times {
   display: flex;
   justify-content: space-between;
   width: 100%;
+  margin-top: 3px;
   font-size: 10px;
-  opacity: 0.7;
+  color: #8ba0bd;
   font-variant-numeric: tabular-nums;
 }
 .ipod__status {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 4px;
+  bottom: 5px;
   text-align: center;
   font-size: 10.5px;
-  opacity: 0.75;
+  color: #8ba0bd;
 }
 
-/* click wheel */
+/* ---- click wheel: chrome ring, recessed centre ---- */
 .ipod__wheel {
   position: relative;
-  width: 172px;
-  height: 172px;
-  margin: 22px auto 0;
+  width: 168px;
+  height: 168px;
+  margin: 20px auto 0;
   border-radius: 50%;
-  background: radial-gradient(circle at 40% 30%, #ffffff, #e6ebf2 60%, #d2d9e3);
-  border: 1px solid #b1bac8;
-  box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.9), inset 0 -3px 8px rgba(20, 40, 70, 0.12),
-    0 2px 5px rgba(10, 30, 60, 0.18);
+  background:
+    radial-gradient(circle at 42% 26%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 52%),
+    conic-gradient(from 210deg, #e9edf4, #cfd6e2 22%, #f6f8fc 40%, #d4dbe6 62%, #eef1f6 80%, #d9dfe9);
+  border: 1px solid #a8b2c2;
+  box-shadow:
+    inset 0 2px 4px rgba(255, 255, 255, 0.95),
+    inset 0 -4px 10px rgba(30, 50, 80, 0.14),
+    0 2px 6px rgba(10, 30, 60, 0.22);
   touch-action: none;
   user-select: none;
 }
 .ipod__wkey {
   position: absolute;
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  color: #7b8598;
+  letter-spacing: 0.08em;
+  color: #6a778c;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85);
+  transition: color 110ms linear;
 }
-.ipod__wkey--menu { top: 9px; left: 50%; transform: translateX(-50%); }
-.ipod__wkey--play { bottom: 9px; left: 50%; transform: translateX(-50%); font-size: 14px; }
-.ipod__wkey--prev { left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; }
-.ipod__wkey--next { right: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; }
-.ipod__wkey:hover { color: #3d4757; }
+.ipod__wkey--menu { top: 11px; left: 50%; transform: translateX(-50%); }
+.ipod__wkey--play { bottom: 11px; left: 50%; transform: translateX(-50%); font-size: 15px; }
+.ipod__wkey--prev { left: 14px; top: 50%; transform: translateY(-50%); font-size: 15px; }
+.ipod__wkey--next { right: 14px; top: 50%; transform: translateY(-50%); font-size: 15px; }
+.ipod__wkey:hover { color: #24314a; }
 .ipod__centre {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 62px;
-  height: 62px;
-  margin: -31px 0 0 -31px;
+  width: 60px;
+  height: 60px;
+  margin: -30px 0 0 -30px;
   border-radius: 50%;
-  background: radial-gradient(circle at 40% 32%, #ffffff, #eef1f6 60%, #dbe1ea);
-  border: 1px solid #b1bac8;
-  box-shadow: inset 0 1px 0 #ffffff, 0 1px 3px rgba(10, 30, 60, 0.2);
+  background: radial-gradient(circle at 42% 30%, #ffffff, #eaeef5 58%, #d3dae5);
+  border: 1px solid #a8b2c2;
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    inset 0 -2px 5px rgba(30, 50, 80, 0.12),
+    0 1px 4px rgba(10, 30, 60, 0.28);
 }
 .ipod__centre:active {
-  background: radial-gradient(circle at 40% 32%, #eef1f6, #d5dce6);
+  background: radial-gradient(circle at 42% 30%, #e6eaf2, #c9d1de);
+  box-shadow: inset 0 2px 5px rgba(30, 50, 80, 0.3);
 }
 
 /* ============================================================

@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react'
 import { useOS, type IconSize, type MenuItem, type Rect } from './store'
 import { launch } from './registry'
 import { useMenu } from './ContextMenu'
+import { addGadget } from './Gadgets'
 import { Icon, type IconName } from '../ui/Icon'
 import { STICKIES, type Sticky } from '../content/notes'
 import { GITHUB_PROFILE } from '../content/projects'
@@ -35,6 +36,7 @@ const SHORTCUTS: Shortcut[] = [
   { id: 'aquarium', label: 'Aquarium', icon: 'aquarium', run: () => launch('aquarium') },
   { id: 'explorer', label: 'Internet Explorer', icon: 'explorer', run: () => launch('explorer') },
   { id: 'paint', label: 'Paint', icon: 'paint', run: () => launch('paint') },
+  { id: 'photobooth', label: 'Photo Booth', icon: 'camera', run: () => launch('photobooth') },
   { id: 'ipod', label: 'iPod', icon: 'ipod', run: () => launch('ipod') },
   { id: 'games', label: 'Games', icon: 'games', run: () => launch('games') },
   { id: 'contacts', label: 'Contacts', icon: 'contacts', run: () => launch('contacts') },
@@ -136,6 +138,15 @@ export function Desktop() {
         run: () => pushToast({ icon: 'star', title: 'Refreshed', body: 'Everything is where you left it.' }),
       },
       { id: 'd2', divider: true },
+      {
+        id: 'gadgets',
+        label: 'Gadgets',
+        submenu: [
+          { id: 'g-clock', label: 'Clock', run: () => addGadget('clock') },
+          { id: 'g-weather', label: 'Weather', run: () => addGadget('weather') },
+          { id: 'g-cal', label: 'Calendar', run: () => addGadget('calendar') },
+        ],
+      },
       { id: 'new', label: 'New', disabled: true },
       { id: 'd3', divider: true },
       { id: 'personalize', label: 'Personalize', icon: 'control', run: () => launch('control') },
