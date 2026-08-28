@@ -240,8 +240,8 @@ function BrushSample({ brush }: { brush: Brush }) {
   useEffect(() => {
     const c = ref.current
     if (!c) return
-    const w = (c.width = 76)
-    const h = (c.height = 76)
+    const w = (c.width = 52)
+    const h = (c.height = 52)
     const ctx = c.getContext('2d')
     if (!ctx) return
     ctx.fillStyle = '#ffffff'
@@ -249,11 +249,11 @@ function BrushSample({ brush }: { brush: Brush }) {
     ctx.lineCap = 'round'
     ctx.lineJoin = 'round'
     // a diagonal sweep, the way Paint samples its brushes
-    let prev = { x: 12, y: 60 }
-    for (let i = 1; i <= 26; i++) {
-      const t = i / 26
-      const pt = { x: 12 + t * 52, y: 60 - t * 44 + Math.sin(t * 5) * 5 }
-      stamp(ctx, brush, prev, pt, '#1b2a3d', 7)
+    let prev = { x: 8, y: 42 }
+    for (let i = 1; i <= 22; i++) {
+      const t = i / 22
+      const pt = { x: 8 + t * 36, y: 42 - t * 30 + Math.sin(t * 5) * 3.5 }
+      stamp(ctx, brush, prev, pt, '#1b2a3d', 5)
       prev = pt
     }
   }, [brush])

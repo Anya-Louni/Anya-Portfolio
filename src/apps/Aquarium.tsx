@@ -91,11 +91,14 @@ export default function Aquarium() {
 
     /* ---------------- setup ---------------- */
     function resize() {
-      const r = host!.getBoundingClientRect()
+      /* offsetWidth, not getBoundingClientRect: a window measured during its
+         open animation is still scaled, and the rect reports the scaled size —
+         the canvas ends up permanently 92% of its container. Transforms do not
+         retrigger a ResizeObserver, so it never corrects itself. */
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
       const hadSize = W > 0
-      W = Math.max(260, r.width)
-      H = Math.max(180, r.height)
+      W = Math.max(260, host!.offsetWidth)
+      H = Math.max(180, host!.offsetHeight)
       if (hadSize) {
         // keep everyone inside the new glass
         for (const f of swimmersRef.current) {

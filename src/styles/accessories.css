@@ -7,26 +7,31 @@
   height: 100%;
   background: var(--chrome-100);
 }
+/* Wraps instead of scrolling: a tool you cannot see is a tool you do
+   not have. At the default width it is one row. */
 .pt__ribbon {
   display: flex;
   align-items: stretch;
+  flex-wrap: wrap;
   gap: 0;
   flex: none;
-  padding: 4px 2px;
+  padding: 3px 2px;
   background: linear-gradient(180deg, #ffffff, var(--chrome-100) 60%, var(--chrome-200));
   border-bottom: 1px solid var(--chrome-300);
-  overflow-x: auto;
 }
 .pt__group {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 2px 9px 1px;
+  gap: 3px;
+  padding: 2px 6px 1px;
   border-right: 1px solid var(--chrome-300);
 }
 .pt__group--right {
   border-right: 0;
+}
+.pt__group--right .pt__grid {
+  grid-template-columns: repeat(2, auto);
 }
 .pt__groupLabel {
   order: 2;
@@ -37,14 +42,12 @@
   display: grid;
   grid-template-columns: repeat(4, auto);
   gap: 2px;
-}
-.pt__grid--brushes {
-  grid-template-columns: repeat(6, auto);
+  justify-items: start;
 }
 .pt__tool {
-  min-width: 62px;
-  padding: 3px 6px;
-  font-size: 11px;
+  min-width: 44px;
+  padding: 2px 5px;
+  font-size: 10.5px;
 }
 .pt__tool[data-pattern='true'] {
   background: linear-gradient(180deg, #fff6fb 0%, #ffe7f4 46%, #ffd6ec 47%, #ffc4e3 100%);
@@ -61,8 +64,8 @@
   gap: 2px;
 }
 .pt__size {
-  width: 54px;
-  height: 15px;
+  width: 44px;
+  height: 13px;
   display: grid;
   place-items: center;
   border-radius: var(--r-xs);
@@ -71,7 +74,7 @@
 }
 .pt__size i {
   display: block;
-  width: 36px;
+  width: 30px;
   border-radius: var(--r-pill);
   background: var(--ink);
 }
@@ -87,14 +90,14 @@
 }
 .pt__current {
   position: relative;
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   flex: none;
 }
 .pt__swatchBig {
   position: absolute;
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   border-radius: 3px;
   border: 1px solid var(--chrome-500);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
@@ -106,12 +109,12 @@
 }
 .pt__palette {
   display: grid;
-  grid-template-columns: repeat(10, 18px);
+  grid-template-columns: repeat(10, 13px);
   gap: 2px;
 }
 .pt__swatch {
-  width: 18px;
-  height: 18px;
+  width: 13px;
+  height: 13px;
   border-radius: 2px;
   border: 1px solid var(--chrome-400);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
@@ -121,8 +124,8 @@
   outline-offset: -1px;
 }
 .pt__picker {
-  width: 34px;
-  height: 26px;
+  width: 28px;
+  height: 22px;
   padding: 0;
   border: 1px solid var(--chrome-400);
   border-radius: var(--r-xs);
@@ -758,13 +761,13 @@
 
 /* brush swatches, the way Paint shows its brushes */
 .pt__grid--brushes {
-  grid-template-columns: repeat(6, auto);
-  gap: 3px;
+  grid-template-columns: repeat(6, 25px);
+  gap: 2px;
 }
 .pt__brush {
-  width: 38px;
-  height: 38px;
-  padding: 2px;
+  width: 25px;
+  height: 25px;
+  padding: 1px;
   border-radius: var(--r-xs);
   border: 1px solid var(--chrome-400);
   background: linear-gradient(180deg, #ffffff, var(--chrome-200));
@@ -776,12 +779,12 @@
 }
 .pt__brush[data-on='true'] {
   border-color: #1b7fbe;
-  box-shadow: inset 0 0 0 2px #a3d6f6, 0 0 0 1px #1b7fbe;
+  box-shadow: inset 0 0 0 1px #a3d6f6, 0 0 0 1px #1b7fbe;
 }
 .pt__sample {
   display: block;
-  width: 100%;
-  height: 100%;
+  width: 23px;
+  height: 23px;
   border-radius: 2px;
   image-rendering: auto;
 }

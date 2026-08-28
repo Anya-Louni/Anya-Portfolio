@@ -120,10 +120,13 @@ export default function MediaPlayer() {
     let t = 0
 
     const size = () => {
-      const r = host.getBoundingClientRect()
+      /* offsetWidth, not getBoundingClientRect: a window measured during its
+         open animation is still scaled, and the rect reports the scaled size —
+         the canvas ends up permanently 92% of its container. Transforms do not
+         retrigger a ResizeObserver, so it never corrects itself. */
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
-      W = Math.max(120, r.width)
-      H = Math.max(90, r.height)
+      W = Math.max(120, host.offsetWidth)
+      H = Math.max(90, host.offsetHeight)
       canvas.width = Math.round(W * dpr)
       canvas.height = Math.round(H * dpr)
       canvas.style.width = `${W}px`

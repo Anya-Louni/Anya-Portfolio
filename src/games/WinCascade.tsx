@@ -29,10 +29,9 @@ export function WinCascade({ onDone }: { onDone: () => void }) {
     let last = 0
 
     function size() {
-      const r = host!.getBoundingClientRect()
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
-      W = r.width
-      H = r.height
+      W = host!.offsetWidth
+      H = host!.offsetHeight
       canvas!.width = Math.round(W * dpr)
       canvas!.height = Math.round(H * dpr)
       canvas!.style.width = `${W}px`

@@ -23,7 +23,18 @@ body {
 }
 
 button, input, textarea, select { font: inherit; letter-spacing: inherit; color: inherit; }
-button { background: none; border: 0; padding: 0; cursor: inherit; }
+/* min-width/min-height reset matters: 7.css puts min-width:75px and
+   min-height:23px on every button, and a min-width beats a width — small
+   controls (brush swatches, Minesweeper cells, colour chips) were being
+   silently inflated to 75px. Unlayered, so it wins over the vendor layer. */
+button {
+  background: none;
+  border: 0;
+  padding: 0;
+  min-width: 0;
+  min-height: 0;
+  cursor: inherit;
+}
 img, svg { display: block; max-width: 100%; }
 /* line glyphs carry no intrinsic size; without this an unsized one falls back
    to the SVG default of 300x150 and blows out its container */
