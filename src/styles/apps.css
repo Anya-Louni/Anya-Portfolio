@@ -901,3 +901,53 @@
 .doc__foot a {
   text-decoration: none;
 }
+
+/* ---- Control Panel: desktop background ---- */
+.cpl__h--sub {
+  margin-top: 26px;
+}
+.cpl__walls {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.wallcard {
+  display: grid;
+  gap: 2px;
+  padding: 7px;
+  text-align: left;
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+  transition: background 110ms linear, border-color 110ms linear;
+}
+.wallcard:hover {
+  border-color: var(--chrome-400);
+  background: linear-gradient(180deg, #ffffff, var(--chrome-100));
+}
+.wallcard[data-on='true'] {
+  border-color: #8fd0ef;
+  background: linear-gradient(180deg, #eafaff, #d3ecfb);
+  box-shadow: inset 0 1px 0 #fff;
+}
+.wallcard__shot {
+  display: block;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--r-xs);
+  background-size: cover;
+  background-position: center;
+  /* the same framing Windows gives a background preview: a hairline, then
+     a white line under it */
+  border: 1px solid #7a93b0;
+  box-shadow: 0 1px 0 #ffffff, inset 0 1px 2px rgba(20, 50, 90, 0.35);
+}
+.wallcard__name {
+  margin-top: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-strong);
+}
+.wallcard__note {
+  font-size: 11px;
+  color: var(--ink-soft);
+}

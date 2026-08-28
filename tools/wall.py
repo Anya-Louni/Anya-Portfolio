@@ -81,7 +81,82 @@ THEMES = {
                (0.900, 0.040, 1.1, 2.6, (0.404, 0.678, 0.243), (0.180, 0.416, 0.114), 0.48)],
         bokeh_tint=(1.0, 1.0, 1.0), vig=0.22,
     ),
+    # Aqua: under the surface. The archive is full of these — light shafts
+    # coming down through green-blue water onto pale sand.
+    'aqua': dict(
+        hz=0.30, sun=(0.52, -0.16), sun_amp=(0.40, 0.34, 0.0), shafts=0.42,
+        horizon_glow=0.0, star=0.0,
+        sky=[(0.00, (0.404, 0.867, 0.910)), (0.30, (0.180, 0.694, 0.816)),
+             (0.60, (0.063, 0.451, 0.678)), (0.85, (0.031, 0.271, 0.494)),
+             (1.00, (0.024, 0.196, 0.400))],
+        swoosh=[],
+        hills=[],
+        bubbles=dict(n=64, r=(0.010, 0.060), a=(0.30, 0.85), tint=(0.62, 0.95, 1.0)),
+        bokeh_tint=(0.8, 1.0, 1.0), vig=0.34,
+    ),
+    # Bubbles: the dark-blue-and-glass one everybody remembers.
+    'bubbles': dict(
+        hz=1.0, sun=(0.62, 0.30), sun_amp=(0.30, 0.22, 0.0), shafts=0.0,
+        horizon_glow=0.0, star=0.0,
+        sky=[(0.00, (0.016, 0.075, 0.239)), (0.40, (0.031, 0.161, 0.412)),
+             (0.72, (0.055, 0.271, 0.545)), (1.00, (0.020, 0.098, 0.278))],
+        swoosh=[],
+        hills=[],
+        bubbles=dict(n=44, r=(0.020, 0.115), a=(0.35, 0.95), tint=(0.45, 0.80, 1.0)),
+        bokeh_tint=(0.7, 0.9, 1.0), vig=0.46,
+    ),
+    # Sunrise: warm sky, low sun, hills in near-silhouette.
+    'sunrise': dict(
+        hz=0.660, sun=(0.30, 0.585), sun_amp=(0.52, 0.36, 0.85), shafts=0.20,
+        horizon_glow=0.44, star=0.0,
+        sky=[(0.00, (0.102, 0.216, 0.478)), (0.28, (0.310, 0.373, 0.596)),
+             (0.52, (0.706, 0.502, 0.545)), (0.74, (0.973, 0.694, 0.451)),
+             (0.90, (1.000, 0.855, 0.588)), (1.00, (1.000, 0.945, 0.796))],
+        swoosh=[(0.38, 0.060, 0.7, 0.110, (1.00, 0.90, 0.72), 0.20)],
+        hills=[(0.665, 0.020, 3.4, 0.9, (0.376, 0.310, 0.361), (0.286, 0.239, 0.298), 0.10),
+               (0.730, 0.032, 2.1, 2.6, (0.208, 0.180, 0.243), (0.129, 0.118, 0.176), 0.12),
+               (0.845, 0.050, 1.4, 0.3, (0.098, 0.094, 0.145), (0.039, 0.043, 0.078), 0.16)],
+        bokeh_tint=(1.0, 0.86, 0.66), vig=0.30,
+    ),
 }
+
+
+def bubbles(img, spec, seed):
+    """Suspended soap bubbles: a bright rim, a wet lower lobe, two speculars.
+
+    Each one is drawn into its own bounding box rather than across the whole
+    frame — at this resolution a full-frame pass per bubble would be a couple
+    of hundred million operations for no benefit.
+    """
+    rng = np.random.default_rng(seed)
+    for _ in range(spec['n']):
+        bx = rng.uniform(0.02, 0.98)
+        by = rng.uniform(0.05, 0.95)
+        br = rng.uniform(*spec['r'])
+        amp = rng.uniform(*spec['a'])
+
+        px, py = br * H, br * H
+        x0 = max(0, int((bx * W) - px * 1.3)); x1 = min(W, int((bx * W) + px * 1.3))
+        y0 = max(0, int((by * H) - py * 1.3)); y1 = min(H, int((by * H) + py * 1.3))
+        if x1 <= x0 or y1 <= y0:
+            continue
+        lu = x[x0:x1] / W
+        lv = y[y0:y1] / H
+        dx = (lu - bx) * (W / H)
+        dy = lv - by
+        d = np.hypot(dx, dy) / br
+
+        rim = np.exp(-(((d - 0.94) / 0.055) ** 2)) * 1.0
+        inner = smooth(0.92, 0.55, d) * 0.14
+        wet = np.exp(-(((d - 0.62) / 0.30) ** 2)) * smooth(0.0, 0.6, dy / br + 0.4) * 0.16
+        spec1 = np.exp(-((((dx / br) + 0.34) / 0.16) ** 2) - ((((dy / br) + 0.40) / 0.13) ** 2)) * 0.9
+        spec2 = np.exp(-((((dx / br) - 0.30) / 0.09) ** 2) - ((((dy / br) - 0.34) / 0.08) ** 2)) * 0.35
+
+        tint = np.float32(spec['tint'])
+        add = ((rim + spec1 + spec2)[..., None] * np.float32((1.0, 1.0, 1.0))
+               + (inner + wet)[..., None] * tint) * amp
+        img[y0:y1, x0:x1] += add
+    return img
 
 
 def render(name, T):
@@ -124,7 +199,7 @@ def render(name, T):
     # ------------------------------------------------------------ swooshes
     # Glossy light gels arcing across the frame. The alpha peaks just under
     # each curve and falls off fast above it, which gives the wet edge.
-    for y0, amp, phase, thick, tint, strength in T['swoosh']:
+    for y0, amp, phase, thick, tint, strength in T.get('swoosh', []):
         c = y0 + amp * np.sin(u * 3.0 + phase) + amp * 0.45 * np.sin(u * 6.4 + phase * 1.7)
         dv = v - c
         band = smooth(thick, 0.0, np.abs(dv)) * np.where(dv > 0, 1.0, 0.55)
@@ -134,7 +209,7 @@ def render(name, T):
     # ------------------------------------------------------------ hills
     # Far hills are hazed toward the sky colour, near ones are saturated: the
     # usual atmospheric-perspective trick, and the reason the depth reads.
-    for base, amp, freq, ph, top, bot, gloss in T['hills']:
+    for base, amp, freq, ph, top, bot, gloss in T.get('hills', []):
         ridge = base + amp * np.sin(u * freq + ph) + amp * 0.4 * np.sin(u * freq * 2.6 + ph * 2)
         below = smooth(-0.0016, 0.0016, v - ridge)
         depth = np.clip((v - ridge) / 0.42, 0, 1)
@@ -146,6 +221,10 @@ def render(name, T):
         # rim light along the ridge itself
         body += (np.exp(-((v - ridge) / 0.0032) ** 2) * 0.75 * (0.35 if T['star'] else 1.0))[..., None]
         img = img * (1 - below[..., None]) + body * below[..., None]
+
+    # ------------------------------------------------------------ bubbles
+    if T.get('bubbles'):
+        img = bubbles(img, T['bubbles'], 11)
 
     # ------------------------------------------------------------ bokeh
     bok = np.zeros_like(img)

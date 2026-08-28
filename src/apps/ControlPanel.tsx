@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useOS, type SkinName, type ThemeName } from '../os/store'
 import { sound } from '../os/sound'
 import { Glyph } from '../ui/Icon'
+import { WALLPAPERS } from '../art/Wallpaper'
 
 type Section = 'appearance' | 'sound' | 'motion'
 
@@ -47,6 +48,8 @@ export default function ControlPanel() {
   const skin = useOS((s) => s.skin)
   const setTheme = useOS((s) => s.setTheme)
   const setSkin = useOS((s) => s.setSkin)
+  const wallpaper = useOS((s) => s.wallpaper)
+  const setWallpaper = useOS((s) => s.setWallpaper)
   const soundOn = useOS((s) => s.soundOn)
   const setSound = useOS((s) => s.setSound)
   const [calm, setCalm] = useState(() => document.documentElement.dataset.calm === 'true')
@@ -132,6 +135,30 @@ export default function ControlPanel() {
                         ))}
                       </span>
                     </span>
+                  </button>
+                ))}
+              </div>
+
+              <h2 className="cpl__h cpl__h--sub">Desktop background</h2>
+              <p className="cpl__p">
+                A theme brings a picture with it, but you can put any of these behind it —
+                the window colour stays where you left it.
+              </p>
+              <div className="cpl__walls">
+                {WALLPAPERS.map((w) => (
+                  <button
+                    key={w.id}
+                    className="wallcard"
+                    data-on={wallpaper === w.id}
+                    aria-pressed={wallpaper === w.id}
+                    onClick={() => setWallpaper(wallpaper === w.id ? null : w.id)}
+                  >
+                    <span
+                      className="wallcard__shot"
+                      style={{ backgroundImage: `url(${import.meta.env.BASE_URL}wall/${w.id}.webp)` }}
+                    />
+                    <span className="wallcard__name">{w.name}</span>
+                    <span className="wallcard__note">{w.note}</span>
                   </button>
                 ))}
               </div>

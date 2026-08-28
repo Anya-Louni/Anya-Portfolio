@@ -79,6 +79,8 @@ interface OSState {
   userName: string
   theme: ThemeName
   skin: SkinName
+  /** null means whatever picture the current theme brings with it */
+  wallpaper: string | null
   soundOn: boolean
   wins: WinInstance[]
   topZ: number
@@ -96,6 +98,7 @@ interface OSState {
   signOut: () => void
   setTheme: (t: ThemeName) => void
   setSkin: (s: SkinName) => void
+  setWallpaper: (w: string | null) => void
   setSound: (on: boolean) => void
 
   open: (spec: OpenSpec) => string
@@ -151,6 +154,7 @@ export const useOS = create<OSState>((set, get) => ({
   userName: readLS('os.user', ''),
   theme: readLS<ThemeName>('os.theme', 'aero'),
   skin: readLS<SkinName>('os.skin', 'seven'),
+  wallpaper: readLS<string | null>('os.wallpaper', null),
   soundOn: readLS('os.sound', true),
   wins: [],
   topZ: 10,
@@ -177,6 +181,14 @@ export const useOS = create<OSState>((set, get) => ({
     writeLS('os.theme', theme)
     document.documentElement.dataset.theme = theme
     set({ theme })
+  },
+
+  /* Kept apart from the theme on purpose. A theme carries a picture, but
+     picking a picture should not drag a whole window colour with it — which
+     is exactly how Windows 7 separates the two. */
+  setWallpaper: (wallpaper) => {
+    writeLS('os.wallpaper', wallpaper)
+    set({ wallpaper })
   },
 
   setSkin: (skin) => {

@@ -10,6 +10,17 @@
  * What stays in the DOM is only the part that moves: the suspended bubbles.
  */
 import type { CSSProperties } from 'react'
+import { useOS } from '../os/store'
+
+/** The pictures in public/wall, in the order the Control Panel shows them. */
+export const WALLPAPERS: { id: string; name: string; note: string }[] = [
+  { id: 'aero', name: 'Aero', note: 'Glass over a bright sky' },
+  { id: 'aqua', name: 'Aqua', note: 'Under the surface' },
+  { id: 'bubbles', name: 'Bubbles', note: 'Glass in deep water' },
+  { id: 'sunrise', name: 'Sunrise', note: 'Low sun, dark hills' },
+  { id: 'luna', name: 'Bliss', note: 'The Windows XP one' },
+  { id: 'night', name: 'Deep Field', note: 'The same hills after dark' },
+]
 
 const BUBBLES = [
   { x: 7, y: 63, r: 52, d: 0, dur: 27, o: 0.72 },
@@ -29,8 +40,15 @@ const BUBBLES = [
 ]
 
 export function Wallpaper({ still = false }: { still?: boolean }) {
+  const picked = useOS((s) => s.wallpaper)
+  /* Inline, so a chosen picture beats the one the theme's --wall token
+     supplies while leaving the shorthand's cover/centre sizing in place. */
+  const style = picked
+    ? ({ backgroundImage: `url(${import.meta.env.BASE_URL}wall/${picked}.webp)` } as CSSProperties)
+    : undefined
+
   return (
-    <div className="wall" data-still={still}>
+    <div className="wall" data-still={still} style={style}>
       <div className="wall__bubbles">
         {BUBBLES.map((b, i) => (
           <span
