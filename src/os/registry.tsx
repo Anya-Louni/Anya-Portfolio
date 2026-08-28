@@ -16,6 +16,11 @@ import FishPainter from '../apps/FishPainter'
 import PaintApp from '../apps/Paint'
 import Explorer from '../apps/Explorer'
 import { Calculator, Notepad, StickyNotes } from '../apps/Accessories'
+import Ipod from '../apps/Ipod'
+import TerminalApp from '../apps/Terminal'
+import SynthApp from '../apps/Synth'
+import ContactsApp from '../apps/Contacts'
+import AvatarMaker from '../apps/AvatarMaker'
 import { byslug } from '../content/projects'
 
 export interface AppDef {
@@ -112,6 +117,62 @@ export const APPS: AppDef[] = [
     minW: 520,
     minH: 400,
     Component: Explorer,
+  },
+  {
+    id: 'ipod',
+    title: 'iPod',
+    icon: 'ipod',
+    blurb: 'Music, and yours if you add it',
+    w: 320,
+    h: 560,
+    minW: 300,
+    minH: 520,
+    resizable: false,
+    Component: Ipod,
+  },
+  {
+    id: 'synth',
+    title: 'Synth',
+    icon: 'synth',
+    blurb: 'Two octaves, playable',
+    w: 780,
+    h: 540,
+    minW: 560,
+    minH: 440,
+    Component: SynthApp,
+  },
+  {
+    id: 'terminal',
+    title: 'Terminal',
+    icon: 'terminal',
+    blurb: 'A small shell over this machine',
+    w: 700,
+    h: 460,
+    minW: 380,
+    minH: 260,
+    Component: TerminalApp,
+  },
+  {
+    id: 'contacts',
+    title: 'Contacts',
+    icon: 'contacts',
+    blurb: 'How to reach Anya',
+    w: 640,
+    h: 440,
+    minW: 420,
+    minH: 340,
+    Component: ContactsApp,
+  },
+  {
+    id: 'avatar',
+    title: 'Change Picture',
+    icon: 'user',
+    blurb: 'Make your sign-in avatar',
+    w: 760,
+    h: 560,
+    minW: 560,
+    minH: 460,
+    Component: AvatarMaker,
   },
   {
     id: 'notepad',

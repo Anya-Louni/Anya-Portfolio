@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useOS } from './store'
 import { APPS, launch } from './registry'
 import { Glyph, Icon } from '../ui/Icon'
+import { Avatar } from '../ui/Avatar'
 import { GITHUB_PROFILE, GITHUB_USER, PROJECTS, REPOS } from '../content/projects'
 
 export function StartMenu() {
@@ -59,7 +60,7 @@ export function StartMenu() {
       <div className="start__right">
         <div className="start__user">
           <span className="start__avatar">
-            <Icon name="user" />
+            <Avatar size={52} />
           </span>
           <span className="start__username">{userName || 'Guest'}</span>
         </div>

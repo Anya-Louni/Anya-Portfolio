@@ -34,6 +34,8 @@ export type IconName =
   | 'notepad'
   | 'calculator'
   | 'sticky'
+  | 'synth'
+  | 'contacts'
 
 export function IconDefs() {
   return (
@@ -546,7 +548,39 @@ const Sticky = ({ className }: P) =>
     className,
   )
 
+const SynthIcon = ({ className }: P) =>
+  box(
+    <>
+      <rect x="3" y="12" width="42" height="26" rx="4" fill="url(#gSlate)" stroke="#0e131f" strokeWidth="1" />
+      <path d="M4.5 13.5h39v6c-9 2.6-30 2.6-39 0Z" fill="url(#gSheen)" />
+      <rect x="6" y="24" width="36" height="12" rx="2" fill="#f2f6ff" />
+      {[0, 1, 2, 3, 4].map((i) => (
+        <rect key={i} x={9 + i * 7} y={24} width={3.4} height={7.5} rx={0.8} fill="#1a2233" />
+      ))}
+      <circle cx="12" cy="18" r="2.6" fill="#5fdcff" />
+      <circle cx="20" cy="18" r="2.6" fill="#ff8f2e" />
+      <path d="M27 19h13" stroke="#8fa4c8" strokeWidth="2" strokeLinecap="round" />
+    </>,
+    className,
+  )
+
+const ContactsIcon = ({ className }: P) =>
+  box(
+    <>
+      <rect x="8" y="4" width="33" height="40" rx="4" fill="url(#gLav)" stroke="#5a6b82" strokeWidth="1" />
+      <rect x="5" y="9" width="7" height="4" rx="2" fill="url(#gPeri)" />
+      <rect x="5" y="22" width="7" height="4" rx="2" fill="url(#gPeri)" />
+      <rect x="5" y="35" width="7" height="4" rx="2" fill="url(#gPeri)" />
+      <circle cx="24" cy="19" r="7" fill="url(#gBlue)" />
+      <path d="M14 38c1.4-6.4 5.4-9.6 10-9.6s8.6 3.2 10 9.6Z" fill="url(#gBlue)" />
+      <path d="M9 5.5h31v5c-9 2.4-22 2.4-31 0Z" fill="url(#gSheen)" />
+    </>,
+    className,
+  )
+
 const registry: Record<IconName, (p: P) => ReactElement> = {
+  synth: SynthIcon,
+  contacts: ContactsIcon,
   notepad: Notepad,
   calculator: Calculator,
   sticky: Sticky,

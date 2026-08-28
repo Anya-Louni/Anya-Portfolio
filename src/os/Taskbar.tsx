@@ -6,7 +6,7 @@ import { StartMenu } from './StartMenu'
 import { useMenu } from './ContextMenu'
 import { viewport, type MenuItem } from './store'
 
-const PINNED = ['finder', 'explorer', 'paint', 'games', 'aquarium', 'control']
+const PINNED = ['finder', 'explorer', 'paint', 'ipod', 'games', 'aquarium', 'control']
 
 interface Slot {
   key: string

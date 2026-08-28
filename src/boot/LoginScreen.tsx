@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Wallpaper } from '../art/Wallpaper'
-import { Glyph, Icon, Mark } from '../ui/Icon'
+import { Glyph, Mark } from '../ui/Icon'
+import { Avatar } from '../ui/Avatar'
 import { useOS } from '../os/store'
 import { sound } from '../os/sound'
 
@@ -44,7 +45,7 @@ export function LoginScreen() {
 
       <div className="login__center">
         <div className="login__tile">
-          <Icon name="user" />
+          <Avatar size={118} />
         </div>
         <p className="login__prompt">Who’s visiting?</p>
         <form className="login__form" onSubmit={submit}>

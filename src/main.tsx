@@ -16,6 +16,7 @@ import './styles/apps.css'
 import './styles/games.css'
 import './styles/notes.css'
 import './styles/accessories.css'
+import './styles/media.css'
 import './styles/skin-luna.css'
 import './styles/mobile.css'
 

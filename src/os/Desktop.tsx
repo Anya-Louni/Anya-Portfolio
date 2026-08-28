@@ -35,7 +35,9 @@ const SHORTCUTS: Shortcut[] = [
   { id: 'aquarium', label: 'Aquarium', icon: 'aquarium', run: () => launch('aquarium') },
   { id: 'explorer', label: 'Internet Explorer', icon: 'explorer', run: () => launch('explorer') },
   { id: 'paint', label: 'Paint', icon: 'paint', run: () => launch('paint') },
+  { id: 'ipod', label: 'iPod', icon: 'ipod', run: () => launch('ipod') },
   { id: 'games', label: 'Games', icon: 'games', run: () => launch('games') },
+  { id: 'contacts', label: 'Contacts', icon: 'contacts', run: () => launch('contacts') },
   { id: 'guestbook', label: 'Leave a note', icon: 'guestbook', run: () => launch('guestbook') },
   { id: 'control', label: 'Control Panel', icon: 'control', run: () => launch('control') },
   {
