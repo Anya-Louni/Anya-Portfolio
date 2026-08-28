@@ -40,6 +40,8 @@ export type IconName =
   | 'snip'
   | 'wmp'
   | 'contacts'
+  | 'ascii'
+  | 'sketchpad'
 
 export function IconDefs() {
   return (
@@ -598,6 +600,55 @@ const SynthIcon = ({ className }: P) =>
     className,
   )
 
+/* A terminal with lines of characters on it. The glyphs are drawn as blocks
+   rather than as <text>: at 16px no real character is legible anyway, and
+   text in an icon both leaks into the accessible name and renders to a
+   different width on every platform. */
+const AsciiIcon = ({ className }: P) =>
+  box(
+    <>
+      <rect x="4" y="7" width="40" height="32" rx="3.5" fill="#131a2b" stroke="#0a0f1c" strokeWidth="1" />
+      <rect x="4.5" y="7.5" width="39" height="31" rx="3" fill="none" stroke="#4b5f80" strokeWidth="1" />
+      <path d="M5.5 8.5h37v5.5c-8 2-29 2-37 0Z" fill="url(#gSheen)" opacity="0.45" />
+      <g fill="#7dfba4">
+        {[
+          [9, 17, 4], [15, 17, 7], [24, 17, 3], [29, 17, 9],
+          [9, 23, 9], [20, 23, 4], [26, 23, 6],
+          [9, 29, 5], [16, 29, 11], [29, 29, 4],
+          [9, 35, 7],
+        ].map(([x, y, w], i) => (
+          <rect key={i} x={x} y={y} width={w} height={3} rx={1} opacity={0.55 + (i % 3) * 0.18} />
+        ))}
+        <rect x="18" y="35" width="3.5" height="3.6" rx="0.8" />
+      </g>
+      <rect x="12" y="40" width="24" height="4" rx="1.6" fill="url(#gSlate)" />
+    </>,
+    className,
+  )
+
+/* A sheet of manuscript with a curve drawn over it, lit like a note. */
+const SketchpadIcon = ({ className }: P) =>
+  box(
+    <>
+      <rect x="5" y="6" width="38" height="36" rx="3.5" fill="url(#gBlue)" stroke="#123a7e" strokeWidth="1" />
+      <path d="M6.5 7.5h35v6.5c-8 2.4-27 2.4-35 0Z" fill="url(#gSheen)" />
+      {[0, 1, 2, 3].map((i) => (
+        <rect key={i} x="9" y={17 + i * 6} width="30" height="1.2" fill="#cfe6ff" opacity="0.45" />
+      ))}
+      <path
+        d="M9 33c5-1 6-13 11-13s5 9 10 8 5-8 8-9"
+        fill="none"
+        stroke="#ffd23f"
+        strokeWidth="2.6"
+        strokeLinecap="round"
+      />
+      <circle cx="20" cy="20.5" r="3.4" fill="#ff8f2e" stroke="#b45a12" strokeWidth="0.9" />
+      <circle cx="30" cy="28" r="3" fill="#5fdcff" stroke="#1c6f96" strokeWidth="0.9" />
+      <circle cx="19" cy="19.4" r="1.1" fill="#fff" opacity="0.85" />
+    </>,
+    className,
+  )
+
 const ContactsIcon = ({ className }: P) =>
   box(
     <>
@@ -693,6 +744,8 @@ const registry: Record<IconName, (p: P) => ReactElement> = {
   recycle: Recycle,
   star: Star,
   user: User,
+  ascii: AsciiIcon,
+  sketchpad: SketchpadIcon,
 }
 
 /**

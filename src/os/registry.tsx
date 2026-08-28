@@ -25,6 +25,8 @@ import PhotoBooth from '../apps/PhotoBooth'
 import WordPad from '../apps/WordPad'
 import Snipping from '../apps/Snipping'
 import MediaPlayer from '../apps/MediaPlayer'
+import AsciiStudio from '../apps/AsciiStudio'
+import Sketchpad from '../apps/Sketchpad'
 import { byslug } from '../content/projects'
 
 export interface AppDef {
@@ -177,6 +179,28 @@ export const APPS: AppDef[] = [
     minW: 560,
     minH: 460,
     Component: AvatarMaker,
+  },
+  {
+    id: 'ascii',
+    title: 'ASCII Studio',
+    icon: 'ascii',
+    blurb: 'Draw in characters, then make them move',
+    w: 900,
+    h: 660,
+    minW: 620,
+    minH: 480,
+    Component: AsciiStudio,
+  },
+  {
+    id: 'sketchpad',
+    title: 'Symphony Sketchpad',
+    icon: 'sketchpad',
+    blurb: 'Draw across the board and hear it back',
+    w: 860,
+    h: 600,
+    minW: 560,
+    minH: 440,
+    Component: Sketchpad,
   },
   {
     id: 'photobooth',

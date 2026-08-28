@@ -1,0 +1,415 @@
+/* ============================================================
+   ASCII Studio and Symphony Sketchpad.
+   Both are canvas apps in an Aero chrome: a glass toolbar on top,
+   the work in the middle, and the exports along the bottom.
+   ============================================================ */
+
+/* ---------------------------------------------------------- ASCII Studio */
+
+.asc {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  height: 100%;
+  background: var(--chrome-100);
+}
+
+.asc__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 8px 10px;
+  background: linear-gradient(180deg, #ffffff, var(--chrome-200));
+  border-bottom: 1px solid var(--chrome-300);
+}
+.asc__group {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.asc__group--end {
+  margin-left: auto;
+}
+.asc__label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.asc__tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+.asc__tool {
+  padding: 5px 9px;
+  font-size: 11.5px;
+  color: var(--ink);
+  border-radius: var(--r-xs);
+  border: 1px solid var(--chrome-400);
+  background: linear-gradient(180deg, #ffffff, var(--chrome-200));
+  transition: background 110ms linear, border-color 110ms linear;
+}
+.asc__tool:hover {
+  border-color: #3c7fb1;
+  background: linear-gradient(180deg, #f2fbff, #dbeffd);
+}
+.asc__tool[data-on='true'] {
+  border-color: #1b7fbe;
+  background: linear-gradient(180deg, #dff2ff, #a9d9f6);
+  box-shadow: inset 0 1px 0 #fff;
+  font-weight: 600;
+}
+
+.asc__chars {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.asc__select,
+.asc__size input {
+  padding: 4px 6px;
+  font: inherit;
+  font-size: 11.5px;
+  color: var(--ink-strong);
+  border-radius: var(--r-xs);
+  border: 1px solid var(--chrome-400);
+  background: #fff;
+}
+.asc__glyphs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  max-width: 260px;
+}
+.asc__glyph {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1;
+  color: var(--ink-strong);
+  border-radius: var(--r-xs);
+  border: 1px solid var(--chrome-400);
+  background: linear-gradient(180deg, #ffffff, var(--chrome-200));
+}
+.asc__glyph:hover {
+  border-color: #3c7fb1;
+  background: linear-gradient(180deg, #f2fbff, #dbeffd);
+}
+.asc__glyph[data-on='true'] {
+  border-color: #1b7fbe;
+  background: linear-gradient(180deg, #dff2ff, #a9d9f6);
+  box-shadow: inset 0 1px 0 #fff;
+}
+
+.asc__themes {
+  display: flex;
+  gap: 3px;
+}
+.asc__theme {
+  width: 30px;
+  height: 24px;
+  border-radius: var(--r-xs);
+  border: 1px solid var(--chrome-500);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.asc__theme[data-on='true'] {
+  outline: 2px solid #1b7fbe;
+  outline-offset: 1px;
+}
+
+.asc__size {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.asc__size label {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.asc__size input {
+  width: 52px;
+}
+
+.asc__btn {
+  padding: 5px 10px;
+  font-size: 11.5px;
+  color: var(--ink);
+  border-radius: var(--r-xs);
+  border: 1px solid var(--chrome-400);
+  background: linear-gradient(180deg, #ffffff, var(--chrome-200));
+  transition: background 110ms linear, border-color 110ms linear;
+}
+.asc__btn:hover:not(:disabled) {
+  border-color: #3c7fb1;
+  background: linear-gradient(180deg, #f2fbff, #dbeffd);
+}
+.asc__btn:disabled {
+  opacity: 0.45;
+}
+.asc__btn--go {
+  min-width: 62px;
+  font-weight: 600;
+}
+.asc__btn--file {
+  display: inline-grid;
+  place-items: center;
+  cursor: inherit;
+}
+
+.asc__stage {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  overflow: auto;
+  padding: 10px;
+  background:
+    linear-gradient(135deg, rgba(10, 40, 90, 0.06) 25%, transparent 25%) 0 0 / 16px 16px,
+    linear-gradient(225deg, rgba(10, 40, 90, 0.06) 25%, transparent 25%) 0 0 / 16px 16px,
+    var(--chrome-200);
+}
+.asc__canvas {
+  display: block;
+  border-radius: var(--r-sm);
+  box-shadow: 0 2px 12px rgba(6, 22, 48, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.asc__film {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 6px 10px;
+  background: linear-gradient(180deg, var(--chrome-100), var(--chrome-200));
+  border-top: 1px solid var(--chrome-300);
+}
+.asc__frames {
+  display: flex;
+  gap: 3px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+.asc__frame {
+  min-width: 26px;
+  height: 24px;
+  padding: 0 6px;
+  font-size: 11px;
+  color: var(--ink);
+  border-radius: var(--r-xs);
+  border: 1px solid var(--chrome-400);
+  background: linear-gradient(180deg, #ffffff, var(--chrome-200));
+}
+.asc__frame[data-on='true'] {
+  border-color: #1b7fbe;
+  background: linear-gradient(180deg, #dff2ff, #a9d9f6);
+  font-weight: 600;
+}
+.asc__frame--add {
+  color: var(--ink-soft);
+}
+.asc__play {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.asc__fps,
+.asc__onion {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.asc__fps input {
+  width: 92px;
+}
+
+.asc__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  background: linear-gradient(180deg, var(--chrome-100), var(--chrome-200));
+  border-top: 1px solid var(--chrome-300);
+}
+.asc__exports {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.asc__status {
+  margin: 0 0 0 auto;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+/* ---------------------------------------------------- Symphony Sketchpad */
+
+.skp {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100%;
+  background: var(--chrome-100);
+}
+
+.skp__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: linear-gradient(180deg, #ffffff, var(--chrome-200));
+  border-bottom: 1px solid var(--chrome-300);
+}
+
+.skp__go {
+  min-width: 68px;
+  padding: 7px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #06305c;
+  border-radius: var(--r-sm);
+  border: 1px solid #2b7fc0;
+  background: linear-gradient(180deg, #f4fcff 0%, #d3efff 46%, #b2e0fb 47%, #93cff4 100%);
+  box-shadow: inset 0 1px 0 #fff, 0 1px 3px rgba(20, 90, 150, 0.28);
+}
+.skp__go[data-on='true'] {
+  color: #14351c;
+  border-color: #3f8f45;
+  background: linear-gradient(180deg, #f2ffef 0%, #d5f5cd 46%, #b3e8a7 47%, #93d885 100%);
+}
+
+.skp__voices {
+  display: flex;
+  gap: 3px;
+}
+.skp__voice {
+  padding: 6px 11px;
+  font-size: 11.5px;
+  color: var(--ink);
+  border-radius: var(--r-xs);
+  border: 1px solid var(--chrome-400);
+  background: linear-gradient(180deg, #ffffff, var(--chrome-200));
+  transition: background 110ms linear, border-color 110ms linear;
+}
+.skp__voice::before {
+  content: '';
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 6px;
+  border-radius: 50%;
+  vertical-align: -1px;
+  background: linear-gradient(180deg, var(--vg, #fff), var(--v, #888));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+.skp__voice--erase::before {
+  background: repeating-linear-gradient(45deg, #d7dee9 0 3px, #fff 3px 6px);
+}
+.skp__voice[data-on='true'] {
+  border-color: #1b7fbe;
+  background: linear-gradient(180deg, #dff2ff, #a9d9f6);
+  box-shadow: inset 0 1px 0 #fff;
+  font-weight: 600;
+}
+
+.skp__field {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.skp__field select {
+  padding: 4px 6px;
+  font: inherit;
+  font-size: 11.5px;
+  color: var(--ink-strong);
+  border-radius: var(--r-xs);
+  border: 1px solid var(--chrome-400);
+  background: #fff;
+}
+.skp__field--slider {
+  margin-left: auto;
+  white-space: nowrap;
+}
+.skp__field--slider input {
+  width: 110px;
+}
+
+.skp__stage {
+  position: relative;
+  min-height: 0;
+  padding: 10px;
+}
+.skp__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--r-sm);
+  box-shadow: 0 2px 14px rgba(6, 22, 48, 0.4), inset 0 0 0 1px rgba(190, 230, 255, 0.22);
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.skp__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  background: linear-gradient(180deg, var(--chrome-100), var(--chrome-200));
+  border-top: 1px solid var(--chrome-300);
+}
+.skp__acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.skp__btn {
+  padding: 5px 10px;
+  font-size: 11.5px;
+  color: var(--ink);
+  border-radius: var(--r-xs);
+  border: 1px solid var(--chrome-400);
+  background: linear-gradient(180deg, #ffffff, var(--chrome-200));
+  transition: background 110ms linear, border-color 110ms linear;
+}
+.skp__btn:hover:not(:disabled) {
+  border-color: #3c7fb1;
+  background: linear-gradient(180deg, #f2fbff, #dbeffd);
+}
+.skp__btn:disabled {
+  opacity: 0.45;
+}
+.skp__status {
+  margin: 0 0 0 auto;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+@media (max-width: 768px) {
+  .asc__group--end,
+  .skp__field--slider,
+  .asc__status,
+  .skp__status {
+    margin-left: 0;
+  }
+  .asc__glyphs {
+    max-width: none;
+  }
+}
