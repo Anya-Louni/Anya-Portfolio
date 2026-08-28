@@ -290,19 +290,20 @@
 .ipod__wkey--prev { left: 1%; top: 50%; transform: translateY(-50%); width: 26%; height: 30%; }
 .ipod__wkey--next { right: 1%; top: 50%; transform: translateY(-50%); width: 26%; height: 30%; }
 /* No hover state at all: a wheel is a moulded piece of plastic, and nothing
-   on it responds to a finger passing over. Pressing lights the glyph and
-   changes nothing else — no plate, no shadow, no movement. These are printed
-   labels under a translucent wheel, and the label picking up is the only
-   thing that can happen to one.
-
-   The glyph darkens rather than brightening. Brightening is the literal
-   reading of lighting up, but the wheel is pale silver, so a white glyph
-   washes out into it and the label all but vanishes — the press reads as
-   the icon being wiped away. Going darker is what actually reads as the
-   icon catching the eye. */
-.ipod__wkey:active {
-  color: #2f3b50;
+   on it responds to a finger passing over. Pressing puts a small warm halo
+   behind the glyph and changes nothing else — no plate, no shadow, no
+   movement, and the glyph keeps its own colour. */
+.ipod__wkey:active span {
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.85),
+    0 0 3px rgba(255, 199, 92, 0.85);
 }
+.ipod__wkey:active svg {
+  filter:
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.85))
+    drop-shadow(0 0 2.5px rgba(255, 199, 92, 0.9));
+}
+
 
 .ipod__centre {
   position: absolute;
