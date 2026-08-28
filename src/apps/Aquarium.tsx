@@ -16,10 +16,12 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { STOCK, imageTexture, makeStockTexture } from '../aquarium/textures'
-import { SPECIES, coinText, makeCreatureTexture, priceOf } from '../aquarium/creatures'
+import { SPECIES, makeCreatureTexture, priceOf } from '../aquarium/creatures'
 import {
-  FED_FOR, FED_MULTIPLIER, awayText, buy, catchUp, load, ratePerSecond, save, type Tank as Save,
+  FED_FOR, FED_MULTIPLIER, affordable, awayText, buy, catchUp, load, payOut, ratePerSecond, save,
+  type Tank as Save,
 } from '../aquarium/economy'
+import { coinText as coins, useCoins } from '../os/purse'
 import type { FishInput, Tank } from '../aquarium/tank3d'
 import { listFish } from '../lib/fish'
 import { launch } from '../os/registry'
@@ -37,6 +39,7 @@ export default function Aquarium() {
   const [shopOpen, setShopOpen] = useState(true)
 
   const caughtUp = useRef(false)
+  const purse = useCoins()
   const saveRef = useRef(saveState)
   saveRef.current = saveState
 
@@ -101,13 +104,13 @@ export default function Aquarium() {
       caughtUp.current = true
       const back = catchUp(saveRef.current)
       if (back.coins > 0) {
+        payOut(back.coins)
         setSaveState((t) => ({
           ...t,
-          coins: t.coins + back.coins,
           earned: t.earned + back.coins,
           seen: Math.floor(Date.now() / 1000),
         }))
-        setWelcome(`They kept working: ${coinText(back.coins)} while you were away ${awayText(back.seconds)}.`)
+        setWelcome(`They kept working: ${coins(back.coins)} while you were away ${awayText(back.seconds)}.`)
       }
     }
 
@@ -136,7 +139,9 @@ export default function Aquarium() {
       setSaveState((t) => {
         const boost = t.fedUntil > Date.now() / 1000 ? FED_MULTIPLIER : 1
         const gain = (ratePerSecond(t.owned) * boost) / 5
-        return gain ? { ...t, coins: t.coins + gain, earned: t.earned + gain } : t
+        if (!gain) return t
+        payOut(gain)
+        return { ...t, earned: t.earned + gain }
       })
     }, 200)
     return () => window.clearInterval(id)
@@ -202,10 +207,10 @@ export default function Aquarium() {
       <div className="aq__purse">
         <span className="aq__coins">
           <i aria-hidden />
-          {coinText(saveState.coins)}
+          {coins(purse)}
         </span>
         <span className="aq__rate" data-fed={fed}>
-          {coinText(live)}/s{fed ? ' · well fed' : ''}
+          {coins(live)}/s{fed ? ' · well fed' : ''}
         </span>
       </div>
 
@@ -232,7 +237,7 @@ export default function Aquarium() {
             {SPECIES.map((s) => {
               const n = saveState.owned[s.id] ?? 0
               const price = priceOf(s, n)
-              const can = saveState.coins >= price
+              const can = affordable(saveState, s.id)
               // don't show the whole ladder at once; reveal the next rung
               const shown = n > 0 || saveState.earned >= s.base * 0.35
               if (!shown) return null
@@ -244,7 +249,7 @@ export default function Aquarium() {
                       <b>{s.name}{n ? <em> ×{n}</em> : null}</b>
                       <span className="aq__blurb">{s.blurb}</span>
                       <span className="aq__nums">
-                        {coinText(price)} · +{coinText(s.rate)}/s
+                        {coins(price)} · +{coins(s.rate)}/s
                       </span>
                     </span>
                   </button>

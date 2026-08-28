@@ -11,6 +11,7 @@
  * to and unpleasant to farm, so the offline catch-up is capped at eight hours.
  */
 import { SPECIES, priceOf } from './creatures'
+import { addCoins, getCoins, spendCoins } from '../os/purse'
 
 const KEY = 'os.tank'
 const OFFLINE_CAP = 8 * 3600
@@ -19,7 +20,6 @@ export const FED_FOR = 30
 export const FED_MULTIPLIER = 2
 
 export interface Tank {
-  coins: number
   owned: Record<string, number>
   /** seconds of unix time when the tank was last written */
   seen: number
@@ -30,7 +30,6 @@ export interface Tank {
 }
 
 export const emptyTank = (): Tank => ({
-  coins: 25,
   owned: { guppy: 1 },
   seen: Math.floor(Date.now() / 1000),
   fedUntil: 0,
@@ -51,8 +50,7 @@ export function load(): Tank {
   } catch {
     t = emptyTank()
   }
-  // sanity: a corrupted or hand-edited save should not produce NaN forever
-  if (!Number.isFinite(t.coins)) t.coins = 0
+  // sanity: a corrupted or hand-edited save should not break the tank
   if (!t.owned || typeof t.owned !== 'object') t.owned = {}
   return t
 }
@@ -74,16 +72,23 @@ export function catchUp(t: Tank): { coins: number; seconds: number } {
   return { coins: ratePerSecond(t.owned) * away, seconds: away }
 }
 
+/** Takes the money from the shared purse, or returns null and takes nothing. */
 export function buy(t: Tank, id: string): Tank | null {
   const s = SPECIES.find((x) => x.id === id)
   if (!s) return null
   const price = priceOf(s, t.owned[id] ?? 0)
-  if (t.coins < price) return null
-  return {
-    ...t,
-    coins: t.coins - price,
-    owned: { ...t.owned, [id]: (t.owned[id] ?? 0) + 1 },
-  }
+  if (!spendCoins(price)) return null
+  return { ...t, owned: { ...t.owned, [id]: (t.owned[id] ?? 0) + 1 } }
+}
+
+export function affordable(t: Tank, id: string) {
+  const s = SPECIES.find((x) => x.id === id)
+  return !!s && getCoins() >= priceOf(s, t.owned[id] ?? 0)
+}
+
+/** Pay the tank's takings into the purse. */
+export function payOut(n: number) {
+  addCoins(n)
 }
 
 export function awayText(seconds: number) {

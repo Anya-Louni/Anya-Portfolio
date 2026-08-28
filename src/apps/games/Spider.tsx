@@ -4,6 +4,7 @@ import { CardView, Slot } from '../../games/CardView'
 import { useCardDrag, type DragState } from '../../games/useCardDrag'
 import { WinCascade } from '../../games/WinCascade'
 import { sound } from '../../os/sound'
+import { prize } from '../../os/prize'
 
 const CH = 96
 const FAN_DOWN = 6
@@ -69,8 +70,9 @@ export default function Spider() {
     if (g.done === 8 && !won) {
       setWon(true)
       sound.chime()
+      prize(`spider-${g.seed}`, { 1: 200, 2: 480, 4: 1100 }[g.suits], `Spider, ${g.suits} suit${g.suits > 1 ? 's' : ''}`)
     }
-  }, [g.done, won])
+  }, [g.done, won, g.seed, g.suits])
 
   const reset = (suits: Difficulty = g.suits, seed = newSeed()) => {
     setG(deal(seed, suits))

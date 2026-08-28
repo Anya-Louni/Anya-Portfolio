@@ -16,6 +16,7 @@
  * lands inside the tune.
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { prize } from '../../os/prize'
 
 const LANES = 4
 const KEYS: string[][] = [
@@ -131,6 +132,8 @@ export default function BubbleBeat() {
   const heldRef = useRef<boolean[]>(Array(LANES).fill(false))
   const barRef = useRef(-1)
   const playingRef = useRef(false)
+  /* ticks on every start, so one run pays once however often this re-renders */
+  const runRef = useRef(0)
 
   const chart = CHARTS[chartIx]
   const stepSecs = 60 / chart.bpm / 4
@@ -209,6 +212,7 @@ export default function BubbleBeat() {
     setScore(0); setCombo(0); setBest(0)
     setTally({ Perfect: 0, Great: 0, Good: 0, Miss: 0 })
     setDone(false)
+    runRef.current++
     startedRef.current = c.currentTime + 1.2 // a beat of lead-in
     playingRef.current = true
     setPlaying(true)
@@ -445,6 +449,13 @@ export default function BubbleBeat() {
 
   const hits = tally.Perfect + tally.Great + tally.Good
   const accuracy = hits + tally.Miss ? Math.round((hits / (hits + tally.Miss)) * 100) : 0
+
+  /* Paid off the score rather than off finishing, so a bad run through the
+     hard chart still beats a perfect run through the easy one. */
+  useEffect(() => {
+    if (!done) return
+    prize(`beat-${chart.id}-${runRef.current}`, Math.round(score / 12), `${chart.name}, ${accuracy}%`)
+  }, [done, chart.id, chart.name, score, accuracy])
 
   const tap = (lane: number) => {
     heldRef.current[lane] = true

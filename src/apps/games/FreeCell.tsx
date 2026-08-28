@@ -12,6 +12,7 @@ import { CardView, Slot } from '../../games/CardView'
 import { useCardDrag, type DragState } from '../../games/useCardDrag'
 import { WinCascade } from '../../games/WinCascade'
 import { sound } from '../../os/sound'
+import { prize } from '../../os/prize'
 
 const CH = 96
 const FAN = 22
@@ -46,8 +47,9 @@ export default function FreeCell() {
     if (home === 52 && !won) {
       setWon(true)
       sound.chime()
+      prize(`freecell-${g.seed}`, 260, 'FreeCell')
     }
-  }, [home, won])
+  }, [home, won, g.seed])
 
   const reset = (seed = newSeed()) => {
     setG(deal(seed))

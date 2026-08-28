@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { PROJECTS, REPOS, GITHUB_PROFILE } from '../content/projects'
 import { CONTACT } from '../content/contact'
 import { APPS, launch } from '../os/registry'
-import { SPECIES, coinText } from '../aquarium/creatures'
+import { SPECIES } from '../aquarium/creatures'
+import { coinText, getCoins } from '../os/purse'
 import { catchUp, load as loadTank, ratePerSecond } from '../aquarium/economy'
 import { useOS } from '../os/store'
 
@@ -51,7 +52,7 @@ function makeFS(): Node {
         return [
           'AQUARIUM',
           '========',
-          `balance   ${coinText(t.coins)}`,
+          `balance   ${coinText(getCoins())}`,
           `income    ${coinText(ratePerSecond(t.owned))}/s`,
           `stocked   ${stocked}`,
           '',
@@ -252,7 +253,7 @@ export default function Terminal() {
         const stocked = SPECIES.reduce((n, sp) => n + (t.owned[sp.id] ?? 0), 0)
         const back = catchUp(t)
         print(
-          `  balance   ${coinText(t.coins)} coins`,
+          `  balance   ${coinText(getCoins())} coins`,
           `  income    ${coinText(ratePerSecond(t.owned))}/s`,
           `  lifetime  ${coinText(t.earned)}`,
           `  stocked   ${stocked} creature${stocked === 1 ? '' : 's'}`,

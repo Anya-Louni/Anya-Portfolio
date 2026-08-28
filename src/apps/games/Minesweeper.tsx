@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { sound } from '../../os/sound'
+import { prize } from '../../os/prize'
 
 type Level = 'beginner' | 'intermediate' | 'expert'
 const LEVELS: Record<Level, { w: number; h: number; mines: number }> = {
@@ -67,6 +68,8 @@ export default function Minesweeper() {
   const [ticks, setTicks] = useState(0)
   const [scared, setScared] = useState(false)
   const timer = useRef<number | null>(null)
+  /* no seed to key the payout on, so a counter that ticks on every new board */
+  const [round, setRound] = useState(0)
 
   const reset = useCallback(
     (lv: Level = level) => {
@@ -75,6 +78,7 @@ export default function Minesweeper() {
       setCells(blank(d.w, d.h))
       setStatus('ready')
       setTicks(0)
+      setRound((n) => n + 1)
       sound.click(1.1)
     },
     [level],
@@ -132,6 +136,8 @@ export default function Minesweeper() {
       })
       setStatus('won')
       sound.chime()
+      prize(`mine-${level}-${round}`, { beginner: 90, intermediate: 320, expert: 900 }[level],
+        `Minesweeper, ${level}`)
     }
   }
 

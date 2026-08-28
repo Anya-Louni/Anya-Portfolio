@@ -12,6 +12,7 @@ import { CardView, Slot } from '../../games/CardView'
 import { useCardDrag, type DragState } from '../../games/useCardDrag'
 import { WinCascade } from '../../games/WinCascade'
 import { sound } from '../../os/sound'
+import { prize } from '../../os/prize'
 
 const CW = 71
 const CH = 96
@@ -75,8 +76,10 @@ export default function Klondike() {
     if (score === 52 && !won) {
       setWon(true)
       sound.chime()
+      // draw three is the harder deal, so it pays better
+      prize(`klondike-${g.seed}`, g.draw === 3 ? 220 : 140, `Solitaire, draw ${g.draw}`)
     }
-  }, [score, won])
+  }, [score, won, g.seed, g.draw])
 
   const reset = (draw: 1 | 3 = g.draw, seed = newSeed()) => {
     setG(deal(seed, draw))

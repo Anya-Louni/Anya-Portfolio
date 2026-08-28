@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { Icon, type IconName } from '../ui/Icon'
 import { launch } from '../os/registry'
 import { useOS } from '../os/store'
-import { SPECIES, coinText } from '../aquarium/creatures'
+import { SPECIES } from '../aquarium/creatures'
+import { coinText, getCoins } from '../os/purse'
 import { load as loadTank, ratePerSecond } from '../aquarium/economy'
 import { GITHUB_PROFILE, PROJECTS, REPOS } from '../content/projects'
 
@@ -122,7 +123,7 @@ export default function Computer() {
         <div>
           <dt>Aquarium</dt>
           <dd>
-            {stocked} creature{stocked === 1 ? '' : 's'} · {coinText(tank.coins)} coins ·{' '}
+            {stocked} creature{stocked === 1 ? '' : 's'} · {coinText(getCoins())} coins ·{' '}
             {coinText(ratePerSecond(tank.owned))}/s
           </dd>
         </div>
