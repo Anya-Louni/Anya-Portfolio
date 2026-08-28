@@ -243,9 +243,14 @@
   aspect-ratio: 1;
   margin: 0 auto;
   border-radius: 50%;
+  /* No conic gradient. A conic always seams where the last stop wraps to the
+     first, and that seam sat across the wheel as a visible wedge. A click
+     wheel is matte plastic lit from above, which is two radials over one
+     vertical ramp — and has no seam anywhere. */
   background:
-    radial-gradient(circle at 42% 26%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 52%),
-    conic-gradient(from 210deg, #e9edf4, #cfd6e2 22%, #f6f8fc 40%, #d4dbe6 62%, #eef1f6 80%, #d9dfe9);
+    radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 56%),
+    radial-gradient(circle at 50% 116%, rgba(110, 132, 168, 0.26), rgba(110, 132, 168, 0) 46%),
+    linear-gradient(180deg, #f5f7fb 0%, #e8ecf3 44%, #dde3ec 62%, #edf0f5 100%);
   border: 1px solid #a8b2c2;
   box-shadow:
     inset 0 2px 4px rgba(255, 255, 255, 0.95),
@@ -264,7 +269,10 @@
   height: 26%;
   color: #6a778c;
   border-radius: 40%;
-  transition: color 110ms linear, background 110ms linear;
+  /* No inherited ring and no easing. A wheel switch either is pressed or it
+     is not; fading into it over 110ms is what made it feel like a web page. */
+  box-shadow: none;
+  transition: none;
 }
 .ipod__wkey span {
   font-size: 9.5px;
@@ -281,8 +289,15 @@
 .ipod__wkey--play { bottom: 2%; left: 50%; transform: translateX(-50%); }
 .ipod__wkey--prev { left: 1%; top: 50%; transform: translateY(-50%); width: 26%; height: 30%; }
 .ipod__wkey--next { right: 1%; top: 50%; transform: translateY(-50%); width: 26%; height: 30%; }
-.ipod__wkey:hover { color: #24314a; }
-.ipod__wkey:active { color: #0d1622; background: rgba(120, 140, 175, 0.18); }
+/* No hover state. A wheel is a moulded piece of plastic — nothing on it
+   lights up when a finger passes over, and pretending otherwise is what made
+   these read as web buttons rather than as a wheel. Pressing gives a hard
+   grey shadow with no blur, which is the whole of the feedback. */
+.ipod__wkey:active {
+  color: #0d1622;
+  background: #b6bdc9;
+  box-shadow: inset 1px 1px 0 #8a94a3, inset -1px -1px 0 #d8dde5;
+}
 
 .ipod__centre {
   position: absolute;
@@ -298,14 +313,15 @@
     inset 0 1px 0 #ffffff,
     inset 0 -2px 5px rgba(30, 50, 80, 0.12),
     0 1px 4px rgba(10, 30, 60, 0.28);
-  transition: background 110ms linear, box-shadow 110ms linear;
+  transition: none;
 }
-.ipod__centre:hover {
-  background: radial-gradient(circle at 42% 30%, #ffffff, #f3f6fb 58%, #dde3ec);
-}
+/* Likewise: nothing on hover, and the press is a hard grey step down. */
 .ipod__centre:active {
-  background: radial-gradient(circle at 42% 30%, #e6eaf2, #c9d1de);
-  box-shadow: inset 0 2px 6px rgba(30, 50, 80, 0.34);
+  background: radial-gradient(circle at 42% 30%, #d8dde6, #bcc4d1);
+  box-shadow:
+    inset 2px 2px 0 #949dab,
+    inset -1px -1px 0 #e4e8ef,
+    0 0 0 1px #97a0ae;
 }
 
 

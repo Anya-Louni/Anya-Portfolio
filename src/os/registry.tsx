@@ -193,9 +193,9 @@ export const APPS: AppDef[] = [
   },
   {
     id: 'sketchpad',
-    title: 'Symphony Sketchpad',
+    title: 'Draw Music',
     icon: 'sketchpad',
-    blurb: 'Draw across the board and hear it back',
+    blurb: 'Draw a line and hear it play',
     w: 860,
     h: 600,
     minW: 560,

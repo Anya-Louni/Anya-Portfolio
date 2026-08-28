@@ -1,5 +1,5 @@
 /* ============================================================
-   ASCII Studio and Symphony Sketchpad.
+   ASCII Studio and Draw Music.
    Both are canvas apps in an Aero chrome: a glass toolbar on top,
    the work in the middle, and the exports along the bottom.
    ============================================================ */
@@ -257,7 +257,7 @@
   color: var(--ink-soft);
 }
 
-/* ---------------------------------------------------- Symphony Sketchpad */
+/* ------------------------------------------------------------ Draw Music */
 
 .skp {
   display: grid;
@@ -360,8 +360,9 @@
   display: block;
   width: 100%;
   height: 100%;
-  border-radius: var(--r-sm);
-  box-shadow: 0 2px 14px rgba(6, 22, 48, 0.4), inset 0 0 0 1px rgba(190, 230, 255, 0.22);
+  /* a Windows 7 sunken client area: one dark hairline, one white one under it */
+  border: 1px solid #7a93b0;
+  box-shadow: inset 0 1px 2px rgba(50, 80, 120, 0.3), 0 1px 0 #ffffff;
   touch-action: none;
   cursor: crosshair;
 }

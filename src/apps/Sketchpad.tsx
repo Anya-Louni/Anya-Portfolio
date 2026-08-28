@@ -1,10 +1,11 @@
 /**
- * Symphony Sketchpad.
+ * Draw Music.
  *
  * Draw across the board and a playhead sweeps through what you drew: left to
  * right is time, up is pitch, and each of the four brushes is a different
  * voice. It is the draw-it-and-hear-it idea — Draw.Audio, Composer's
- * Sketchpad — rather than the orchestral sample library that shares the name.
+ * Sketchpad. It was called Symphony Sketchpad, which said nothing about what
+ * it does; the name is now the instructions.
  *
  * Pitches are snapped to a scale, so a scribble is always in key. That is the
  * whole trick: pentatonic has no interval that can clash, which means anything
@@ -42,10 +43,10 @@ interface Voice {
 }
 
 const VOICES: Voice[] = [
-  { name: 'Bells', colour: '#5ec8ff', glow: '#b6ecff', wave: 'sine', cutoff: 6000, attack: 0.004, release: 1.5, gain: 0.5 },
-  { name: 'Strings', colour: '#8be08a', glow: '#d6ffcf', wave: 'sawtooth', cutoff: 1500, attack: 0.14, release: 0.9, gain: 0.22 },
-  { name: 'Flute', colour: '#ffc861', glow: '#ffe8bb', wave: 'triangle', cutoff: 3200, attack: 0.05, release: 0.5, gain: 0.34 },
-  { name: 'Pluck', colour: '#e57ede', glow: '#ffd4fb', wave: 'square', cutoff: 2400, attack: 0.002, release: 0.35, gain: 0.2 },
+  { name: 'Bells', colour: '#3f96dc', glow: '#c6e7fb', wave: 'sine', cutoff: 6000, attack: 0.004, release: 1.5, gain: 0.5 },
+  { name: 'Strings', colour: '#5fa63f', glow: '#d3eeb6', wave: 'sawtooth', cutoff: 1500, attack: 0.14, release: 0.9, gain: 0.22 },
+  { name: 'Flute', colour: '#e39a22', glow: '#ffe4ab', wave: 'triangle', cutoff: 3200, attack: 0.05, release: 0.5, gain: 0.34 },
+  { name: 'Pluck', colour: '#b64bb0', glow: '#f2c7ef', wave: 'square', cutoff: 2400, attack: 0.002, release: 0.35, gain: 0.2 },
 ]
 
 /** row 0 is the top of the board, so it must be the highest note */
@@ -54,6 +55,25 @@ function freqOf(row: number, scaleIx: number, root: string) {
   const n = PITCHES - 1 - row
   const semi = ROOT_SEMI[root] + scale[n % scale.length] + 12 * Math.floor(n / scale.length)
   return 220 * Math.pow(2, semi / 12)
+}
+
+/* Aero buttons are one hue at four values, so the chips need to be able to
+   walk their own colour up and down rather than carry four hex codes each. */
+const rgb = (hex: string) => {
+  const n = parseInt(hex.slice(1), 16)
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255]
+}
+const hex = (c: number[]) =>
+  `#${c.map((v) => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, '0')).join('')}`
+
+/** toward black when k < 0, toward white when k > 0 */
+const shade = (h: string, k: number) => {
+  const t = k < 0 ? 0 : 255
+  return hex(rgb(h).map((v) => v + (t - v) * Math.abs(k)))
+}
+const mix = (a: string, b: string, k: number) => {
+  const [x, y] = [rgb(a), rgb(b)]
+  return hex(x.map((v, i) => v + (y[i] - v) * k))
 }
 
 type Board = Int8Array // -1 empty, otherwise the voice index
@@ -198,56 +218,80 @@ export default function Sketchpad() {
     const cw = w / STEPS
     const chh = h / PITCHES
 
-    const sky = ctx.createLinearGradient(0, 0, 0, h)
-    sky.addColorStop(0, '#0b2a5c')
-    sky.addColorStop(0.55, '#123a7e')
-    sky.addColorStop(1, '#0a1f47')
-    ctx.fillStyle = sky
+    /* The board is a Windows 7 client area, not a night sky: a pale sunken
+       panel with bar shading and hairline rules. The notes on it are Aero
+       glass buttons — a hard tonal break just under halfway, a darker edge in
+       the button's own hue, and a white line inside the top. */
+    const paper = ctx.createLinearGradient(0, 0, 0, h)
+    paper.addColorStop(0, '#fbfdff')
+    paper.addColorStop(1, '#e8eff8')
+    ctx.fillStyle = paper
     ctx.fillRect(0, 0, w, h)
 
-    // every fourth column is a beat, and gets a brighter rule
-    for (let s = 0; s <= STEPS; s++) {
-      ctx.fillStyle = s % 4 === 0 ? 'rgba(190,225,255,0.22)' : 'rgba(190,225,255,0.08)'
-      ctx.fillRect(Math.round(s * cw), 0, 1, h)
-    }
+    const bars = SCALES[scale].steps.length
     for (let r = 0; r < PITCHES; r++) {
-      // the root of the scale, so the octaves can be read off the board
-      if ((PITCHES - 1 - r) % SCALES[scale].steps.length === 0) {
-        ctx.fillStyle = 'rgba(190,225,255,0.06)'
+      // shade the octave the way a listview shades alternate groups
+      if (Math.floor((PITCHES - 1 - r) / bars) % 2 === 1) {
+        ctx.fillStyle = 'rgba(120, 165, 215, 0.075)'
         ctx.fillRect(0, r * chh, w, chh)
       }
-      ctx.fillStyle = 'rgba(190,225,255,0.07)'
+    }
+    for (let s2 = 0; s2 < STEPS; s2 += 8) {
+      ctx.fillStyle = 'rgba(120, 165, 215, 0.07)'
+      ctx.fillRect(s2 * cw, 0, cw * 4, h)
+    }
+
+    for (let s2 = 0; s2 <= STEPS; s2++) {
+      ctx.fillStyle = s2 % 4 === 0 ? '#b9cbe0' : '#dae4f0'
+      ctx.fillRect(Math.round(s2 * cw), 0, 1, h)
+    }
+    for (let r = 0; r <= PITCHES; r++) {
+      ctx.fillStyle = (PITCHES - r) % bars === 0 ? '#b9cbe0' : '#dae4f0'
       ctx.fillRect(0, Math.round(r * chh), w, 1)
     }
 
     const b = boardRef.current
     const now = performance.now()
-    for (let s = 0; s < STEPS; s++) {
+    for (let s2 = 0; s2 < STEPS; s2++) {
       for (let r = 0; r < PITCHES; r++) {
-        const v = b[s * PITCHES + r]
+        const v = b[s2 * PITCHES + r]
         if (v < 0) continue
-        const x = s * cw
-        const y = r * chh
-        const age = now - (litRef.current.get(s * PITCHES + r) ?? -1e9)
+        const x = Math.round(s2 * cw) + 1
+        const y = Math.round(r * chh) + 1
+        const bw = Math.round(cw) - 2
+        const bh = Math.round(chh) - 2
+        const age = now - (litRef.current.get(s2 * PITCHES + r) ?? -1e9)
         const hot = Math.max(0, 1 - age / 420)
+        const V = VOICES[v]
 
-        const rad = Math.min(cw, chh) * 0.22
+        const chip = ctx.createLinearGradient(0, y, 0, y + bh)
+        chip.addColorStop(0, V.glow)
+        chip.addColorStop(0.46, mix(V.glow, V.colour, 0.55))
+        chip.addColorStop(0.47, V.colour)          // the hard Aero break
+        chip.addColorStop(1, shade(V.colour, -0.22))
+        ctx.fillStyle = chip
         ctx.beginPath()
-        ctx.roundRect(x + 1.5, y + 1.5, cw - 3, chh - 3, rad)
-        const g = ctx.createLinearGradient(x, y, x, y + chh)
-        g.addColorStop(0, VOICES[v].glow)
-        g.addColorStop(1, VOICES[v].colour)
-        ctx.fillStyle = g
+        ctx.roundRect(x, y, bw, bh, 2.5)
         ctx.fill()
 
+        ctx.strokeStyle = shade(V.colour, -0.42)
+        ctx.lineWidth = 1
+        ctx.beginPath()
+        ctx.roundRect(x + 0.5, y + 0.5, bw - 1, bh - 1, 2.5)
+        ctx.stroke()
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.72)'
+        ctx.beginPath()
+        ctx.roundRect(x + 1.5, y + 1.5, bw - 3, bh - 3, 1.8)
+        ctx.stroke()
+
+        // the playhead lighting a note is the same glass, lit from inside
         if (hot > 0) {
           ctx.save()
-          ctx.globalAlpha = hot * 0.85
-          ctx.shadowColor = VOICES[v].glow
-          ctx.shadowBlur = 22 * hot
+          ctx.globalAlpha = hot * 0.8
           ctx.fillStyle = '#ffffff'
           ctx.beginPath()
-          ctx.roundRect(x + 1.5, y + 1.5, cw - 3, chh - 3, rad)
+          ctx.roundRect(x, y, bw, bh, 2.5)
           ctx.fill()
           ctx.restore()
         }
@@ -255,16 +299,27 @@ export default function Sketchpad() {
     }
 
     if (playing && stepRef.current >= 0) {
-      const x = stepRef.current * cw
-      const beam = ctx.createLinearGradient(x, 0, x + cw, 0)
-      beam.addColorStop(0, 'rgba(255,255,255,0.06)')
-      beam.addColorStop(0.5, 'rgba(255,255,255,0.30)')
-      beam.addColorStop(1, 'rgba(255,255,255,0.06)')
-      ctx.fillStyle = beam
-      ctx.fillRect(x, 0, cw, h)
-      ctx.fillStyle = 'rgba(255,255,255,0.85)'
-      ctx.fillRect(Math.round(x + cw / 2), 0, 1.5, h)
+      const x = Math.round(stepRef.current * cw)
+      const bw = Math.round(cw)
+      const band = ctx.createLinearGradient(0, 0, 0, h)
+      band.addColorStop(0, 'rgba(120, 190, 245, 0.34)')
+      band.addColorStop(0.46, 'rgba(84, 165, 232, 0.30)')
+      band.addColorStop(0.47, 'rgba(56, 140, 215, 0.24)')
+      band.addColorStop(1, 'rgba(120, 190, 245, 0.30)')
+      ctx.fillStyle = band
+      ctx.fillRect(x, 0, bw, h)
+      ctx.fillStyle = '#3c8fd0'
+      ctx.fillRect(x, 0, 1, h)
+      ctx.fillRect(x + bw - 1, 0, 1, h)
     }
+
+    // the sunken edge that puts the whole panel below the surface
+    ctx.fillStyle = 'rgba(70, 105, 150, 0.35)'
+    ctx.fillRect(0, 0, w, 1)
+    ctx.fillRect(0, 0, 1, h)
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.85)'
+    ctx.fillRect(0, h - 1, w, 1)
+    ctx.fillRect(w - 1, 0, 1, h)
   }, [playing, scale])
 
   useEffect(() => {
