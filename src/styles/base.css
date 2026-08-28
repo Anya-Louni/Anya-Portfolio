@@ -35,15 +35,18 @@ button {
   min-height: 0;
   cursor: inherit;
 }
-/* 7.css also hangs a ::before on every button and fades it in on hover — that
-   is the pale blue plate that kept appearing behind bare controls, most
-   visibly the iPod's wheel keys. Being a pseudo-element, it never shows up in
-   the button's own computed styles, which is what made it hard to find.
+/* 7.css hangs two plates on every button and fades them in: ::before on
+   hover, ::after on press. They are the pale blue squares that kept appearing
+   behind bare controls, most visibly the iPod's wheel keys. Being pseudo-
+   elements they never show up in the button's own computed styles, which is
+   what made them hard to find — and they come as a pair, so removing only the
+   hover one leaves the press one behind.
 
-   Dropping the content removes the plate everywhere. Anything of ours that
-   wants a ::before declares its own content and wins on specificity: a class
-   selector beats these two element selectors. */
-button::before { content: none; }
+   Dropping the content removes both everywhere. Anything of ours that wants a
+   ::before or ::after declares its own content and wins on specificity: a
+   class selector beats these two element selectors. */
+button::before,
+button::after { content: none; }
 img, svg { display: block; max-width: 100%; }
 /* line glyphs carry no intrinsic size; without this an unsized one falls back
    to the SVG default of 300x150 and blows out its container */
