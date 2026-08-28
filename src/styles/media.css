@@ -289,14 +289,19 @@
 .ipod__wkey--play { bottom: 2%; left: 50%; transform: translateX(-50%); }
 .ipod__wkey--prev { left: 1%; top: 50%; transform: translateY(-50%); width: 26%; height: 30%; }
 .ipod__wkey--next { right: 1%; top: 50%; transform: translateY(-50%); width: 26%; height: 30%; }
-/* No hover state. A wheel is a moulded piece of plastic — nothing on it
-   lights up when a finger passes over, and pretending otherwise is what made
-   these read as web buttons rather than as a wheel. Pressing gives a hard
-   grey shadow with no blur, which is the whole of the feedback. */
+/* No hover state at all: a wheel is a moulded piece of plastic, and nothing
+   on it responds to a finger passing over. Pressing lights the glyph and
+   changes nothing else — no plate, no shadow, no movement. These are printed
+   labels under a translucent wheel, and the label picking up is the only
+   thing that can happen to one.
+
+   The glyph darkens rather than brightening. Brightening is the literal
+   reading of lighting up, but the wheel is pale silver, so a white glyph
+   washes out into it and the label all but vanishes — the press reads as
+   the icon being wiped away. Going darker is what actually reads as the
+   icon catching the eye. */
 .ipod__wkey:active {
-  color: #0d1622;
-  background: #b6bdc9;
-  box-shadow: inset 1px 1px 0 #8a94a3, inset -1px -1px 0 #d8dde5;
+  color: #2f3b50;
 }
 
 .ipod__centre {
@@ -315,14 +320,7 @@
     0 1px 4px rgba(10, 30, 60, 0.28);
   transition: none;
 }
-/* Likewise: nothing on hover, and the press is a hard grey step down. */
-.ipod__centre:active {
-  background: radial-gradient(circle at 42% 30%, #d8dde6, #bcc4d1);
-  box-shadow:
-    inset 2px 2px 0 #949dab,
-    inset -1px -1px 0 #e4e8ef,
-    0 0 0 1px #97a0ae;
-}
+/* The centre button has no pressed state of any kind. */
 
 
 /* ============================================================
