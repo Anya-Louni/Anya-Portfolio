@@ -1,11 +1,20 @@
 /**
  * Frutiger Aero avatar.
  *
- * The era's look: a glossy 3D-rendered bust on a bright gradient with bokeh
- * and an aurora sweep — Windows Live Messenger display pictures, Xbox 360
- * avatars, Wii-era portraits. Built as SVG so it stays sharp at 24px in the
- * Start menu and 128px on the login screen, and lit with the same specular
- * filter the icons use.
+ * The figure is drawn to match the person in Windows 7's own icons: a tall
+ * egg of a head with no face at all, a hair cap with one soft highlight, a
+ * short neck almost entirely hidden by the collar, and shoulders that flare
+ * to a rounded trapezoid with a white shirt V and a seam down the middle.
+ *
+ * Two details do most of the work, and both come straight from Microsoft's
+ * icon guidelines. The light is above, in front and slightly left, so every
+ * part carries a soft highlight up there and a darker crescent on the lower
+ * right. And nothing is outlined in black — each outline is a darker version
+ * of the colour it surrounds.
+ *
+ * The tile around it is the other half of the era: a bright gradient, bokeh,
+ * and one restrained pane of glass. Built as SVG so it stays sharp at 24px in
+ * the Start menu and 128px on the login screen.
  */
 import { useId, useSyncExternalStore } from 'react'
 
@@ -36,6 +45,18 @@ export const DEFAULT_AVATAR: AvatarSpec = {
 }
 
 const KEY = 'os.avatar'
+
+/** Mix a hex colour toward black (k < 0) or white (k > 0). */
+function shade(hex: string, k: number) {
+  const n = parseInt(hex.slice(1), 16)
+  const t = k < 0 ? 0 : 255
+  const p = Math.abs(k)
+  const ch = (sh: number) => {
+    const v = (n >> sh) & 255
+    return Math.round(v + (t - v) * p)
+  }
+  return `#${[ch(16), ch(8), ch(0)].map((v) => v.toString(16).padStart(2, '0')).join('')}`
+}
 
 /* ---- a tiny store so every surface updates the moment it is saved ---- */
 const listeners = new Set<() => void>()
@@ -78,6 +99,11 @@ export function useAvatar(): AvatarSpec {
   return read()
 }
 
+/* The head is an egg that tapers to a chin, not a circle; the torso flares
+   from the neck and is cut off square at the bottom of the tile. */
+const HEAD = 'M48 19c10 0 17.5 8.4 17.5 18.6 0 12.4-7.8 21.4-17.5 21.4s-17.5-9-17.5-21.4C30.5 27.4 38 19 48 19Z'
+const TORSO = 'M7 96c0-17.5 14-29 41-29s41 11.5 41 29Z'
+
 export function Avatar({
   spec,
   size = 48,
@@ -110,15 +136,18 @@ export function Avatar({
           <stop offset="0.49" stopColor="#ffffff" stopOpacity="0.03" />
           <stop offset="1" stopColor="#ffffff" stopOpacity="0.18" />
         </linearGradient>
-        <radialGradient id={`${id}skin`} cx="0.38" cy="0.3" r="0.78">
-          <stop offset="0" stopColor="#ffffff" stopOpacity="0.55" />
-          <stop offset="0.45" stopColor={skin} />
-          <stop offset="1" stopColor={skin} />
+        {/* light from above, in front and slightly left — so the highlight
+            sits on the upper left of the forehead and the colour deepens
+            toward the lower right */}
+        <radialGradient id={`${id}skin`} cx="0.36" cy="0.26" r="0.86">
+          <stop offset="0" stopColor={shade(skin, 0.4)} />
+          <stop offset="0.42" stopColor={skin} />
+          <stop offset="1" stopColor={shade(skin, -0.22)} />
         </radialGradient>
-        <linearGradient id={`${id}shirt`} x1="0" y1="0" x2="0.2" y2="1">
-          <stop offset="0" stopColor="#ffffff" stopOpacity="0.55" />
-          <stop offset="0.35" stopColor={shirt} />
-          <stop offset="1" stopColor={shirt} />
+        <linearGradient id={`${id}shirt`} x1="0.15" y1="0" x2="0.85" y2="1">
+          <stop offset="0" stopColor={shade(shirt, 0.34)} />
+          <stop offset="0.4" stopColor={shirt} />
+          <stop offset="1" stopColor={shade(shirt, -0.24)} />
         </linearGradient>
         <linearGradient id={`${id}aurora`} x1="0" y1="0" x2="1" y2="0.4">
           <stop offset="0" stopColor="#ffffff" stopOpacity="0" />
@@ -142,43 +171,55 @@ export function Avatar({
           <circle cx="24" cy="30" r="3.4" fill="#fff" opacity="0.35" />
         </g>
 
-        {/* shoulders */}
-        <path d="M14 96c0-16 15-25 34-25s34 9 34 25Z" fill={`url(#${id}shirt)`} />
-        <path d="M14 96c0-16 15-25 34-25s34 9 34 25Z" fill={`url(#${id}gloss)`} opacity="0.5" />
+        {/* shoulders: a rounded trapezoid, wide at the cut, narrow at the neck */}
+        <path d={TORSO} fill={`url(#${id}shirt)`} />
+        <path d={TORSO} fill="none" stroke={shade(shirt, -0.34)} strokeWidth="1.2" />
+        {/* the shirt showing at the collar, and the seam below it */}
+        <path d="M40.5 66.5 48 82l7.5-15.5c-4.5-1.6-10.5-1.6-15 0Z" fill="#f4f8fc" />
+        <path d="M48 82v14" stroke={shade(shirt, -0.3)} strokeWidth="1.4" strokeLinecap="round" />
 
-        {/* neck + head */}
-        <rect x="41" y="56" width="14" height="16" rx="7" fill={skin} />
-        <ellipse cx="48" cy="42" rx="21" ry="23" fill={`url(#${id}skin)`} />
+        {/* neck: barely visible, and in the head's shadow */}
+        <path d="M41 54h14v10c0 4-14 4-14 0Z" fill={shade(skin, -0.22)} />
+
+        {/* head. No face — the era's avatars were blank, and that is the charm */}
+        <path d={HEAD} fill={`url(#${id}skin)`} />
+        <ellipse cx="30.5" cy="42" rx="3" ry="4.4" fill={shade(skin, -0.08)} />
+        <ellipse cx="65.5" cy="42" rx="3" ry="4.4" fill={shade(skin, -0.14)} />
+        <path d={HEAD} fill="none" stroke={shade(skin, -0.32)} strokeWidth="1.1" />
+        {/* the crescent of shadow down the right, where the light does not reach */}
+        <path
+          d="M65 33c1.6 4 2 8 2 11 0 12-8 21-17 21 12-2 17-11 17-21 0-4-.6-8-2-11Z"
+          fill={shade(skin, -0.3)}
+          opacity="0.65"
+        />
 
         {/* hair */}
         {a.hair % 4 === 0 ? (
-          <path d="M27 40c0-14 9-22 21-22s21 8 21 22c0-8-8-11-21-11s-21 3-21 11Z" fill={hair} />
+          <path d="M28 41c0-14 9-23 20-23s20 9 20 23c0-9-8-12-20-12s-20 3-20 12Z" fill={hair} />
         ) : null}
         {a.hair % 4 === 1 ? (
           <>
-            <path d="M27 42c0-15 9-24 21-24s21 9 21 24v6c-2-10-4-14-9-16-6 3-19 3-24-1-5 3-7 6-9 11Z" fill={hair} />
-            <path d="M25 44c0 14 3 22 6 26-6-6-9-16-8-26Z" fill={hair} />
-            <path d="M71 44c0 14-3 22-6 26 6-6 9-16 8-26Z" fill={hair} />
+            <path d="M28 43c0-15 9-25 20-25s20 10 20 25v7c-2-11-4-15-9-17-6 3-18 3-23-1-5 3-6 6-8 11Z" fill={hair} />
+            <path d="M26 45c0 14 3 22 6 26-6-6-9-16-6-26Z" fill={hair} />
+            <path d="M70 45c0 14-3 22-6 26 6-6 9-16 6-26Z" fill={hair} />
           </>
         ) : null}
         {a.hair % 4 === 2 ? (
           <>
-            <path d="M27 41c0-14 9-23 21-23s21 9 21 23c0-7-9-10-21-10s-21 3-21 10Z" fill={hair} />
-            <circle cx="26" cy="30" r="8" fill={hair} />
-            <circle cx="70" cy="30" r="8" fill={hair} />
+            <path d="M28 42c0-14 9-24 20-24s20 10 20 24c0-8-9-11-20-11s-20 3-20 11Z" fill={hair} />
+            <circle cx="27" cy="31" r="8" fill={hair} />
+            <circle cx="69" cy="31" r="8" fill={hair} />
           </>
         ) : null}
         {a.hair % 4 === 3 ? (
-          <path
-            d="M28 44c-1-17 8-26 20-26s21 9 20 26c2-16-4-22-8-24-5 6-22 7-27 2-4 3-6 10-5 22Z"
-            fill={hair}
-          />
+          <path d="M29 45c-1-18 8-27 19-27s20 9 19 27c2-17-4-23-8-25-5 6-21 7-26 2-4 3-5 11-4 23Z" fill={hair} />
         ) : null}
-
-        {/* No face. The era's avatars were glossy blank mannequins and
-            that is the whole charm — the light does the work. */}
-        <ellipse cx="42" cy="34" rx="9" ry="6" fill="#ffffff" opacity="0.32" />
-        <ellipse cx="48" cy="60" rx="13" ry="4" fill="#ffffff" opacity="0.12" />
+        {/* one soft streak across the hair, where the light lands */}
+        <path
+          d="M35 26c3-4 8-6 13-6s10 2 13 6c-4-2-8-3-13-3s-9 1-13 3Z"
+          fill={shade(hair, 0.42)}
+          opacity="0.75"
+        />
 
         {/* accessories */}
         {a.accessory % 4 === 1 ? (
@@ -210,8 +251,10 @@ export function Avatar({
           />
         ) : null}
 
-        {/* the glass pane over everything, which is the whole look */}
-        <rect width="96" height="96" fill={`url(#${id}gloss)`} />
+        {/* one restrained pane of glass. It used to be much stronger, which
+            made the whole tile read as plastic rather than as a photograph
+            behind glass. */}
+        <rect width="96" height="96" fill={`url(#${id}gloss)`} opacity="0.55" />
         <rect x="0.5" y="0.5" width="95" height="95" rx="13.5" fill="none" stroke="#ffffff" strokeOpacity="0.65" />
       </g>
     </svg>

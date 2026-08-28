@@ -312,13 +312,13 @@
   inset: 0;
 }
 [data-theme-preview="aero"] .themecard__sky {
-  background: linear-gradient(170deg, #0a4bc4 0%, #2b80e6 34%, #5cb9f4 62%, #a6f4f8 84%, #f4feff 100%);
+  background: url('/wall/aero.webp') center / cover no-repeat;
 }
 [data-theme-preview="night"] .themecard__sky {
-  background: linear-gradient(170deg, #050b2e 0%, #12246e 38%, #2b46b4 68%, #4fc6e0 90%, #b6ecfb 100%);
+  background: url('/wall/night.webp') center / cover no-repeat;
 }
 [data-theme-preview="luna"] .themecard__sky {
-  background: linear-gradient(170deg, #5aa6e8 0%, #7cc0f0 40%, #86c440 62%, #6aa832 100%);
+  background: url('/wall/luna.webp') center / cover no-repeat;
 }
 [data-theme-preview="luna"] .themecard__glass {
   background: #ece9d8;

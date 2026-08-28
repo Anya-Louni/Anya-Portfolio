@@ -24,10 +24,15 @@
   .cpl__split,
   .fin__split {
     grid-template-columns: 1fr;
+    /* An auto row in a grid taller than its content is stretched to fill, so
+       without this the sidebar took half the window and its buttons came out
+       as tall blank slabs. */
+    grid-template-rows: auto minmax(0, 1fr);
   }
   .cpl__nav,
   .fin__side {
     display: flex;
+    align-items: center;
     gap: 6px;
     overflow-x: auto;
     padding: 9px 10px;
