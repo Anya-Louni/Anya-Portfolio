@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { Icon, type IconName } from '../ui/Icon'
 import { launch } from '../os/registry'
 import { useOS } from '../os/store'
+import { SPECIES, coinText } from '../aquarium/creatures'
+import { load as loadTank, ratePerSecond } from '../aquarium/economy'
 import { GITHUB_PROFILE, PROJECTS, REPOS } from '../content/projects'
 
 type Drive = {
@@ -19,6 +21,11 @@ export default function Computer() {
   const theme = useOS((s) => s.theme)
   const skin = useOS((s) => s.skin)
   const [res, setRes] = useState(`${window.innerWidth} × ${window.innerHeight}`)
+  /* Read once, when the window opens: the drive is a snapshot, and polling
+     the tank's save five times a second to keep a bar in sync would be
+     absurd for something nobody is watching. */
+  const [tank] = useState(loadTank)
+  const stocked = SPECIES.reduce((n, s) => n + (tank.owned[s.id] ?? 0), 0)
 
   useEffect(() => {
     const on = () => setRes(`${window.innerWidth} × ${window.innerHeight}`)
@@ -40,9 +47,9 @@ export default function Computer() {
       letter: 'Q:',
       name: 'Aquarium',
       icon: 'aquarium',
-      used: 7,
-      size: 7,
-      unit: 'inhabitants',
+      used: stocked,
+      size: Math.max(12, Math.ceil(stocked * 1.4)),
+      unit: 'creatures',
       open: () => launch('aquarium'),
     },
     {
@@ -111,6 +118,13 @@ export default function Computer() {
         <div>
           <dt>Theme</dt>
           <dd>{skin === 'luna' ? 'Windows XP' : theme === 'night' ? 'Deep Field' : 'Aero'}</dd>
+        </div>
+        <div>
+          <dt>Aquarium</dt>
+          <dd>
+            {stocked} creature{stocked === 1 ? '' : 's'} · {coinText(tank.coins)} coins ·{' '}
+            {coinText(ratePerSecond(tank.owned))}/s
+          </dd>
         </div>
         <div>
           <dt>Session storage</dt>

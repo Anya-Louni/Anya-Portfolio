@@ -19,6 +19,12 @@ import * as THREE from 'three'
 export interface FishInput {
   tex: HTMLCanvasElement | HTMLImageElement
   name?: string
+  /** how big it swims, in tank units; omitted means a plain fish */
+  size?: number
+  /** speed relative to a fish */
+  pace?: number
+  /** where in the water it keeps: 0 is the sand, 1 is the surface */
+  band?: [number, number]
 }
 
 export interface Tank {
@@ -209,6 +215,9 @@ interface Swimmer {
   vz: number
   speed: number
   scale: number
+  /** the slice of water this one keeps to */
+  lowY: number
+  highY: number
   phase: number
   wanderT: number
   target: THREE.Vector3
@@ -462,12 +471,17 @@ export function createTank(host: HTMLElement): Tank {
         side: THREE.DoubleSide,
       })
       // visitors' fish swim a little larger than the stock ones, so they read
-      const scale = item.name ? rand(3.4, 4.6) : rand(2.2, 3.6)
+      const scale = item.size ?? (item.name ? rand(3.4, 4.6) : rand(2.2, 3.6))
+      const pace = item.pace ?? 1
+      // a band of [0,1] over the water column, defaulting to most of it
+      const band = item.band ?? [0.1, 0.92]
+      const lowY = FLOOR + 1.2 + band[0] * (HALF_H - FLOOR - 2.4)
+      const highY = FLOOR + 1.2 + band[1] * (HALF_H - FLOOR - 2.4)
       const geo = new THREE.PlaneGeometry(scale, scale * 0.62, 24, 2)
       const mesh = new THREE.Mesh(geo, mat)
       mesh.position.set(
         rand(-HALF_W + 2, HALF_W - 2),
-        rand(FLOOR + 2, HALF_H - 2),
+        rand(lowY, highY),
         rand(BACK + 3, FRONT - 2),
       )
       mesh.renderOrder = 2
@@ -479,8 +493,10 @@ export function createTank(host: HTMLElement): Tank {
         vx: Math.random() < 0.5 ? -2 : 2,
         vy: 0,
         vz: 0,
-        speed: rand(2.4, 4.6),
+        speed: rand(2.4, 4.6) * pace,
         scale,
+        lowY,
+        highY,
         phase: rand(0, 6.3),
         wanderT: rand(0, 3),
         target: new THREE.Vector3(),
@@ -524,7 +540,7 @@ export function createTank(host: HTMLElement): Tank {
         s.wanderT = rand(1.6, 4.5)
         s.target.set(
           rand(-HALF_W + 2, HALF_W - 2),
-          rand(FLOOR + 2, HALF_H - 2),
+          rand(s.lowY, s.highY),
           rand(BACK + 3, FRONT - 2),
         )
       }
@@ -561,8 +577,8 @@ export function createTank(host: HTMLElement): Tank {
       const pad = s.scale * 0.5
       if (p.x < -HALF_W + pad) { p.x = -HALF_W + pad; s.vx = Math.abs(s.vx) }
       if (p.x > HALF_W - pad) { p.x = HALF_W - pad; s.vx = -Math.abs(s.vx) }
-      if (p.y < FLOOR + 1.2) { p.y = FLOOR + 1.2; s.vy = Math.abs(s.vy) }
-      if (p.y > HALF_H - 1) { p.y = HALF_H - 1; s.vy = -Math.abs(s.vy) }
+      if (p.y < s.lowY) { p.y = s.lowY; s.vy = Math.abs(s.vy) }
+      if (p.y > s.highY) { p.y = s.highY; s.vy = -Math.abs(s.vy) }
       if (p.z < BACK + 2) { p.z = BACK + 2; s.vz = Math.abs(s.vz) }
       if (p.z > FRONT - 1) { p.z = FRONT - 1; s.vz = -Math.abs(s.vz) }
 

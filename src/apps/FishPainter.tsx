@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { FISH_H, FISH_W, fishPath } from '../aquarium/silhouette'
-import { drawEye } from '../aquarium/textures'
 import { releasedFish, saveFish } from '../lib/fish'
 import { useOS } from '../os/store'
 import { sound } from '../os/sound'
@@ -142,7 +141,6 @@ export default function FishPainter() {
     ctx.strokeStyle = 'rgba(10,26,52,0.45)'
     ctx.lineWidth = 1.6
     ctx.stroke(fishPath('standard'))
-    drawEye(ctx, 'standard')
     return out.toDataURL('image/png')
   }
 

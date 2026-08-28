@@ -94,12 +94,3 @@ export function fishPath(shape: Shape = 'standard'): Path2D {
   }
   return p
 }
-
-/** Where the eye sits for each silhouette. */
-export const EYE: Record<Shape, { x: number; y: number; r: number }> = {
-  standard: { x: 98, y: 33, r: 5.4 },
-  round: { x: 98, y: 33, r: 5.6 },
-  long: { x: 106, y: 37, r: 4.4 },
-  tall: { x: 96, y: 32, r: 5.2 },
-  angel: { x: 96, y: 33, r: 5 },
-}

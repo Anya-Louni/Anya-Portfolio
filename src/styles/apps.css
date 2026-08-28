@@ -951,3 +951,167 @@
   font-size: 11px;
   color: var(--ink-soft);
 }
+
+/* ---- Aquarium: the purse and the shop ---- */
+.aq__purse {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  display: grid;
+  gap: 1px;
+  padding: 7px 12px;
+  border-radius: var(--r-sm);
+  background: rgba(6, 24, 52, 0.6);
+  box-shadow: inset 0 0 0 1px rgba(190, 230, 255, 0.22);
+  pointer-events: none;
+}
+.aq__coins {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 19px;
+  font-weight: 700;
+  color: #fff6d8;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+.aq__coins i {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 28%, #fff5c4, #f2c33c 55%, #b8830c);
+  box-shadow: inset 0 -1px 2px rgba(120, 80, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+.aq__rate {
+  font-size: 11px;
+  color: #b9d8f4;
+  font-variant-numeric: tabular-nums;
+}
+.aq__rate[data-fed='true'] { color: #a8f0b4; }
+
+.aq__welcome {
+  position: absolute;
+  left: 12px;
+  top: 72px;
+  max-width: 280px;
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px;
+  text-align: left;
+  border-radius: var(--r-sm);
+  background: rgba(6, 24, 52, 0.78);
+  box-shadow: inset 0 0 0 1px rgba(190, 230, 255, 0.24);
+  color: #dceeff;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.aq__welcome b { justify-self: start; color: #8fd0ff; font-size: 11px; }
+
+.aq__shop {
+  position: absolute;
+  top: 10px;
+  right: 0;
+  bottom: 34px;
+  display: flex;
+  align-items: flex-start;
+  transition: transform 180ms ease;
+}
+.aq__shop[data-open='false'] { transform: translateX(calc(100% - 26px)); }
+
+.aq__shopTab {
+  display: grid;
+  place-items: center;
+  gap: 4px;
+  width: 26px;
+  padding: 10px 0;
+  border-radius: var(--r-sm) 0 0 var(--r-sm);
+  background: rgba(6, 24, 52, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(190, 230, 255, 0.22);
+  color: #cfe8ff;
+  font-size: 12px;
+}
+.aq__shopTab span {
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+}
+
+.aq__shopBody {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  width: 226px;
+  height: 100%;
+  border-radius: var(--r-sm) 0 0 var(--r-sm);
+  background: rgba(6, 24, 52, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(190, 230, 255, 0.22);
+  overflow: hidden;
+}
+.aq__shopHead {
+  display: grid;
+  gap: 1px;
+  padding: 9px 11px;
+  border-bottom: 1px solid rgba(190, 230, 255, 0.16);
+}
+.aq__shopHead b { font-size: 12px; color: #eaf6ff; }
+.aq__shopHead span { font-size: 10.5px; color: #9dc2e4; }
+
+.aq__list {
+  margin: 0;
+  padding: 5px;
+  list-style: none;
+  overflow-y: auto;
+  display: grid;
+  gap: 3px;
+}
+.aq__buy {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  padding: 5px 6px;
+  text-align: left;
+  border-radius: var(--r-xs);
+  border: 1px solid transparent;
+  transition: background 110ms linear, border-color 110ms linear;
+}
+.aq__buy:hover:not(:disabled) {
+  border-color: rgba(150, 210, 255, 0.5);
+  background: rgba(120, 190, 255, 0.16);
+}
+.aq__buy:disabled { opacity: 0.42; }
+.aq__art {
+  width: 44px;
+  height: 28px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+}
+.aq__meta { display: grid; gap: 1px; min-width: 0; }
+.aq__meta > b { font-size: 12px; color: #eaf6ff; }
+.aq__meta em { font-style: normal; color: #8fd0ff; font-weight: 600; }
+.aq__blurb {
+  font-size: 10px;
+  color: #9dc2e4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.aq__nums { font-size: 10.5px; color: #ffe6a8; font-variant-numeric: tabular-nums; }
+
+.aq__shopFoot {
+  display: flex;
+  gap: 5px;
+  padding: 7px;
+  border-top: 1px solid rgba(190, 230, 255, 0.16);
+}
+.aq__shopFoot button {
+  flex: 1;
+  padding: 6px 8px;
+  font-size: 11px;
+  color: #eaf6ff;
+  border-radius: var(--r-xs);
+  border: 1px solid rgba(150, 210, 255, 0.4);
+  background: rgba(120, 190, 255, 0.16);
+}
+.aq__shopFoot button:hover { background: rgba(140, 205, 255, 0.28); }

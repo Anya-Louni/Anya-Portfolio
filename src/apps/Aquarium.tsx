@@ -1,35 +1,77 @@
 /**
  * Aquarium.
  *
- * The tank itself is WebGL and lives in ../aquarium/tank3d, imported on
- * demand: three.js is a big dependency and only visitors who actually open
- * the aquarium should pay for it. Everything else — the stock fish, the
- * visitors' drawings, the HUD — is the same as it was.
+ * The tank is WebGL and lives in ../aquarium/tank3d, imported on demand:
+ * three.js is a big dependency and only visitors who actually open the
+ * aquarium should pay for it.
+ *
+ * It is also a shop. Every creature you own earns a trickle of coins and
+ * coins buy more creatures, which is the whole loop — the tank fills up
+ * because it has been running, not because someone pressed a button. That
+ * part is yours alone and lives in this browser. The fish with names on them
+ * are the shared half: other visitors drew those, and they cost nothing.
  *
  * If WebGL is unavailable the app says so and offers the painter anyway,
  * rather than showing a black rectangle.
  */
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { STOCK, imageTexture, makeStockTexture } from '../aquarium/textures'
+import { SPECIES, coinText, makeCreatureTexture, priceOf } from '../aquarium/creatures'
+import {
+  FED_FOR, FED_MULTIPLIER, awayText, buy, catchUp, load, ratePerSecond, save, type Tank as Save,
+} from '../aquarium/economy'
 import type { FishInput, Tank } from '../aquarium/tank3d'
 import { listFish } from '../lib/fish'
 import { launch } from '../os/registry'
+import { sound } from '../os/sound'
 
 export default function Aquarium() {
   const hostRef = useRef<HTMLDivElement>(null)
   const tankRef = useRef<Tank | null>(null)
-  const stockRef = useRef<FishInput[]>([])
   const drawnRef = useRef<FishInput[]>([])
-  const [count, setCount] = useState({ drawn: 0, total: 0 })
+  const [saveState, setSaveState] = useState<Save>(load)
+  const [drawn, setDrawn] = useState(0)
   const [hover, setHover] = useState<{ name: string; x: number; y: number } | null>(null)
   const [failed, setFailed] = useState(false)
+  const [welcome, setWelcome] = useState<string | null>(null)
+  const [shopOpen, setShopOpen] = useState(true)
 
-  /** Hand the tank whatever we have: stock fish first, visitors' on top. */
-  const publish = useCallback(() => {
-    const all = [...stockRef.current, ...drawnRef.current]
-    tankRef.current?.setFish(all)
-    setCount({ drawn: drawnRef.current.length, total: all.length })
+  const caughtUp = useRef(false)
+  const saveRef = useRef(saveState)
+  saveRef.current = saveState
+
+  /* Textures are built once, and so are the data URLs the shop shows. The
+     coin count moves five times a second, so anything done inline in the
+     render happens five times a second — and toDataURL on nine canvases at
+     that rate was by a wide margin the most expensive thing in the app. */
+  const art = useMemo(() => {
+    const m: Record<string, HTMLCanvasElement> = {}
+    for (const s of SPECIES) m[s.id] = makeCreatureTexture(s)
+    return m
   }, [])
+  const artUrl = useMemo(() => {
+    const m: Record<string, string> = {}
+    for (const s of SPECIES) m[s.id] = art[s.id].toDataURL()
+    return m
+  }, [art])
+  const stock = useMemo(() => STOCK.slice(0, 4).map((p) => ({ tex: makeStockTexture(p) })), [])
+
+  const rate = ratePerSecond(saveState.owned)
+  const fed = saveState.fedUntil > Date.now() / 1000
+  const live = rate * (fed ? FED_MULTIPLIER : 1)
+
+  /** Hand the tank everything currently in it. */
+  const publish = useCallback(() => {
+    const bought: FishInput[] = []
+    for (const s of SPECIES) {
+      const n = saveRef.current.owned[s.id] ?? 0
+      // a hard ceiling per species: past this the tank is soup, not an aquarium
+      for (let i = 0; i < Math.min(n, 24); i++) {
+        bought.push({ tex: art[s.id], size: s.size, pace: s.pace, band: s.band })
+      }
+    }
+    tankRef.current?.setFish([...stock, ...bought, ...drawnRef.current])
+  }, [art, stock])
 
   const loadDrawn = useCallback(async () => {
     const rows = await listFish(40)
@@ -42,15 +84,32 @@ export default function Aquarium() {
       }
     }
     drawnRef.current = added
+    setDrawn(added.length)
     publish()
   }, [publish])
 
+  /* ---------------- boot ---------------- */
   useEffect(() => {
     const host = hostRef.current
     if (!host) return
     let dead = false
 
-    stockRef.current = STOCK.map((p) => ({ tex: makeStockTexture(p) }))
+    /* Guarded by a ref, and the catch-up stamps `seen` as it applies. React
+       mounts effects twice in development, and without both of those the time
+       spent away was paid out twice over. */
+    if (!caughtUp.current) {
+      caughtUp.current = true
+      const back = catchUp(saveRef.current)
+      if (back.coins > 0) {
+        setSaveState((t) => ({
+          ...t,
+          coins: t.coins + back.coins,
+          earned: t.earned + back.coins,
+          seen: Math.floor(Date.now() / 1000),
+        }))
+        setWelcome(`They kept working: ${coinText(back.coins)} while you were away ${awayText(back.seconds)}.`)
+      }
+    }
 
     void import('../aquarium/tank3d')
       .then(({ createTank }) => {
@@ -71,12 +130,57 @@ export default function Aquarium() {
     }
   }, [loadDrawn, publish])
 
+  /* ---------------- the trickle ---------------- */
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setSaveState((t) => {
+        const boost = t.fedUntil > Date.now() / 1000 ? FED_MULTIPLIER : 1
+        const gain = (ratePerSecond(t.owned) * boost) / 5
+        return gain ? { ...t, coins: t.coins + gain, earned: t.earned + gain } : t
+      })
+    }, 200)
+    return () => window.clearInterval(id)
+  }, [])
+
+  /* Written on a timer rather than on every tick: the coin count changes five
+     times a second and localStorage is synchronous. */
+  useEffect(() => {
+    const id = window.setInterval(() => save(saveRef.current), 4000)
+    const bye = () => save(saveRef.current)
+    window.addEventListener('pagehide', bye)
+    return () => {
+      window.clearInterval(id)
+      window.removeEventListener('pagehide', bye)
+      save(saveRef.current)
+    }
+  }, [])
+
+  const purchase = (id: string) => {
+    setSaveState((t) => {
+      const next = buy(t, id)
+      if (!next) return t
+      sound.click(0.9)
+      return next
+    })
+  }
+
+  // the tank only needs rebuilding when the count of something changes
+  const ownedKey = SPECIES.map((s) => saveState.owned[s.id] ?? 0).join(',')
+  useEffect(() => { publish() }, [ownedKey, publish])
+
+  const feed = (x: number, y: number) => {
+    tankRef.current?.feedAt(x, y)
+    setSaveState((t) => ({ ...t, fedUntil: Date.now() / 1000 + FED_FOR }))
+  }
+
+  const total = SPECIES.reduce((n, s) => n + (saveState.owned[s.id] ?? 0), 0)
+
   return (
     <div className="aq">
       <div
         className="aq__stage"
         ref={hostRef}
-        onPointerDown={(e) => tankRef.current?.feedAt(e.clientX, e.clientY)}
+        onPointerDown={(e) => feed(e.clientX, e.clientY)}
         onPointerMove={(e) => setHover(tankRef.current?.hoverAt(e.clientX, e.clientY) ?? null)}
         onPointerLeave={() => setHover(null)}
       />
@@ -95,19 +199,70 @@ export default function Aquarium() {
         </span>
       ) : null}
 
-      <div className="aq__hud">
-        <button className="aq__add" onClick={() => launch('fishpainter')}>
-          Draw a fish
-        </button>
-        <span className="aq__count">
-          {count.drawn} drawn · {count.total} swimming
+      <div className="aq__purse">
+        <span className="aq__coins">
+          <i aria-hidden />
+          {coinText(saveState.coins)}
         </span>
-        <button className="aq__refresh" onClick={() => void loadDrawn()} title="Check for new fish">
-          Refresh
-        </button>
+        <span className="aq__rate" data-fed={fed}>
+          {coinText(live)}/s{fed ? ' · well fed' : ''}
+        </span>
       </div>
 
-      <p className="aq__hint">tap the glass to feed them</p>
+      {welcome ? (
+        <button className="aq__welcome" onClick={() => setWelcome(null)}>
+          {welcome}
+          <b>Dismiss</b>
+        </button>
+      ) : null}
+
+      <aside className="aq__shop" data-open={shopOpen}>
+        <button className="aq__shopTab" onClick={() => setShopOpen((o) => !o)}>
+          {shopOpen ? '›' : '‹'}
+          <span>Shop</span>
+        </button>
+
+        <div className="aq__shopBody">
+          <header className="aq__shopHead">
+            <b>Stock the tank</b>
+            <span>{total} bought · {drawn} drawn</span>
+          </header>
+
+          <ul className="aq__list">
+            {SPECIES.map((s) => {
+              const n = saveState.owned[s.id] ?? 0
+              const price = priceOf(s, n)
+              const can = saveState.coins >= price
+              // don't show the whole ladder at once; reveal the next rung
+              const shown = n > 0 || saveState.earned >= s.base * 0.35
+              if (!shown) return null
+              return (
+                <li key={s.id} className="aq__item">
+                  <button className="aq__buy" disabled={!can} onClick={() => purchase(s.id)}>
+                    <img className="aq__art" src={artUrl[s.id]} alt="" />
+                    <span className="aq__meta">
+                      <b>{s.name}{n ? <em> ×{n}</em> : null}</b>
+                      <span className="aq__blurb">{s.blurb}</span>
+                      <span className="aq__nums">
+                        {coinText(price)} · +{coinText(s.rate)}/s
+                      </span>
+                    </span>
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+
+          <footer className="aq__shopFoot">
+            <button className="aq__add" onClick={() => launch('fishpainter')}>Draw a fish</button>
+            <button className="aq__refresh" onClick={() => void loadDrawn()} title="Check for new fish">
+              Refresh
+            </button>
+          </footer>
+        </div>
+      </aside>
+
+      <p className="aq__hint">tap the glass to feed them — they pay double for {FED_FOR}s</p>
     </div>
   )
 }

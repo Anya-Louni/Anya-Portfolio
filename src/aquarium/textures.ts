@@ -1,4 +1,4 @@
-import { EYE, FISH_H, FISH_W, fishPath, type Shape } from './silhouette'
+import { FISH_H, FISH_W, fishPath, type Shape } from './silhouette'
 
 /**
  * Stock fish are painted once into offscreen canvases and then rendered by the
@@ -99,31 +99,13 @@ export function makeStockTexture(p: Pattern): HTMLCanvasElement {
 
   ctx.restore()
 
-  // outline + eye
+  /* Outline only. The fish have no eyes, the same way the avatars have no
+     faces and the pet has no mouth — the shapes carry it, and a pair of
+     cartoon eyes on every one of them pulled the whole tank toward clip art. */
   ctx.strokeStyle = 'rgba(10,26,52,0.5)'
   ctx.lineWidth = 1.6
   ctx.stroke(path)
-  drawEye(ctx, p.shape)
   return c
-}
-
-export function drawEye(ctx: CanvasRenderingContext2D, shape: Shape) {
-  const e = EYE[shape]
-  ctx.beginPath()
-  ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2)
-  ctx.fillStyle = '#ffffff'
-  ctx.fill()
-  ctx.strokeStyle = 'rgba(10,26,52,0.45)'
-  ctx.lineWidth = 1
-  ctx.stroke()
-  ctx.beginPath()
-  ctx.arc(e.x + e.r * 0.24, e.y + e.r * 0.1, e.r * 0.5, 0, Math.PI * 2)
-  ctx.fillStyle = '#12172b'
-  ctx.fill()
-  ctx.beginPath()
-  ctx.arc(e.x + e.r * 0.05, e.y - e.r * 0.34, e.r * 0.2, 0, Math.PI * 2)
-  ctx.fillStyle = '#ffffff'
-  ctx.fill()
 }
 
 /** Turn a saved dataURL into a texture the engine can draw. */

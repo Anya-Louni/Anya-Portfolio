@@ -165,9 +165,6 @@ export function Avatar({
         <path d="M40.5 66.5 48 82l7.5-15.5c-4.5-1.6-10.5-1.6-15 0Z" fill="#f4f8fc" />
         <path d="M48 82v14" stroke={shade(shirt, -0.3)} strokeWidth="1.4" strokeLinecap="round" />
 
-        {/* neck: barely visible, and in the head's shadow */}
-        <path d="M41 54h14v10c0 4-14 4-14 0Z" fill={shade(skin, -0.22)} />
-
         {/* head. No face — the era's avatars were blank, and that is the charm */}
         <path d={HEAD} fill={`url(#${id}skin)`} />
         <ellipse cx="30.5" cy="42" rx="3" ry="4.4" fill={shade(skin, -0.08)} />

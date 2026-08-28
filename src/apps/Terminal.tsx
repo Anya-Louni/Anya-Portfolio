@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { PROJECTS, REPOS, GITHUB_PROFILE } from '../content/projects'
 import { CONTACT } from '../content/contact'
 import { APPS, launch } from '../os/registry'
+import { SPECIES, coinText } from '../aquarium/creatures'
+import { catchUp, load as loadTank, ratePerSecond } from '../aquarium/economy'
 import { useOS } from '../os/store'
 
 /**
@@ -28,7 +30,7 @@ function makeFS(): Node {
     anya: dir({
       'readme.txt': file(
         () =>
-          `This desktop is the portfolio.\n\nEverything here is real: the projects are repositories,\nthe numbers come from their own READMEs, and the games,\naquarium and paint program were written for this machine.\n\nTry: ls projects, cat projects/galaxy-compass, open aquarium`,
+          `This desktop is the portfolio.\n\nEverything here is real: the projects are repositories,\nthe numbers come from their own READMEs, and the games,\nthe aquarium and the paint program were written for this\nmachine. The tank is WebGL, it earns while you are away,\nand the fish with names on them were drawn by visitors.\n\nTry: ls projects, cat projects/galaxy-compass, tank, open aquarium`,
       ),
       projects: dir(
         Object.fromEntries(
@@ -43,6 +45,20 @@ function makeFS(): Node {
           ]),
         ),
       ),
+      'tank.txt': file(() => {
+        const t = loadTank()
+        const stocked = SPECIES.reduce((n, sp) => n + (t.owned[sp.id] ?? 0), 0)
+        return [
+          'AQUARIUM',
+          '========',
+          `balance   ${coinText(t.coins)}`,
+          `income    ${coinText(ratePerSecond(t.owned))}/s`,
+          `stocked   ${stocked}`,
+          '',
+          'This one is yours: it lives in this browser and is not',
+          'shared with anyone. The named fish are the shared half.',
+        ].join('\n')
+      }),
       repos: dir(
         Object.fromEntries(
           REPOS.map((r) => [r.name, file(() => `${r.name}\n${r.desc}\n\n${r.language}\n${r.url}`)]),
@@ -128,6 +144,7 @@ export default function Terminal() {
           'tree             show everything at once',
           'open <app>       launch an app window',
           'apps             list the apps you can open',
+          'tank             what is in the aquarium',
           'echo <text>      say it back',
           'whoami           who is signed in',
           'date             the time right now',
@@ -229,6 +246,24 @@ export default function Terminal() {
           '',
         )
         break
+
+      case 'tank': {
+        const t = loadTank()
+        const stocked = SPECIES.reduce((n, sp) => n + (t.owned[sp.id] ?? 0), 0)
+        const back = catchUp(t)
+        print(
+          `  balance   ${coinText(t.coins)} coins`,
+          `  income    ${coinText(ratePerSecond(t.owned))}/s`,
+          `  lifetime  ${coinText(t.earned)}`,
+          `  stocked   ${stocked} creature${stocked === 1 ? '' : 's'}`,
+          ...SPECIES.filter((sp) => t.owned[sp.id]).map(
+            (sp) => `    ${sp.name.padEnd(11)} x${String(t.owned[sp.id]).padEnd(4)} ${coinText(sp.rate * t.owned[sp.id])}/s`,
+          ),
+          back.coins > 0 ? `  pending   ${coinText(back.coins)} earned while away` : '',
+          '',
+        )
+        break
+      }
 
       case 'history':
         print(...[...history].reverse().map((h, i) => `  ${i + 1}  ${h}`), '')
