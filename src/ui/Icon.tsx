@@ -695,7 +695,31 @@ const registry: Record<IconName, (p: P) => ReactElement> = {
   user: User,
 }
 
+/**
+ * Icons that ship as the real Windows 7 artwork, in public/icons.
+ * Nothing beats the originals for the apps Windows itself shipped, so those
+ * are the PNGs; the names missing from this list are ours (the aquarium, the
+ * pet, the synth) and stay authored SVG.
+ *
+ * They render as <image> inside an <svg> on the same 48-unit grid rather than
+ * as a bare <img>, so every stylesheet rule that sizes `svg` inside a tile,
+ * a menu row or a taskbar slot keeps applying without change.
+ */
+const PHOTO: ReadonlySet<IconName> = new Set([
+  'computer', 'folder', 'folderProjects', 'ipod', 'explorer', 'paint',
+  'terminal', 'notes', 'guestbook', 'arcade', 'control', 'recycle', 'user',
+  'contacts', 'games', 'cards', 'spider', 'freecell', 'mine', 'notepad',
+  'calculator', 'sticky', 'camera', 'wordpad', 'snip', 'wmp',
+])
+
 export function Icon({ name, className }: { name: IconName; className?: string }) {
+  if (PHOTO.has(name)) {
+    return (
+      <svg viewBox="0 0 48 48" className={className} aria-hidden focusable="false">
+        <image href={`${import.meta.env.BASE_URL}icons/${name}.png`} width="48" height="48" />
+      </svg>
+    )
+  }
   const C = registry[name]
   return <C className={className} />
 }
