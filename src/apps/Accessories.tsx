@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useReducer, useRef, useState } from 'react'
 import { sound } from '../os/sound'
 
 /* ============================================================
@@ -67,103 +67,141 @@ export function Notepad() {
    ============================================================ */
 type Mode = 'standard' | 'scientific'
 
+/* Declared out here on purpose. A component defined inside another
+   component is a new type on every render, so React unmounts and
+   remounts the entire keypad each keypress — presses land on nodes
+   that are about to be thrown away, and the thing feels dead. */
+function Btn({ label, onClick, kind }: { label: string; onClick: () => void; kind?: string }) {
+  return (
+    <button className="calc__key" data-kind={kind} onClick={onClick}>
+      {label}
+    </button>
+  )
+}
+
+/* Every press is one reducer action.
+   With plain useState the handlers read `display` and `fresh` from the
+   render they were created in, so two clicks landing before React
+   re-renders both saw the old values — pressing 7 + 5 = gave 75. A
+   reducer always sees the current state, however fast you press. */
+interface CalcState {
+  display: string
+  acc: number | null
+  op: string | null
+  fresh: boolean
+  memory: number
+  tape: string
+}
+
+type CalcAction =
+  | { t: 'digit'; d: string }
+  | { t: 'op'; op: string }
+  | { t: 'equals' }
+  | { t: 'unary'; fn: (n: number) => number; label: string }
+  | { t: 'set'; value: number }
+  | { t: 'clear' }
+  | { t: 'clearEntry' }
+  | { t: 'back' }
+  | { t: 'sign' }
+  | { t: 'mem'; how: 'clear' | 'recall' | 'add' | 'sub' | 'store' }
+
+const INITIAL: CalcState = { display: '0', acc: null, op: null, fresh: true, memory: 0, tape: '' }
+
+const ERR = 'Cannot divide by zero'
+
+function show(n: number) {
+  if (!isFinite(n)) return ERR
+  return Math.abs(n) >= 1e15 || (Math.abs(n) < 1e-9 && n !== 0)
+    ? n.toExponential(9)
+    : String(+n.toPrecision(14))
+}
+const num = (s: string) => (s === ERR ? 0 : parseFloat(s) || 0)
+
+function apply(a: number, b: number, o: string) {
+  switch (o) {
+    case '+': return a + b
+    case '−': return a - b
+    case '×': return a * b
+    case '÷': return b === 0 ? Infinity : a / b
+    case 'xʸ': return Math.pow(a, b)
+    default: return b
+  }
+}
+
+function reduce(s: CalcState, a: CalcAction): CalcState {
+  const value = num(s.display)
+  switch (a.t) {
+    case 'digit': {
+      if (s.display === ERR) return { ...s, display: a.d === '.' ? '0.' : a.d, fresh: false }
+      if (s.fresh) return { ...s, display: a.d === '.' ? '0.' : a.d, fresh: false }
+      if (a.d === '.' && s.display.includes('.')) return s
+      if (s.display.length > 16) return s
+      return { ...s, display: s.display === '0' && a.d !== '.' ? a.d : s.display + a.d }
+    }
+    case 'op': {
+      const result = s.acc !== null && s.op && !s.fresh ? apply(s.acc, value, s.op) : value
+      return { ...s, acc: result, display: show(result), op: a.op, fresh: true, tape: `${show(result)} ${a.op}` }
+    }
+    case 'equals': {
+      if (s.acc === null || !s.op) return s
+      const result = apply(s.acc, value, s.op)
+      return {
+        ...s,
+        display: show(result),
+        tape: `${show(s.acc)} ${s.op} ${show(value)} =`,
+        acc: null,
+        op: null,
+        fresh: true,
+      }
+    }
+    case 'unary':
+      return { ...s, display: show(a.fn(value)), tape: `${a.label}(${show(value)})`, fresh: true }
+    case 'set':
+      return { ...s, display: show(a.value), fresh: true }
+    case 'sign':
+      return { ...s, display: show(-value) }
+    case 'back':
+      return { ...s, display: s.display.length > 1 ? s.display.slice(0, -1) : '0' }
+    case 'clearEntry':
+      return { ...s, display: '0', fresh: true }
+    case 'clear':
+      return { ...INITIAL, memory: s.memory }
+    case 'mem':
+      switch (a.how) {
+        case 'clear': return { ...s, memory: 0 }
+        case 'recall': return { ...s, display: show(s.memory), fresh: true }
+        case 'add': return { ...s, memory: s.memory + value }
+        case 'sub': return { ...s, memory: s.memory - value }
+        case 'store': return { ...s, memory: value }
+      }
+  }
+}
+
 export function Calculator() {
   const [mode, setMode] = useState<Mode>('standard')
-  const [display, setDisplay] = useState('0')
-  const [acc, setAcc] = useState<number | null>(null)
-  const [op, setOp] = useState<string | null>(null)
-  const [fresh, setFresh] = useState(true)
-  const [memory, setMemory] = useState(0)
-  const [tape, setTape] = useState('')
+  const [st, send] = useReducer(reduce, INITIAL)
 
-  const value = parseFloat(display.replace(/,/g, '')) || 0
-  const show = (n: number) => {
-    if (!isFinite(n)) return 'Cannot divide by zero'
-    const s = Math.abs(n) >= 1e15 || (Math.abs(n) < 1e-9 && n !== 0) ? n.toExponential(9) : String(+n.toPrecision(14))
-    return s
-  }
-
-  const digit = (d: string) => {
-    sound.click(1.2)
-    if (display === 'Cannot divide by zero') {
-      setDisplay(d)
-      setFresh(false)
-      return
-    }
-    if (fresh) {
-      setDisplay(d === '.' ? '0.' : d)
-      setFresh(false)
-      return
-    }
-    if (d === '.' && display.includes('.')) return
-    setDisplay(display.length > 16 ? display : display + d)
-  }
-
-  const apply = (a: number, b: number, o: string) => {
-    switch (o) {
-      case '+': return a + b
-      case '−': return a - b
-      case '×': return a * b
-      case '÷': return b === 0 ? Infinity : a / b
-      case 'xʸ': return Math.pow(a, b)
-      default: return b
-    }
-  }
-
-  const operate = (next: string) => {
-    sound.click(0.95)
-    const result = acc !== null && op ? apply(acc, value, op) : value
-    setAcc(result)
-    setDisplay(show(result))
-    setOp(next)
-    setFresh(true)
-    setTape(`${show(result)} ${next}`)
-  }
-
-  const equals = () => {
-    sound.click(0.8)
-    if (acc === null || !op) return
-    const result = apply(acc, value, op)
-    setTape(`${show(acc)} ${op} ${show(value)} =`)
-    setDisplay(show(result))
-    setAcc(null)
-    setOp(null)
-    setFresh(true)
-  }
-
-  const unary = (fn: (n: number) => number, label: string) => {
-    sound.click(1.3)
-    const r = fn(value)
-    setTape(`${label}(${show(value)})`)
-    setDisplay(show(r))
-    setFresh(true)
-  }
-
-  const clearAll = () => {
-    setDisplay('0'); setAcc(null); setOp(null); setFresh(true); setTape('')
-    sound.click(0.7)
-  }
+  const digit = (d: string) => { sound.click(1.2); send({ t: 'digit', d }) }
+  const operate = (op: string) => { sound.click(0.95); send({ t: 'op', op }) }
+  const equals = () => { sound.click(0.8); send({ t: 'equals' }) }
+  const unary = (fn: (n: number) => number, label: string) => { sound.click(1.3); send({ t: 'unary', fn, label }) }
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return
       if (/^[0-9.]$/.test(e.key)) digit(e.key)
       else if (e.key === '+') operate('+')
       else if (e.key === '-') operate('−')
       else if (e.key === '*') operate('×')
       else if (e.key === '/') { e.preventDefault(); operate('÷') }
       else if (e.key === 'Enter' || e.key === '=') { e.preventDefault(); equals() }
-      else if (e.key === 'Escape') clearAll()
-      else if (e.key === 'Backspace') setDisplay((d) => (d.length > 1 ? d.slice(0, -1) : '0'))
+      else if (e.key === 'Escape') send({ t: 'clear' })
+      else if (e.key === 'Backspace') send({ t: 'back' })
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  })
-
-  const Btn = ({ label, onClick, kind }: { label: string; onClick: () => void; kind?: string }) => (
-    <button className="calc__key" data-kind={kind} onClick={onClick}>
-      {label}
-    </button>
-  )
+  }, [])
 
   return (
     <div className="calc">
@@ -174,20 +212,20 @@ export function Calculator() {
           </button>
         ))}
         <span className="game__spacer" />
-        <span className="calc__mem">{memory !== 0 ? 'M' : ''}</span>
+        <span className="calc__mem">{st.memory !== 0 ? 'M' : ''}</span>
       </div>
 
       <div className="calc__screen">
-        <span className="calc__tape">{tape}</span>
-        <span className="calc__display">{display}</span>
+        <span className="calc__tape">{st.tape}</span>
+        <span className="calc__display">{st.display}</span>
       </div>
 
       <div className="calc__memRow">
-        <Btn label="MC" onClick={() => setMemory(0)} kind="mem" />
-        <Btn label="MR" onClick={() => { setDisplay(show(memory)); setFresh(true) }} kind="mem" />
-        <Btn label="M+" onClick={() => setMemory(memory + value)} kind="mem" />
-        <Btn label="M−" onClick={() => setMemory(memory - value)} kind="mem" />
-        <Btn label="MS" onClick={() => setMemory(value)} kind="mem" />
+        <Btn label="MC" onClick={() => send({ t: 'mem', how: 'clear' })} kind="mem" />
+        <Btn label="MR" onClick={() => send({ t: 'mem', how: 'recall' })} kind="mem" />
+        <Btn label="M+" onClick={() => send({ t: 'mem', how: 'add' })} kind="mem" />
+        <Btn label="M−" onClick={() => send({ t: 'mem', how: 'sub' })} kind="mem" />
+        <Btn label="MS" onClick={() => send({ t: 'mem', how: 'store' })} kind="mem" />
       </div>
 
       {mode === 'scientific' ? (
@@ -197,10 +235,19 @@ export function Calculator() {
           <Btn label="tan" onClick={() => unary(Math.tan, 'tan')} />
           <Btn label="ln" onClick={() => unary(Math.log, 'ln')} />
           <Btn label="log" onClick={() => unary(Math.log10, 'log')} />
-          <Btn label="n!" onClick={() => unary((n) => { let r = 1; for (let i = 2; i <= Math.min(170, Math.floor(n)); i++) r *= i; return r }, 'fact')} />
+          <Btn
+            label="n!"
+            onClick={() =>
+              unary((n) => {
+                let r = 1
+                for (let i = 2; i <= Math.min(170, Math.floor(n)); i++) r *= i
+                return r
+              }, 'fact')
+            }
+          />
           <Btn label="xʸ" onClick={() => operate('xʸ')} />
-          <Btn label="π" onClick={() => { setDisplay(show(Math.PI)); setFresh(true) }} />
-          <Btn label="e" onClick={() => { setDisplay(show(Math.E)); setFresh(true) }} />
+          <Btn label="π" onClick={() => send({ t: 'set', value: Math.PI })} />
+          <Btn label="e" onClick={() => send({ t: 'set', value: Math.E })} />
           <Btn label="1/x" onClick={() => unary((n) => 1 / n, '1/')} />
         </div>
       ) : null}
@@ -208,8 +255,8 @@ export function Calculator() {
       <div className="calc__pad">
         <Btn label="%" onClick={() => unary((n) => n / 100, 'pct')} kind="fn" />
         <Btn label="√" onClick={() => unary(Math.sqrt, '√')} kind="fn" />
-        <Btn label="CE" onClick={() => setDisplay('0')} kind="fn" />
-        <Btn label="C" onClick={clearAll} kind="fn" />
+        <Btn label="CE" onClick={() => send({ t: 'clearEntry' })} kind="fn" />
+        <Btn label="C" onClick={() => { sound.click(0.7); send({ t: 'clear' }) }} kind="fn" />
 
         <Btn label="7" onClick={() => digit('7')} />
         <Btn label="8" onClick={() => digit('8')} />
@@ -226,7 +273,7 @@ export function Calculator() {
         <Btn label="3" onClick={() => digit('3')} />
         <Btn label="−" onClick={() => operate('−')} kind="op" />
 
-        <Btn label="±" onClick={() => setDisplay(show(-value))} />
+        <Btn label="±" onClick={() => send({ t: 'sign' })} />
         <Btn label="0" onClick={() => digit('0')} />
         <Btn label="." onClick={() => digit('.')} />
         <Btn label="+" onClick={() => operate('+')} kind="op" />

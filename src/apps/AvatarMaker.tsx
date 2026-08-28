@@ -13,63 +13,24 @@ import {
 import { sound } from '../os/sound'
 import { useOS } from '../os/store'
 
-const HAIR = ['Short', 'Long', 'Buns', 'Swept']
-const EYES = ['Round', 'Happy', 'Wide']
-const ACCESSORY = ['None', 'Glasses', 'Headphones', 'Sparkle']
-
-export default function AvatarMaker() {
-  const saved = useAvatar()
-  const [spec, setSpec] = useState<AvatarSpec>(saved)
-  const pushToast = useOS((s) => s.pushToast)
-
-  /* every change lands immediately — the sign-in tile, Start menu and
-     Contacts all read the same store, so they update as you click */
-  useEffect(() => {
-    saveAvatar(spec)
-  }, [spec])
-
-  const set = <K extends keyof AvatarSpec>(k: K, v: AvatarSpec[K]) => {
-    setSpec((s) => ({ ...s, [k]: v }))
-    sound.click(1.2)
-  }
-
-  const randomise = () => {
-    setSpec({
-      skin: Math.floor(Math.random() * SKIN.length),
-      hair: Math.floor(Math.random() * HAIR.length),
-      hairColour: Math.floor(Math.random() * HAIR_COLOUR.length),
-      eyes: Math.floor(Math.random() * EYES.length),
-      shirt: Math.floor(Math.random() * SHIRT.length),
-      bg: Math.floor(Math.random() * BG.length),
-      accessory: Math.floor(Math.random() * ACCESSORY.length),
-    })
-    sound.click(0.9)
-  }
-
-  const confirm = () => {
-    sound.chime()
-    pushToast({
-      icon: 'user',
-      title: 'That is you now',
-      body: 'It is already on the Start menu and the sign-in screen.',
-    })
-  }
-
-  const Row = ({
-    label,
-    count,
-    value,
-    onPick,
-    swatches,
-    names,
-  }: {
-    label: string
-    count: number
-    value: number
-    onPick: (n: number) => void
-    swatches?: string[] | [string, string][]
-    names?: string[]
-  }) => (
+/* Out here so React keeps the same component type between renders —
+   defined inline it remounts every row on every click. */
+function Row({
+  label,
+  count,
+  value,
+  onPick,
+  swatches,
+  names,
+}: {
+  label: string
+  count: number
+  value: number
+  onPick: (n: number) => void
+  swatches?: string[] | [string, string][]
+  names?: string[]
+}) {
+  return (
     <div className="am__row">
       <span className="am__label">{label}</span>
       <div className="am__opts">
@@ -92,6 +53,48 @@ export default function AvatarMaker() {
       </div>
     </div>
   )
+}
+
+const HAIR = ['Short', 'Long', 'Buns', 'Swept']
+const ACCESSORY = ['None', 'Visor', 'Headphones', 'Sparkle']
+
+export default function AvatarMaker() {
+  const saved = useAvatar()
+  const [spec, setSpec] = useState<AvatarSpec>(saved)
+  const pushToast = useOS((s) => s.pushToast)
+
+  /* every change lands immediately — the sign-in tile, Start menu and
+     Contacts all read the same store, so they update as you click */
+  useEffect(() => {
+    saveAvatar(spec)
+  }, [spec])
+
+  const set = <K extends keyof AvatarSpec>(k: K, v: AvatarSpec[K]) => {
+    setSpec((s) => ({ ...s, [k]: v }))
+    sound.click(1.2)
+  }
+
+  const randomise = () => {
+    setSpec({
+      skin: Math.floor(Math.random() * SKIN.length),
+      hair: Math.floor(Math.random() * HAIR.length),
+      hairColour: Math.floor(Math.random() * HAIR_COLOUR.length),
+      eyes: 0,
+      shirt: Math.floor(Math.random() * SHIRT.length),
+      bg: Math.floor(Math.random() * BG.length),
+      accessory: Math.floor(Math.random() * ACCESSORY.length),
+    })
+    sound.click(0.9)
+  }
+
+  const confirm = () => {
+    sound.chime()
+    pushToast({
+      icon: 'user',
+      title: 'That is you now',
+      body: 'It is already on the Start menu and the sign-in screen.',
+    })
+  }
 
   return (
     <div className="am">
@@ -120,7 +123,6 @@ export default function AvatarMaker() {
           onPick={(n) => set('hairColour', n)}
           swatches={HAIR_COLOUR}
         />
-        <Row label="Eyes" count={EYES.length} value={spec.eyes} onPick={(n) => set('eyes', n)} names={EYES} />
         <Row label="Shirt" count={SHIRT.length} value={spec.shirt} onPick={(n) => set('shirt', n)} swatches={SHIRT} />
         <Row
           label="Extras"

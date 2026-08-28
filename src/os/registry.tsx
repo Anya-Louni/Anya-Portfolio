@@ -23,6 +23,8 @@ import ContactsApp from '../apps/Contacts'
 import AvatarMaker from '../apps/AvatarMaker'
 import PhotoBooth from '../apps/PhotoBooth'
 import WordPad from '../apps/WordPad'
+import Snipping from '../apps/Snipping'
+import MediaPlayer from '../apps/MediaPlayer'
 import { byslug } from '../content/projects'
 
 export interface AppDef {
@@ -197,6 +199,28 @@ export const APPS: AppDef[] = [
     minW: 520,
     minH: 400,
     Component: WordPad,
+  },
+  {
+    id: 'wmp',
+    title: 'Windows Media Player',
+    icon: 'wmp',
+    blurb: 'Music, with the visualiser',
+    w: 780,
+    h: 620,
+    minW: 520,
+    minH: 460,
+    Component: MediaPlayer,
+  },
+  {
+    id: 'snip',
+    title: 'Snipping Tool',
+    icon: 'snip',
+    blurb: 'Grab a piece of the screen',
+    w: 620,
+    h: 480,
+    minW: 380,
+    minH: 300,
+    Component: Snipping,
   },
   {
     id: 'notepad',

@@ -37,6 +37,8 @@ export type IconName =
   | 'synth'
   | 'camera'
   | 'wordpad'
+  | 'snip'
+  | 'wmp'
   | 'contacts'
 
 export function IconDefs() {
@@ -635,7 +637,33 @@ const WordPadIcon = ({ className }: P) =>
     className,
   )
 
+const Snip = ({ className }: P) =>
+  box(
+    <>
+      <rect x="6" y="10" width="36" height="26" rx="3" fill="#ffffff" stroke="#5a6b82" strokeWidth="1" strokeDasharray="4 3" />
+      <path d="M7 11h34v5c-8 2.2-26 2.2-34 0Z" fill="url(#gSheen)" />
+      <path d="M14 40 30 14" stroke="#5a6b82" strokeWidth="2.4" strokeLinecap="round" />
+      <path d="M34 40 18 14" stroke="#5a6b82" strokeWidth="2.4" strokeLinecap="round" />
+      <circle cx="14" cy="41" r="4.4" fill="url(#gOrange)" stroke="#8f3a05" strokeWidth="1" />
+      <circle cx="34" cy="41" r="4.4" fill="url(#gOrange)" stroke="#8f3a05" strokeWidth="1" />
+    </>,
+    className,
+  )
+
+const Wmp = ({ className }: P) =>
+  box(
+    <>
+      <circle cx="24" cy="24" r="19" fill="url(#gOrange)" stroke="#8f3a05" strokeWidth="1" />
+      <circle cx="24" cy="24" r="14" fill="url(#gSlate)" />
+      <path d="M8 15c5-6 27-6 32 0-4 7-28 7-32 0Z" fill="url(#gSheen)" />
+      <path d="M20 17.5 33 24l-13 6.5Z" fill="#ffffff" />
+    </>,
+    className,
+  )
+
 const registry: Record<IconName, (p: P) => ReactElement> = {
+  snip: Snip,
+  wmp: Wmp,
   camera: Camera,
   wordpad: WordPadIcon,
   synth: SynthIcon,

@@ -755,3 +755,33 @@
   font-size: 11.5px;
   white-space: nowrap;
 }
+
+/* brush swatches, the way Paint shows its brushes */
+.pt__grid--brushes {
+  grid-template-columns: repeat(6, auto);
+  gap: 3px;
+}
+.pt__brush {
+  width: 38px;
+  height: 38px;
+  padding: 2px;
+  border-radius: var(--r-xs);
+  border: 1px solid var(--chrome-400);
+  background: linear-gradient(180deg, #ffffff, var(--chrome-200));
+  box-shadow: var(--sh-inset-top);
+  transition: border-color 110ms linear, box-shadow 110ms linear;
+}
+.pt__brush:hover {
+  border-color: #3c7fb1;
+}
+.pt__brush[data-on='true'] {
+  border-color: #1b7fbe;
+  box-shadow: inset 0 0 0 2px #a3d6f6, 0 0 0 1px #1b7fbe;
+}
+.pt__sample {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  image-rendering: auto;
+}

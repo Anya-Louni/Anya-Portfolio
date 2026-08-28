@@ -194,6 +194,7 @@ function ClockGadget() {
 
 /* ---------------- weather ---------------- */
 const CITIES = [
+  { name: 'Algiers', lat: 36.75, lon: 3.06 },
   { name: 'London', lat: 51.51, lon: -0.13 },
   { name: 'Paris', lat: 48.86, lon: 2.35 },
   { name: 'New York', lat: 40.71, lon: -74.01 },

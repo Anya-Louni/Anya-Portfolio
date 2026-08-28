@@ -175,43 +175,22 @@ export function Avatar({
           />
         ) : null}
 
-        {/* eyes */}
-        {a.eyes % 3 === 0 ? (
-          <>
-            <ellipse cx="40" cy="43" rx="3.1" ry="3.7" fill="#1a1a26" />
-            <ellipse cx="56" cy="43" rx="3.1" ry="3.7" fill="#1a1a26" />
-            <circle cx="41.2" cy="41.6" r="1.1" fill="#fff" />
-            <circle cx="57.2" cy="41.6" r="1.1" fill="#fff" />
-          </>
-        ) : null}
-        {a.eyes % 3 === 1 ? (
-          <>
-            <path d="M36.5 43.5q3.5-4 7 0" fill="none" stroke="#1a1a26" strokeWidth="2.2" strokeLinecap="round" />
-            <path d="M52.5 43.5q3.5-4 7 0" fill="none" stroke="#1a1a26" strokeWidth="2.2" strokeLinecap="round" />
-          </>
-        ) : null}
-        {a.eyes % 3 === 2 ? (
-          <>
-            <ellipse cx="40" cy="43" rx="4" ry="4.4" fill="#fff" stroke="#1a1a26" strokeWidth="1" />
-            <ellipse cx="56" cy="43" rx="4" ry="4.4" fill="#fff" stroke="#1a1a26" strokeWidth="1" />
-            <circle cx="40.8" cy="43.4" r="2.1" fill="#2f6fd8" />
-            <circle cx="56.8" cy="43.4" r="2.1" fill="#2f6fd8" />
-            <circle cx="41.6" cy="42.2" r="0.8" fill="#fff" />
-            <circle cx="57.6" cy="42.2" r="0.8" fill="#fff" />
-          </>
-        ) : null}
-
-        {/* mouth + blush */}
-        <path d="M43 52q5 4 10 0" fill="none" stroke="#8c4a4a" strokeWidth="1.8" strokeLinecap="round" />
-        <ellipse cx="33" cy="48" rx="4" ry="2.4" fill="#ff9db0" opacity="0.4" />
-        <ellipse cx="63" cy="48" rx="4" ry="2.4" fill="#ff9db0" opacity="0.4" />
+        {/* No face. The era's avatars were glossy blank mannequins and
+            that is the whole charm — the light does the work. */}
+        <ellipse cx="42" cy="34" rx="9" ry="6" fill="#ffffff" opacity="0.32" />
+        <ellipse cx="48" cy="60" rx="13" ry="4" fill="#ffffff" opacity="0.12" />
 
         {/* accessories */}
         {a.accessory % 4 === 1 ? (
-          <g fill="none" stroke="#2b3550" strokeWidth="2">
-            <circle cx="40" cy="43" r="7.5" fill="#bfe6ff" fillOpacity="0.42" />
-            <circle cx="56" cy="43" r="7.5" fill="#bfe6ff" fillOpacity="0.42" />
-            <path d="M47.5 43h1M25 41l7.5 1M71 41l-7.5 1" />
+          <g>
+            <path
+              d="M29 40q19 7 38 0v6q-19 8-38 0Z"
+              fill="#7fdcff"
+              fillOpacity="0.65"
+              stroke="#2b3550"
+              strokeWidth="1.4"
+            />
+            <path d="M31 41q17 6 34 0v2q-17 6-34 0Z" fill="#ffffff" opacity="0.5" />
           </g>
         ) : null}
         {a.accessory % 4 === 2 ? (

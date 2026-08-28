@@ -50,6 +50,216 @@ const PALETTE = [
 
 const CONFETTI = ['#ff5252', '#ffb02e', '#ffe14d', '#5ad46a', '#3ab7ff', '#a86bff', '#ff77c8']
 
+/* ---------------- stamps ----------------
+   Module scope on purpose: the brush swatches in the ribbon paint their
+   preview with the same routine that paints the canvas, so what you see
+   on the button is literally what the brush does. */
+
+function star(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, points = 5) {
+  ctx.beginPath()
+  for (let i = 0; i < points * 2; i++) {
+    const rad = i % 2 === 0 ? r : r * 0.44
+    const a = (i / (points * 2)) * Math.PI * 2 - Math.PI / 2
+    const px = x + Math.cos(a) * rad
+    const py = y + Math.sin(a) * rad
+    i ? ctx.lineTo(px, py) : ctx.moveTo(px, py)
+  }
+  ctx.closePath()
+  ctx.fill()
+}
+
+function heart(ctx: CanvasRenderingContext2D, x: number, y: number, r: number) {
+  ctx.beginPath()
+  ctx.moveTo(x, y + r * 0.75)
+  ctx.bezierCurveTo(x - r * 1.4, y - r * 0.4, x - r * 0.5, y - r * 1.2, x, y - r * 0.4)
+  ctx.bezierCurveTo(x + r * 0.5, y - r * 1.2, x + r * 1.4, y - r * 0.4, x, y + r * 0.75)
+  ctx.closePath()
+  ctx.fill()
+}
+
+function bubble(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, col: string) {
+  ctx.beginPath()
+  ctx.arc(x, y, r, 0, Math.PI * 2)
+  ctx.fillStyle = col + '33'
+  ctx.fill()
+  ctx.strokeStyle = col
+  ctx.lineWidth = 1.4
+  ctx.stroke()
+  ctx.beginPath()
+  ctx.arc(x - r * 0.32, y - r * 0.34, Math.max(1, r * 0.22), 0, Math.PI * 2)
+  ctx.fillStyle = '#ffffff'
+  ctx.fill()
+}
+
+let hue = 0
+
+function stamp(
+  ctx: CanvasRenderingContext2D,
+  brush: Brush,
+  from: { x: number; y: number },
+  to: { x: number; y: number },
+  c: string,
+  s: number,
+) {
+  const dist = Math.hypot(to.x - from.x, to.y - from.y)
+  const rnd = (a: number, b: number) => a + Math.random() * (b - a)
+
+  ctx.save()
+  switch (brush) {
+    case 'airbrush': {
+      ctx.fillStyle = c
+      for (let i = 0; i < s * 3; i++) {
+        const a = Math.random() * Math.PI * 2
+        const d = Math.random() * s * 1.8
+        ctx.globalAlpha = 0.18
+        ctx.fillRect(to.x + Math.cos(a) * d, to.y + Math.sin(a) * d, 1.2, 1.2)
+      }
+      break
+    }
+    case 'calligraphy': {
+      ctx.strokeStyle = c
+      ctx.lineWidth = s
+      ctx.lineCap = 'butt'
+      const ang = 0.7
+      ctx.beginPath()
+      ctx.moveTo(from.x - Math.cos(ang) * s, from.y - Math.sin(ang) * s)
+      ctx.lineTo(to.x + Math.cos(ang) * s, to.y + Math.sin(ang) * s)
+      ctx.stroke()
+      break
+    }
+    case 'marker': {
+      ctx.globalAlpha = 0.35
+      ctx.globalCompositeOperation = 'multiply'
+      ctx.strokeStyle = c
+      ctx.lineWidth = s * 2.2
+      ctx.beginPath()
+      ctx.moveTo(from.x, from.y)
+      ctx.lineTo(to.x, to.y)
+      ctx.stroke()
+      break
+    }
+    case 'crayon': {
+      ctx.strokeStyle = c
+      ctx.lineWidth = 1.4
+      for (let i = 0; i < s * 2.4; i++) {
+        ctx.globalAlpha = rnd(0.08, 0.34)
+        const j = () => rnd(-s, s)
+        ctx.beginPath()
+        ctx.moveTo(from.x + j(), from.y + j())
+        ctx.lineTo(to.x + j(), to.y + j())
+        ctx.stroke()
+      }
+      break
+    }
+    case 'watercolour': {
+      ctx.globalAlpha = 0.1
+      ctx.fillStyle = c
+      for (let i = 0; i < 4; i++) {
+        ctx.beginPath()
+        ctx.arc(to.x + rnd(-s, s), to.y + rnd(-s, s), s * rnd(1.1, 2.4), 0, Math.PI * 2)
+        ctx.fill()
+      }
+      break
+    }
+    case 'bubbles': {
+      if (dist < s * 1.4 && Math.random() > 0.35) break
+      bubble(ctx, to.x + rnd(-s, s), to.y + rnd(-s, s), rnd(s * 0.6, s * 1.6), c)
+      break
+    }
+    case 'stars': {
+      if (dist < s * 1.2 && Math.random() > 0.4) break
+      ctx.fillStyle = c
+      ctx.save()
+      ctx.translate(to.x + rnd(-s, s), to.y + rnd(-s, s))
+      ctx.rotate(Math.random() * Math.PI * 2)
+      star(ctx, 0, 0, rnd(s * 0.7, s * 1.5))
+      ctx.restore()
+      break
+    }
+    case 'sparkle': {
+      ctx.fillStyle = c
+      ctx.save()
+      ctx.translate(to.x + rnd(-s, s), to.y + rnd(-s, s))
+      ctx.rotate(Math.random() * Math.PI)
+      star(ctx, 0, 0, rnd(s * 0.6, s * 1.4), 4)
+      ctx.restore()
+      for (let i = 0; i < 3; i++) {
+        ctx.globalAlpha = rnd(0.4, 1)
+        ctx.beginPath()
+        ctx.arc(to.x + rnd(-s * 2, s * 2), to.y + rnd(-s * 2, s * 2), rnd(0.7, 1.8), 0, Math.PI * 2)
+        ctx.fill()
+      }
+      break
+    }
+    case 'hearts': {
+      if (dist < s * 1.3 && Math.random() > 0.35) break
+      ctx.fillStyle = c
+      ctx.save()
+      ctx.translate(to.x + rnd(-s, s), to.y + rnd(-s, s))
+      ctx.rotate(rnd(-0.5, 0.5))
+      heart(ctx, 0, 0, rnd(s * 0.6, s * 1.3))
+      ctx.restore()
+      break
+    }
+    case 'confetti': {
+      for (let i = 0; i < 2; i++) {
+        ctx.save()
+        ctx.translate(to.x + rnd(-s * 1.8, s * 1.8), to.y + rnd(-s * 1.8, s * 1.8))
+        ctx.rotate(Math.random() * Math.PI)
+        ctx.fillStyle = CONFETTI[Math.floor(Math.random() * CONFETTI.length)]
+        ctx.fillRect(0, 0, rnd(s * 0.4, s), rnd(s * 0.2, s * 0.5))
+        ctx.restore()
+      }
+      break
+    }
+    case 'rainbow': {
+      hue = (hue + 4) % 360
+      ctx.strokeStyle = `hsl(${hue} 90% 55%)`
+      ctx.lineWidth = s * 1.6
+      ctx.beginPath()
+      ctx.moveTo(from.x, from.y)
+      ctx.lineTo(to.x, to.y)
+      ctx.stroke()
+      break
+    }
+    default: {
+      ctx.strokeStyle = c
+      ctx.lineWidth = s
+      ctx.beginPath()
+      ctx.moveTo(from.x, from.y)
+      ctx.lineTo(to.x, to.y)
+      ctx.stroke()
+    }
+  }
+  ctx.restore()
+}
+
+/** The swatch on the ribbon button, drawn with the real brush. */
+function BrushSample({ brush }: { brush: Brush }) {
+  const ref = useRef<HTMLCanvasElement>(null)
+  useEffect(() => {
+    const c = ref.current
+    if (!c) return
+    const w = (c.width = 76)
+    const h = (c.height = 76)
+    const ctx = c.getContext('2d')
+    if (!ctx) return
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(0, 0, w, h)
+    ctx.lineCap = 'round'
+    ctx.lineJoin = 'round'
+    // a diagonal sweep, the way Paint samples its brushes
+    let prev = { x: 12, y: 60 }
+    for (let i = 1; i <= 26; i++) {
+      const t = i / 26
+      const pt = { x: 12 + t * 52, y: 60 - t * 44 + Math.sin(t * 5) * 5 }
+      stamp(ctx, brush, prev, pt, '#1b2a3d', 7)
+      prev = pt
+    }
+  }, [brush])
+  return <canvas ref={ref} className="pt__sample" aria-hidden />
+}
+
 export default function Paint() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null)
@@ -59,7 +269,6 @@ export default function Paint() {
   const snapshot = useRef<ImageData | null>(null)
   const undoStack = useRef<ImageData[]>([])
   const redoStack = useRef<ImageData[]>([])
-  const hue = useRef(0)
 
   const [tool, setTool] = useState<Tool>('brush')
   const [brush, setBrush] = useState<Brush>('round')
@@ -71,54 +280,9 @@ export default function Paint() {
   const W = 900
   const H = 560
 
-  /* the canvas is never blank on first open */
   const seed = useCallback((ctx: CanvasRenderingContext2D) => {
     ctx.fillStyle = '#ffffff'
     ctx.fillRect(0, 0, W, H)
-
-    // a horizon and a couple of hills, the way everyone's first Paint drawing goes
-    const sky = ctx.createLinearGradient(0, 0, 0, H * 0.62)
-    sky.addColorStop(0, '#9fd7ff')
-    sky.addColorStop(1, '#e6f6ff')
-    ctx.fillStyle = sky
-    ctx.fillRect(0, 0, W, H * 0.62)
-
-    ctx.fillStyle = '#8fd46a'
-    ctx.beginPath()
-    ctx.moveTo(0, H * 0.62)
-    ctx.quadraticCurveTo(W * 0.3, H * 0.5, W * 0.62, H * 0.62)
-    ctx.quadraticCurveTo(W * 0.82, H * 0.7, W, H * 0.6)
-    ctx.lineTo(W, H)
-    ctx.lineTo(0, H)
-    ctx.closePath()
-    ctx.fill()
-
-    ctx.fillStyle = '#ffe14d'
-    ctx.beginPath()
-    ctx.arc(W * 0.82, H * 0.18, 44, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.strokeStyle = '#ffd000'
-    ctx.lineWidth = 3
-    for (let i = 0; i < 12; i++) {
-      const a = (i / 12) * Math.PI * 2
-      ctx.beginPath()
-      ctx.moveTo(W * 0.82 + Math.cos(a) * 54, H * 0.18 + Math.sin(a) * 54)
-      ctx.lineTo(W * 0.82 + Math.cos(a) * 68, H * 0.18 + Math.sin(a) * 68)
-      ctx.stroke()
-    }
-
-    ctx.fillStyle = '#ffffff'
-    for (const [cx, cy, s] of [
-      [150, 90, 1],
-      [330, 140, 0.7],
-      [560, 80, 0.85],
-    ] as [number, number, number][]) {
-      ctx.beginPath()
-      ctx.arc(cx, cy, 26 * s, 0, Math.PI * 2)
-      ctx.arc(cx + 26 * s, cy + 6 * s, 20 * s, 0, Math.PI * 2)
-      ctx.arc(cx - 24 * s, cy + 8 * s, 17 * s, 0, Math.PI * 2)
-      ctx.fill()
-    }
   }, [])
 
   useEffect(() => {
@@ -149,184 +313,11 @@ export default function Paint() {
     redoStack.current = []
   }
 
-  /* ---------------- stamps ---------------- */
-
-  function star(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, points = 5) {
-    ctx.beginPath()
-    for (let i = 0; i < points * 2; i++) {
-      const rad = i % 2 === 0 ? r : r * 0.44
-      const a = (i / (points * 2)) * Math.PI * 2 - Math.PI / 2
-      const px = x + Math.cos(a) * rad
-      const py = y + Math.sin(a) * rad
-      i ? ctx.lineTo(px, py) : ctx.moveTo(px, py)
-    }
-    ctx.closePath()
-    ctx.fill()
-  }
-
-  function heart(ctx: CanvasRenderingContext2D, x: number, y: number, r: number) {
-    ctx.beginPath()
-    ctx.moveTo(x, y + r * 0.75)
-    ctx.bezierCurveTo(x - r * 1.4, y - r * 0.4, x - r * 0.5, y - r * 1.2, x, y - r * 0.4)
-    ctx.bezierCurveTo(x + r * 0.5, y - r * 1.2, x + r * 1.4, y - r * 0.4, x, y + r * 0.75)
-    ctx.closePath()
-    ctx.fill()
-  }
-
-  function bubble(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, col: string) {
-    ctx.beginPath()
-    ctx.arc(x, y, r, 0, Math.PI * 2)
-    ctx.fillStyle = col + '33'
-    ctx.fill()
-    ctx.strokeStyle = col
-    ctx.lineWidth = 1.4
-    ctx.stroke()
-    ctx.beginPath()
-    ctx.arc(x - r * 0.32, y - r * 0.34, Math.max(1, r * 0.22), 0, Math.PI * 2)
-    ctx.fillStyle = '#ffffff'
-    ctx.fill()
-  }
-
-  /** one dab of whatever brush is selected */
   const dab = (
     ctx: CanvasRenderingContext2D,
     from: { x: number; y: number },
     to: { x: number; y: number },
-  ) => {
-    const c = tool === 'eraser' ? colour2 : colour
-    const s = size
-    const dist = Math.hypot(to.x - from.x, to.y - from.y)
-    const rnd = (a: number, b: number) => a + Math.random() * (b - a)
-
-    ctx.save()
-    switch (brush) {
-      case 'airbrush': {
-        ctx.fillStyle = c
-        for (let i = 0; i < s * 3; i++) {
-          const a = Math.random() * Math.PI * 2
-          const d = Math.random() * s * 1.8
-          ctx.globalAlpha = 0.18
-          ctx.fillRect(to.x + Math.cos(a) * d, to.y + Math.sin(a) * d, 1.2, 1.2)
-        }
-        break
-      }
-      case 'calligraphy': {
-        ctx.strokeStyle = c
-        ctx.lineWidth = s
-        ctx.lineCap = 'butt'
-        const ang = 0.7
-        ctx.beginPath()
-        ctx.moveTo(from.x - Math.cos(ang) * s, from.y - Math.sin(ang) * s)
-        ctx.lineTo(to.x + Math.cos(ang) * s, to.y + Math.sin(ang) * s)
-        ctx.stroke()
-        break
-      }
-      case 'marker': {
-        ctx.globalAlpha = 0.35
-        ctx.globalCompositeOperation = 'multiply'
-        ctx.strokeStyle = c
-        ctx.lineWidth = s * 2.2
-        ctx.beginPath()
-        ctx.moveTo(from.x, from.y)
-        ctx.lineTo(to.x, to.y)
-        ctx.stroke()
-        break
-      }
-      case 'crayon': {
-        ctx.strokeStyle = c
-        ctx.lineWidth = 1.4
-        for (let i = 0; i < s * 2.4; i++) {
-          ctx.globalAlpha = rnd(0.08, 0.34)
-          const j = () => rnd(-s, s)
-          ctx.beginPath()
-          ctx.moveTo(from.x + j(), from.y + j())
-          ctx.lineTo(to.x + j(), to.y + j())
-          ctx.stroke()
-        }
-        break
-      }
-      case 'watercolour': {
-        ctx.globalAlpha = 0.1
-        ctx.fillStyle = c
-        for (let i = 0; i < 4; i++) {
-          ctx.beginPath()
-          ctx.arc(to.x + rnd(-s, s), to.y + rnd(-s, s), s * rnd(1.1, 2.4), 0, Math.PI * 2)
-          ctx.fill()
-        }
-        break
-      }
-      case 'bubbles': {
-        if (dist < s * 1.4 && Math.random() > 0.35) break
-        bubble(ctx, to.x + rnd(-s, s), to.y + rnd(-s, s), rnd(s * 0.6, s * 1.6), c)
-        break
-      }
-      case 'stars': {
-        if (dist < s * 1.2 && Math.random() > 0.4) break
-        ctx.fillStyle = c
-        ctx.save()
-        ctx.translate(to.x + rnd(-s, s), to.y + rnd(-s, s))
-        ctx.rotate(Math.random() * Math.PI * 2)
-        star(ctx, 0, 0, rnd(s * 0.7, s * 1.5))
-        ctx.restore()
-        break
-      }
-      case 'sparkle': {
-        ctx.fillStyle = c
-        ctx.save()
-        ctx.translate(to.x + rnd(-s, s), to.y + rnd(-s, s))
-        ctx.rotate(Math.random() * Math.PI)
-        star(ctx, 0, 0, rnd(s * 0.6, s * 1.4), 4)
-        ctx.restore()
-        for (let i = 0; i < 3; i++) {
-          ctx.globalAlpha = rnd(0.4, 1)
-          ctx.beginPath()
-          ctx.arc(to.x + rnd(-s * 2, s * 2), to.y + rnd(-s * 2, s * 2), rnd(0.7, 1.8), 0, Math.PI * 2)
-          ctx.fill()
-        }
-        break
-      }
-      case 'hearts': {
-        if (dist < s * 1.3 && Math.random() > 0.35) break
-        ctx.fillStyle = c
-        ctx.save()
-        ctx.translate(to.x + rnd(-s, s), to.y + rnd(-s, s))
-        ctx.rotate(rnd(-0.5, 0.5))
-        heart(ctx, 0, 0, rnd(s * 0.6, s * 1.3))
-        ctx.restore()
-        break
-      }
-      case 'confetti': {
-        for (let i = 0; i < 2; i++) {
-          ctx.save()
-          ctx.translate(to.x + rnd(-s * 1.8, s * 1.8), to.y + rnd(-s * 1.8, s * 1.8))
-          ctx.rotate(Math.random() * Math.PI)
-          ctx.fillStyle = CONFETTI[Math.floor(Math.random() * CONFETTI.length)]
-          ctx.fillRect(0, 0, rnd(s * 0.4, s), rnd(s * 0.2, s * 0.5))
-          ctx.restore()
-        }
-        break
-      }
-      case 'rainbow': {
-        hue.current = (hue.current + 4) % 360
-        ctx.strokeStyle = `hsl(${hue.current} 90% 55%)`
-        ctx.lineWidth = s * 1.6
-        ctx.beginPath()
-        ctx.moveTo(from.x, from.y)
-        ctx.lineTo(to.x, to.y)
-        ctx.stroke()
-        break
-      }
-      default: {
-        ctx.strokeStyle = c
-        ctx.lineWidth = s
-        ctx.beginPath()
-        ctx.moveTo(from.x, from.y)
-        ctx.lineTo(to.x, to.y)
-        ctx.stroke()
-      }
-    }
-    ctx.restore()
-  }
+  ) => stamp(ctx, brush, from, to, tool === 'eraser' ? colour2 : colour, size)
 
   /* ---------------- flood fill ---------------- */
   const flood = (x: number, y: number, hex: string) => {
@@ -509,15 +500,16 @@ export default function Paint() {
             {BRUSHES.map((b) => (
               <button
                 key={b.id}
-                className="game__btn pt__tool"
+                className="pt__brush"
+                title={b.label}
+                aria-label={b.label}
                 data-on={brush === b.id && tool === 'brush'}
-                data-pattern={b.pattern}
                 onClick={() => {
                   setBrush(b.id)
                   setTool('brush')
                 }}
               >
-                {b.label}
+                <BrushSample brush={b.id} />
               </button>
             ))}
           </div>

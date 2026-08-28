@@ -267,13 +267,9 @@ function PetArt({ kind, state, blink }: { kind: PetKind; state: State; blink: bo
         <ellipse cx="21" cy="22" rx="9" ry="6" fill="#ffffff" opacity="0.35" />
         {eye(20)}
         {eye(32)}
-        {kind === 'bird' ? (
-          <path d="M24 33h4l-2 3Z" fill="#ffb02e" />
-        ) : (
-          <path d="M22 33q4 4 8 0" stroke="#1a1a2e" strokeWidth="2" fill="none" strokeLinecap="round" />
-        )}
-        <ellipse cx="14" cy="32" rx="3.4" ry="2.2" fill="#ff9db0" opacity="0.5" />
-        <ellipse cx="38" cy="32" rx="3.4" ry="2.2" fill="#ff9db0" opacity="0.5" />
+        {kind === 'bird' ? <path d="M24 32h4l-2 3Z" fill="#ffb02e" /> : null}
+        <ellipse cx="14" cy="32" rx="3.4" ry="2.2" fill="#ff9db0" opacity="0.45" />
+        <ellipse cx="38" cy="32" rx="3.4" ry="2.2" fill="#ff9db0" opacity="0.45" />
       </g>
     </svg>
   )

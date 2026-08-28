@@ -38,6 +38,7 @@ const SHORTCUTS: Shortcut[] = [
   { id: 'paint', label: 'Paint', icon: 'paint', run: () => launch('paint') },
   { id: 'photobooth', label: 'Photo Booth', icon: 'camera', run: () => launch('photobooth') },
   { id: 'ipod', label: 'iPod', icon: 'ipod', run: () => launch('ipod') },
+  { id: 'wmp', label: 'Media Player', icon: 'wmp', run: () => launch('wmp') },
   { id: 'games', label: 'Games', icon: 'games', run: () => launch('games') },
   { id: 'contacts', label: 'Contacts', icon: 'contacts', run: () => launch('contacts') },
   { id: 'guestbook', label: 'Leave a note', icon: 'guestbook', run: () => launch('guestbook') },
