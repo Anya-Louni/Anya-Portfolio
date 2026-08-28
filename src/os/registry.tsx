@@ -11,6 +11,7 @@ import Klondike from '../apps/games/Klondike'
 import Spider from '../apps/games/Spider'
 import FreeCell from '../apps/games/FreeCell'
 import Minesweeper from '../apps/games/Minesweeper'
+import BubbleBeat from '../apps/games/BubbleBeat'
 import Guestbook from '../apps/Guestbook'
 import FishPainter from '../apps/FishPainter'
 import PaintApp from '../apps/Paint'
@@ -179,6 +180,17 @@ export const APPS: AppDef[] = [
     minW: 560,
     minH: 460,
     Component: AvatarMaker,
+  },
+  {
+    id: 'bubblebeat',
+    title: 'Bubble Beat',
+    icon: 'arcade',
+    blurb: 'Catch the notes, hear the tune',
+    w: 720,
+    h: 640,
+    minW: 460,
+    minH: 480,
+    Component: BubbleBeat,
   },
   {
     id: 'ascii',

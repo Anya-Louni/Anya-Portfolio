@@ -664,3 +664,136 @@
   opacity: 0.55;
   filter: grayscale(0.4) drop-shadow(0 3px 6px rgba(10, 40, 80, 0.2));
 }
+
+/* ============================================================
+   BUBBLE BEAT
+   ============================================================ */
+.bb {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100%;
+  background: var(--chrome-100);
+}
+
+.bb__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: linear-gradient(180deg, #ffffff, var(--chrome-200));
+  border-bottom: 1px solid var(--chrome-300);
+}
+.bb__go {
+  min-width: 70px;
+  padding: 7px 15px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #06305c;
+  border-radius: var(--r-sm);
+  border: 1px solid #2b7fc0;
+  background: linear-gradient(180deg, #f4fcff 0%, #d3efff 46%, #b2e0fb 47%, #93cff4 100%);
+  box-shadow: inset 0 1px 0 #fff, 0 1px 3px rgba(20, 90, 150, 0.28);
+}
+.bb__go[data-on='true'] {
+  color: #4a1616;
+  border-color: #b4595c;
+  background: linear-gradient(180deg, #fff4f4 0%, #fbd9da 46%, #f3b8ba 47%, #e79598 100%);
+}
+
+.bb__charts {
+  display: flex;
+  gap: 3px;
+}
+.bb__chart {
+  display: grid;
+  padding: 5px 10px;
+  text-align: left;
+  border-radius: var(--r-xs);
+  border: 1px solid var(--chrome-400);
+  background: linear-gradient(180deg, #ffffff, var(--chrome-200));
+  transition: background 110ms linear, border-color 110ms linear;
+}
+.bb__chart b { font-size: 11.5px; font-weight: 600; color: var(--ink-strong); }
+.bb__chart em { font-size: 10px; font-style: normal; color: var(--ink-soft); }
+.bb__chart:hover:not(:disabled) { border-color: #3c7fb1; background: linear-gradient(180deg, #f2fbff, #dbeffd); }
+.bb__chart[data-on='true'] {
+  border-color: #1b7fbe;
+  background: linear-gradient(180deg, #dff2ff, #a9d9f6);
+  box-shadow: inset 0 1px 0 #fff;
+}
+.bb__chart:disabled { opacity: 0.55; }
+
+.bb__stats { display: flex; gap: 14px; margin: 0 0 0 auto; }
+.bb__stats > div { display: grid; }
+.bb__stats dt { font-size: 9.5px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-faint); }
+.bb__stats dd {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.bb__stage { position: relative; min-height: 0; padding: 10px; }
+.bb__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #7a93b0;
+  box-shadow: inset 0 1px 3px rgba(10, 40, 80, 0.5), 0 1px 0 #ffffff;
+  touch-action: none;
+}
+/* invisible hit areas over the lanes, so a tap works without a keyboard */
+.bb__taps {
+  position: absolute;
+  inset: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.bb__tap { background: none; touch-action: none; }
+
+.bb__hint {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  top: 34%;
+  margin: 0;
+  padding: 14px 18px;
+  border-radius: var(--r-sm);
+  background: rgba(6, 24, 52, 0.72);
+  color: #dceeff;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+}
+.bb__hint b { color: #ffffff; }
+
+.bb__done {
+  position: absolute;
+  inset: 10px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 6px;
+  border-radius: var(--r-sm);
+  background: rgba(6, 24, 52, 0.82);
+  color: #dceeff;
+}
+.bb__done h3 { margin: 0; font-size: 15px; font-weight: 600; color: #a9e0ff; }
+.bb__score {
+  margin: 0;
+  font-size: 40px;
+  font-weight: 700;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+}
+.bb__done dl {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 6px 22px;
+  margin: 10px 0 16px;
+}
+.bb__done dl > div { display: grid; justify-items: center; }
+.bb__done dt { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: #8fb4d8; }
+.bb__done dd { margin: 0; font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
