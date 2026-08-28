@@ -194,11 +194,7 @@ html[data-calm="true"] {
   --t-base: 90ms;
   --t-slow: 120ms;
 }
-html[data-calm="true"] .bub,
-html[data-calm="true"] .wall__aurora,
-html[data-calm="true"] .wall__flare,
-html[data-calm="true"] .wall__rays,
-html[data-calm="true"] .wall__glints {
+html[data-calm="true"] .bub {
   animation: none !important;
   opacity: 0.25;
 }

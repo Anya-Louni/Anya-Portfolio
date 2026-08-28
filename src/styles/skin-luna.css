@@ -8,6 +8,7 @@
    ============================================================ */
 
 :root[data-skin='luna'] {
+  --wall: url('/wall/luna.webp');
   /* XP shipped Tahoma for UI and Trebuchet MS for captions */
   --font-ui: Tahoma, 'Segoe UI', var(--font-ui-fallback, system-ui), sans-serif;
   --font-caption: 'Trebuchet MS', Tahoma, sans-serif;

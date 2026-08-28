@@ -2,13 +2,7 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background: var(--sky);
-}
-.wall__scene {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  background: var(--wall) center / cover no-repeat, var(--sky);
 }
 
 /* --- suspended bubbles: two speculars, a rim, a wet lower lobe --- */
@@ -50,77 +44,12 @@
   }
 }
 
-.wall__aurora {
-  animation: auroraDrift 26s ease-in-out infinite alternate;
-  transform-origin: 50% 30%;
-}
-@keyframes auroraDrift {
-  from {
-    transform: translateX(-30px) scaleY(1);
-    opacity: 0.6;
-  }
-  to {
-    transform: translateX(34px) scaleY(1.12);
-    opacity: 0.85;
-  }
-}
-
-.wall__rays {
-  animation: rayBreathe 15s ease-in-out infinite;
-  transform-origin: 1245px 215px;
-}
-@keyframes rayBreathe {
-  0%,
-  100% {
-    opacity: 0.3;
-    transform: scaleX(1);
-  }
-  50% {
-    opacity: 0.5;
-    transform: scaleX(1.06);
-  }
-}
-
-.wall__flare {
-  animation: flarePulse 9s ease-in-out infinite alternate;
-}
-@keyframes flarePulse {
-  from {
-    opacity: 0.4;
-  }
-  to {
-    opacity: 0.7;
-  }
-}
-
-.wall__glints {
-  animation: glintShift 12s ease-in-out infinite alternate;
-}
-@keyframes glintShift {
-  from {
-    transform: translateX(-18px);
-    opacity: 0.45;
-  }
-  to {
-    transform: translateX(20px);
-    opacity: 0.8;
-  }
-}
-
-.wall[data-still="true"] .bub,
-.wall[data-still="true"] .wall__aurora,
-.wall[data-still="true"] .wall__rays,
-.wall[data-still="true"] .wall__flare,
-.wall[data-still="true"] .wall__glints {
+.wall[data-still="true"] .bub {
   animation: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bub,
-  .wall__aurora,
-  .wall__rays,
-  .wall__flare,
-  .wall__glints {
+  .bub {
     animation: none !important;
   }
 }

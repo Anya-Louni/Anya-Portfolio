@@ -13,6 +13,8 @@
    ============================================================ */
 
 :root {
+  /* The desktop picture. Rendered, not drawn in CSS - see tools/wall.py. */
+  --wall: url('/wall/aero.webp');
   /* ---- WORLD: sky, water, nature -------------------------------- */
   --sky-deep:   #0a4bc4;
   --sky:        #2b80e6;
@@ -137,6 +139,7 @@
    THEME B — "Deep Field": the same world after dark.
    ============================================================ */
 :root[data-theme='night'] {
+  --wall: url('/wall/night.webp');
   --sky-deep:   #050b2e;
   --sky:        #12246e;
   --sky-lite:   #2b46b4;
