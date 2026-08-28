@@ -31,6 +31,9 @@ export type IconName =
   | 'freecell'
   | 'mine'
   | 'github'
+  | 'notepad'
+  | 'calculator'
+  | 'sticky'
 
 export function IconDefs() {
   return (
@@ -79,6 +82,33 @@ export function IconDefs() {
           <stop offset="0" stopColor="#ffffff" stopOpacity="0.26" />
           <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
         </linearGradient>
+        {/* Real lighting, not a painted-on highlight: the alpha channel is
+            treated as a height field and lit from the upper left, so every
+            edge catches a specular the way a moulded plastic object does.
+            Renders once per icon and costs nothing after that. */}
+        <filter id="fx3d" x="-25%" y="-25%" width="150%" height="150%" colorInterpolationFilters="sRGB">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="1.4" result="height" />
+          <feSpecularLighting
+            in="height"
+            surfaceScale="3.4"
+            specularConstant="0.78"
+            specularExponent="24"
+            lightingColor="#ffffff"
+            result="spec"
+          >
+            <feDistantLight azimuth="228" elevation="56" />
+          </feSpecularLighting>
+          <feComposite in="spec" in2="SourceAlpha" operator="in" result="specClipped" />
+          <feComposite
+            in="SourceGraphic"
+            in2="specClipped"
+            operator="arithmetic"
+            k1="0"
+            k2="1"
+            k3="0.85"
+            k4="0"
+          />
+        </filter>
         <radialGradient id="gBloom" cx="0.5" cy="0.5" r="0.5">
           <stop offset="0" stopColor="#ffffff" stopOpacity="0.55" />
           <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
@@ -91,7 +121,7 @@ export function IconDefs() {
 type P = { className?: string }
 const box = (children: ReactNode, className?: string) => (
   <svg viewBox="0 0 48 48" className={className} aria-hidden focusable="false">
-    {children}
+    <g filter="url(#fx3d)">{children}</g>
   </svg>
 )
 
@@ -470,7 +500,56 @@ const GitHub = ({ className }: P) =>
     className,
   )
 
+const Notepad = ({ className }: P) =>
+  box(
+    <>
+      <path d="M9 6.5a2.5 2.5 0 0 1 2.5-2.5h19L40 13.5v28A2.5 2.5 0 0 1 37.5 44h-26A2.5 2.5 0 0 1 9 41.5Z" fill="#ffffff" stroke="#5a6b82" strokeWidth="1" />
+      <path d="M30.5 4 40 13.5h-9.5Z" fill="#cfdcea" stroke="#5a6b82" strokeWidth="1" strokeLinejoin="round" />
+      <path d="M15 20h18M15 26h18M15 32h12" stroke="#7fa0c8" strokeWidth="2" strokeLinecap="round" />
+      <path d="M10 5.5h20v4.5c-6 2-14 2-20 0Z" fill="url(#gSheen)" />
+    </>,
+    className,
+  )
+
+const Calculator = ({ className }: P) =>
+  box(
+    <>
+      <rect x="7" y="4" width="34" height="40" rx="4" fill="url(#gSlate)" stroke="#0e131f" strokeWidth="1" />
+      <path d="M8.5 5.5h31v9c-7 3-24 3-31 0Z" fill="url(#gSheen)" />
+      <rect x="11" y="8" width="26" height="9" rx="2" fill="#9fe8b0" stroke="#2f5a3c" strokeWidth="0.8" />
+      <path d="M22 10.5h13" stroke="#2b4a35" strokeWidth="1.6" strokeLinecap="round" />
+      {[0, 1, 2, 3].map((r) =>
+        [0, 1, 2, 3].map((c) => (
+          <rect
+            key={`${r}-${c}`}
+            x={11.5 + c * 6.6}
+            y={21 + r * 5.6}
+            width={5.2}
+            height={4.4}
+            rx={1.2}
+            fill={c === 3 ? '#ff9f2e' : '#dfe8f5'}
+          />
+        )),
+      )}
+    </>,
+    className,
+  )
+
+const Sticky = ({ className }: P) =>
+  box(
+    <>
+      <path d="M7 8.5A2.5 2.5 0 0 1 9.5 6h29A2.5 2.5 0 0 1 41 8.5V30L27 44H9.5A2.5 2.5 0 0 1 7 41.5Z" fill="#fdf0a4" stroke="#c8a93c" strokeWidth="1" />
+      <path d="M41 30 27 44V32.5A2.5 2.5 0 0 1 29.5 30Z" fill="#f2df82" stroke="#c8a93c" strokeWidth="1" strokeLinejoin="round" />
+      <path d="M14 16h20M14 22h20M14 28h13" stroke="#b39527" strokeWidth="2" strokeLinecap="round" />
+      <path d="M8 7.5h30v4.5c-9 2-21 2-30 0Z" fill="url(#gSheen)" />
+    </>,
+    className,
+  )
+
 const registry: Record<IconName, (p: P) => ReactElement> = {
+  notepad: Notepad,
+  calculator: Calculator,
+  sticky: Sticky,
   github: GitHub,
   games: Games,
   cards: Cards,

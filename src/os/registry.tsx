@@ -13,6 +13,9 @@ import FreeCell from '../apps/games/FreeCell'
 import Minesweeper from '../apps/games/Minesweeper'
 import Guestbook from '../apps/Guestbook'
 import FishPainter from '../apps/FishPainter'
+import PaintApp from '../apps/Paint'
+import Explorer from '../apps/Explorer'
+import { Calculator, Notepad, StickyNotes } from '../apps/Accessories'
 import { byslug } from '../content/projects'
 
 export interface AppDef {
@@ -87,6 +90,62 @@ export const APPS: AppDef[] = [
     minW: 480,
     minH: 340,
     Component: ControlPanel,
+  },
+  {
+    id: 'paint',
+    title: 'Paint',
+    icon: 'paint',
+    blurb: 'Brushes, shapes and patterns',
+    w: 980,
+    h: 700,
+    minW: 620,
+    minH: 460,
+    Component: PaintApp,
+  },
+  {
+    id: 'explorer',
+    title: 'Internet Explorer',
+    icon: 'explorer',
+    blurb: 'Browse the web, and the old one',
+    w: 940,
+    h: 660,
+    minW: 520,
+    minH: 400,
+    Component: Explorer,
+  },
+  {
+    id: 'notepad',
+    title: 'Notepad',
+    icon: 'notepad',
+    blurb: 'Plain text, nothing else',
+    w: 560,
+    h: 440,
+    minW: 300,
+    minH: 220,
+    Component: Notepad,
+  },
+  {
+    id: 'calculator',
+    title: 'Calculator',
+    icon: 'calculator',
+    blurb: 'Standard and scientific',
+    w: 320,
+    h: 470,
+    minW: 280,
+    minH: 420,
+    resizable: false,
+    Component: Calculator,
+  },
+  {
+    id: 'stickynotes',
+    title: 'Sticky Notes',
+    icon: 'sticky',
+    blurb: 'Notes that stay put',
+    w: 520,
+    h: 420,
+    minW: 300,
+    minH: 260,
+    Component: StickyNotes,
   },
   {
     id: 'games',

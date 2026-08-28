@@ -33,6 +33,8 @@ const SHORTCUTS: Shortcut[] = [
     run: () => launch('project', { slug: 'deep-sea-ood' }),
   },
   { id: 'aquarium', label: 'Aquarium', icon: 'aquarium', run: () => launch('aquarium') },
+  { id: 'explorer', label: 'Internet Explorer', icon: 'explorer', run: () => launch('explorer') },
+  { id: 'paint', label: 'Paint', icon: 'paint', run: () => launch('paint') },
   { id: 'games', label: 'Games', icon: 'games', run: () => launch('games') },
   { id: 'guestbook', label: 'Leave a note', icon: 'guestbook', run: () => launch('guestbook') },
   { id: 'control', label: 'Control Panel', icon: 'control', run: () => launch('control') },
