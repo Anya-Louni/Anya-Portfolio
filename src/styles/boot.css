@@ -240,7 +240,8 @@
     inset 0 2px 3px rgba(255, 255, 255, 0.8);
 }
 .login__go:active {
-  transform: scale(0.96);
+  background: radial-gradient(circle at 36% 28%, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 46%),
+    linear-gradient(180deg, #4cc0ea, #1a7cbb 55%, #12628f);
 }
 .login__hint {
   font-size: 12.5px;

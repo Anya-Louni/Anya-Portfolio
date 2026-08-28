@@ -50,10 +50,13 @@ h1, h2, h3, h4 { font-weight: 600; line-height: 1.15; letter-spacing: var(--trac
 
 :where(input, textarea) { caret-color: var(--accent); }
 
+/* No border-radius here. It used to set one, which squared off every
+   round control the moment it took focus — the iPod's centre button,
+   the Start orb, the sign-in arrow. The outline follows the element's
+   own shape on its own. */
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-  border-radius: var(--r-xs);
 }
 :focus:not(:focus-visible) { outline: none; }
 

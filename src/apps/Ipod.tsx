@@ -109,6 +109,10 @@ export default function Ipod() {
   }
 
   const wheelDown = (e: React.PointerEvent) => {
+    /* Only the ring scrolls. If the press landed on one of the five
+       buttons, leave the pointer alone — capturing it here retargets
+       the events to the wheel and the button's click never fires. */
+    if ((e.target as HTMLElement).closest('.ipod__wkey, .ipod__centre')) return
     const r = wheelRef.current!.getBoundingClientRect()
     const cx = r.left + r.width / 2
     const cy = r.top + r.height / 2
@@ -271,16 +275,26 @@ export default function Ipod() {
           onPointerCancel={wheelUp}
         >
           <button className="ipod__wkey ipod__wkey--menu" onClick={back}>
-            MENU
+            <span>MENU</span>
           </button>
           <button className="ipod__wkey ipod__wkey--prev" aria-label="Previous" onClick={() => skip(-1)}>
-            ⏮
+            <svg viewBox="0 0 16 16" aria-hidden>
+              <path d="M13 3 6.5 8 13 13Z" fill="currentColor" />
+              <rect x="3.5" y="3" width="2" height="10" rx="0.6" fill="currentColor" />
+            </svg>
           </button>
           <button className="ipod__wkey ipod__wkey--next" aria-label="Next" onClick={() => skip(1)}>
-            ⏭
+            <svg viewBox="0 0 16 16" aria-hidden>
+              <path d="M3 3 9.5 8 3 13Z" fill="currentColor" />
+              <rect x="10.5" y="3" width="2" height="10" rx="0.6" fill="currentColor" />
+            </svg>
           </button>
           <button className="ipod__wkey ipod__wkey--play" aria-label="Play or pause" onClick={toggle}>
-            ⏯
+            <svg viewBox="0 0 22 16" aria-hidden>
+              <path d="M2 3 8 8 2 13Z" fill="currentColor" />
+              <rect x="12" y="3.5" width="2.2" height="9" rx="0.6" fill="currentColor" />
+              <rect x="16" y="3.5" width="2.2" height="9" rx="0.6" fill="currentColor" />
+            </svg>
           </button>
           <button className="ipod__centre" aria-label="Select" onClick={select} />
         </div>

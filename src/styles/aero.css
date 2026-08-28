@@ -34,7 +34,6 @@
 
 /* soften every 7.css control a couple of px past authentic Aero */
 .win7 :where(button, input, select, textarea) { border-radius: var(--r-sm); }
-.win7 :where(button):not(:disabled):active { transform: translateY(.5px); }
 .win7 :where(button, input, select) { transition: box-shadow var(--t-fast) var(--e-out), background var(--t-fast) var(--e-out); }
 .win7 :where(button):focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .win7 fieldset { border-radius: var(--r-md); }
@@ -69,7 +68,7 @@
   border-color: var(--accent-deep);
   box-shadow: var(--sh-inset-top), 0 2px 8px -1px rgba(30,147,214,.4);
 }
-.aero-btn:active { transform: translateY(1px) scale(.985); }
+.aero-btn:active { --btn-face: linear-gradient(180deg, #d6eefb 0%, #b4e0f7 46%, #94cff0 47%, #7ec2ea 100%); }
 .aero-btn--primary {
   --btn-face: linear-gradient(180deg, #7ce6ff 0%, #45c6f5 46%, #2ba6e8 47%, #1d86c9 100%);
   color: #04222f; border-color: #1b7fbe;

@@ -254,25 +254,41 @@
   touch-action: none;
   user-select: none;
 }
+/* Each label is a real hit area over its quadrant of the ring, the way
+   the four switches sit under the real wheel. */
 .ipod__wkey {
   position: absolute;
+  display: grid;
+  place-items: center;
+  width: 30%;
+  height: 26%;
+  color: #6a778c;
+  border-radius: 40%;
+  transition: color 110ms linear, background 110ms linear;
+}
+.ipod__wkey span {
   font-size: 9.5px;
   font-weight: 700;
   letter-spacing: 0.09em;
-  color: #6a778c;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85);
-  transition: color 110ms linear;
 }
-.ipod__wkey--menu { top: 10%; left: 50%; transform: translateX(-50%); }
-.ipod__wkey--play { bottom: 10%; left: 50%; transform: translateX(-50%); font-size: 14px; }
-.ipod__wkey--prev { left: 8%; top: 50%; transform: translateY(-50%); font-size: 14px; }
-.ipod__wkey--next { right: 8%; top: 50%; transform: translateY(-50%); font-size: 14px; }
+.ipod__wkey svg {
+  width: 15px;
+  height: 12px;
+  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.85));
+}
+.ipod__wkey--menu { top: 2%; left: 50%; transform: translateX(-50%); }
+.ipod__wkey--play { bottom: 2%; left: 50%; transform: translateX(-50%); }
+.ipod__wkey--prev { left: 1%; top: 50%; transform: translateY(-50%); width: 26%; height: 30%; }
+.ipod__wkey--next { right: 1%; top: 50%; transform: translateY(-50%); width: 26%; height: 30%; }
 .ipod__wkey:hover { color: #24314a; }
+.ipod__wkey:active { color: #0d1622; background: rgba(120, 140, 175, 0.18); }
+
 .ipod__centre {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 36%;
+  width: 38%;
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   border-radius: 50%;
@@ -282,11 +298,16 @@
     inset 0 1px 0 #ffffff,
     inset 0 -2px 5px rgba(30, 50, 80, 0.12),
     0 1px 4px rgba(10, 30, 60, 0.28);
+  transition: background 110ms linear, box-shadow 110ms linear;
+}
+.ipod__centre:hover {
+  background: radial-gradient(circle at 42% 30%, #ffffff, #f3f6fb 58%, #dde3ec);
 }
 .ipod__centre:active {
   background: radial-gradient(circle at 42% 30%, #e6eaf2, #c9d1de);
-  box-shadow: inset 0 2px 5px rgba(30, 50, 80, 0.3);
+  box-shadow: inset 0 2px 6px rgba(30, 50, 80, 0.34);
 }
+
 
 /* ============================================================
    TERMINAL

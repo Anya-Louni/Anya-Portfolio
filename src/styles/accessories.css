@@ -2,6 +2,7 @@
    PAINT
    ============================================================ */
 .pt {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -787,4 +788,167 @@
   height: 23px;
   border-radius: 2px;
   image-rendering: auto;
+}
+
+
+/* ---- Paint: tools are pictures, at a size you can actually hit ---- */
+.pt__tools {
+  display: grid;
+  grid-template-columns: repeat(4, 28px);
+  gap: 2px;
+}
+.pt__toolBtn {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-xs);
+  border: 1px solid transparent;
+  color: #33465e;
+  transition: background 110ms linear, border-color 110ms linear;
+}
+.pt__toolBtn svg { width: 19px; height: 19px; }
+.pt__toolBtn:hover {
+  background: linear-gradient(180deg, #f2fbff, #d6ecfd);
+  border-color: #a4d4f2;
+}
+.pt__toolBtn[data-on='true'] {
+  background: linear-gradient(180deg, #dff2ff, #a9d9f6);
+  border-color: #1b7fbe;
+  box-shadow: inset 0 1px 0 #fff;
+}
+
+.pt__edit {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 3px 7px;
+  border-radius: var(--r-xs);
+  border: 1px solid var(--chrome-400);
+  background: linear-gradient(180deg, #ffffff, var(--chrome-200));
+  font-size: 10px;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.pt__edit:hover { border-color: #3c7fb1; background: linear-gradient(180deg, #f2fbff, #dbeffd); }
+.pt__editSwatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  border: 1px solid var(--chrome-500);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* ---- Edit colours dialog ---- */
+.cp2 {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  background: rgba(10, 24, 48, 0.45);
+}
+.cp2__panel {
+  width: min(420px, 92%);
+  border-radius: var(--r-lg) var(--r-lg) 4px 4px;
+  background: var(--chrome-100);
+  border: 1px solid rgba(6, 22, 48, 0.55);
+  box-shadow: 2px 3px 16px 2px rgba(2, 14, 38, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+  overflow: hidden;
+}
+.cp2__head {
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-strong);
+  background: linear-gradient(180deg, #ffffff, var(--chrome-200));
+  border-bottom: 1px solid var(--chrome-300);
+}
+.cp2__body {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  padding: 16px;
+}
+.cp2__wheelWrap {
+  position: relative;
+  width: 176px;
+  height: 176px;
+}
+.cp2__wheel {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  cursor: crosshair;
+  touch-action: none;
+  box-shadow: 0 2px 8px rgba(10, 30, 60, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+.cp2__mark {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px rgba(6, 22, 48, 0.7);
+  pointer-events: none;
+}
+.cp2__side {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.cp2__val { display: grid; gap: 4px; font-size: 11px; color: var(--ink-soft); }
+.cp2__val input {
+  width: 100%;
+  height: 12px;
+  border-radius: var(--r-pill);
+  appearance: none;
+  border: 1px solid var(--chrome-400);
+}
+.cp2__val input::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 16px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #fff, #cdd8e6);
+  border: 1px solid var(--chrome-500);
+}
+.cp2__preview {
+  height: 46px;
+  border-radius: var(--r-xs);
+  border: 1px solid var(--chrome-500);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+.cp2__hex { display: grid; gap: 4px; font-size: 11px; color: var(--ink-soft); }
+.cp2__hex input {
+  padding: 5px 8px;
+  border-radius: var(--r-xs);
+  border: 1px solid var(--chrome-400);
+  background: #fff;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-strong);
+}
+.cp2__rgb { display: flex; gap: 10px; font-size: 11px; }
+.cp2__rgb > div { display: flex; gap: 4px; }
+.cp2__rgb dt { color: var(--ink-faint); }
+.cp2__rgb dd { color: var(--ink-strong); font-variant-numeric: tabular-nums; }
+.cp2__foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 14px;
+  background: linear-gradient(180deg, var(--chrome-100), var(--chrome-200));
+  border-top: 1px solid var(--chrome-300);
+}
+
+.cp2__dim {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #000;
+  pointer-events: none;
+  transition: opacity 80ms linear;
 }

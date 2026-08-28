@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { sound } from '../os/sound'
+import { ColorPicker } from './ColorPicker'
 
 /**
  * Paint.
@@ -41,6 +42,33 @@ const BRUSHES: { id: Brush; label: string; pattern?: boolean }[] = [
 ]
 
 const SIZES = [2, 5, 10, 20]
+
+/* The real ribbon shows tools as pictures, not words. One stroke weight,
+   one cap style, drawn at 16 so they stay crisp at 26px. */
+const ToolIcon = ({ id }: { id: Tool }) => {
+  const p = (d: React.ReactNode) => (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4"
+      strokeLinecap="round" strokeLinejoin="round" aria-hidden>{d}</svg>
+  )
+  switch (id) {
+    case 'pencil':
+      return p(<><path d="M2.5 13.5 3 11l7.4-7.4 2 2L5 13l-2.5.5Z" fill="#f6c667" /><path d="M10.4 3.6 12 2a1.4 1.4 0 0 1 2 2l-1.6 1.6Z" fill="#c9d3e2" /></>)
+    case 'brush':
+      return p(<><path d="M3 13.5c0-1.6.8-2.6 2-2.6s2 1 2 2.2c0 1-.9 1.4-2 1.4H2.6c.3-.3.4-.6.4-1Z" fill="#f6c667" /><path d="m6.4 10.6 6.2-7.2a1.3 1.3 0 0 1 2 1.7l-6.6 6.7Z" fill="#8fb6e0" /></>)
+    case 'eraser':
+      return p(<><path d="M2.5 11.2 8 5.7l4.3 4.3-2.5 2.5H4Z" fill="#f2a5b8" /><path d="M8 5.7 10.6 3a1.4 1.4 0 0 1 2 0l2.3 2.3a1.4 1.4 0 0 1 0 2l-2.6 2.7Z" fill="#dfe6f0" /></>)
+    case 'fill':
+      return p(<><path d="M7.4 2.2 12.8 7.6a1 1 0 0 1 0 1.4l-4 4a1 1 0 0 1-1.4 0L2 7.6l4-4Z" fill="#8fd0ff" /><path d="M13.6 10.4c.8 1.2 1.2 2 1.2 2.5a1.2 1.2 0 0 1-2.4 0c0-.5.4-1.3 1.2-2.5Z" fill="#4aa0e8" /></>)
+    case 'picker':
+      return p(<><path d="M3 13v-1.6l6-6 1.6 1.6-6 6Z" fill="#c9d3e2" /><path d="m10 3.6 1.2-1.2a1.5 1.5 0 0 1 2.4 2.4L12.4 6Z" fill="#8fb6e0" /></>)
+    case 'line':
+      return p(<path d="M3 13 13 3" />)
+    case 'rect':
+      return p(<rect x="2.6" y="4" width="10.8" height="8" rx="1" />)
+    case 'ellipse':
+      return p(<ellipse cx="8" cy="8" rx="5.6" ry="4.2" />)
+  }
+}
 
 const PALETTE = [
   '#000000', '#7f7f7f', '#880015', '#ed1c24', '#ff7f27', '#fff200', '#22b14c', '#00a2e8',
@@ -276,6 +304,7 @@ export default function Paint() {
   const [colour, setColour] = useState('#000000')
   const [colour2, setColour2] = useState('#ffffff')
   const [status, setStatus] = useState('')
+  const [picking, setPicking] = useState(false)
 
   const W = 900
   const H = 560
@@ -467,11 +496,11 @@ export default function Paint() {
   const TOOLS: { id: Tool; label: string }[] = [
     { id: 'pencil', label: 'Pencil' },
     { id: 'brush', label: 'Brush' },
+    { id: 'fill', label: 'Fill with colour' },
+    { id: 'picker', label: 'Colour picker' },
     { id: 'eraser', label: 'Eraser' },
-    { id: 'fill', label: 'Fill' },
-    { id: 'picker', label: 'Pick' },
     { id: 'line', label: 'Line' },
-    { id: 'rect', label: 'Rect' },
+    { id: 'rect', label: 'Rectangle' },
     { id: 'ellipse', label: 'Oval' },
   ]
 
@@ -480,15 +509,17 @@ export default function Paint() {
       <div className="pt__ribbon">
         <div className="pt__group">
           <span className="pt__groupLabel">Tools</span>
-          <div className="pt__grid">
+          <div className="pt__tools">
             {TOOLS.map((t) => (
               <button
                 key={t.id}
-                className="game__btn pt__tool"
+                className="pt__toolBtn"
+                title={t.label}
+                aria-label={t.label}
                 data-on={tool === t.id}
                 onClick={() => setTool(t.id)}
               >
-                {t.label}
+                <ToolIcon id={t.id} />
               </button>
             ))}
           </div>
@@ -554,13 +585,12 @@ export default function Paint() {
                 />
               ))}
             </div>
-            <input
-              type="color"
-              className="pt__picker"
-              value={colour}
-              onChange={(e) => setColour(e.target.value)}
-              aria-label="Custom colour"
-            />
+            <button className="pt__edit" onClick={() => setPicking(true)}>
+              <span className="pt__editSwatch" style={{ background: colour }} />
+              Edit
+              <br />
+              colours
+            </button>
           </div>
         </div>
 
@@ -586,6 +616,10 @@ export default function Paint() {
           onPointerLeave={() => setStatus('')}
         />
       </div>
+
+      {picking ? (
+        <ColorPicker initial={colour} onPick={setColour} onClose={() => setPicking(false)} />
+      ) : null}
 
       <div className="pt__status">
         <span>{status || `${W} × ${H}px`}</span>
