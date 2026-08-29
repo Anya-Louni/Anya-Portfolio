@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useOS } from './store'
+import { loadPinned, since, type Pinned } from '../content/pinned'
 
 /**
  * Desktop gadgets — the Windows 7 sidebar ones, floating loose on the desktop.
@@ -7,7 +8,7 @@ import { useOS } from './store'
  * needs no key and allows cross-origin requests.
  */
 
-export type GadgetKind = 'clock' | 'weather' | 'calendar'
+export type GadgetKind = 'clock' | 'weather' | 'calendar' | 'pinned'
 
 interface Placed {
   id: string
@@ -21,6 +22,7 @@ const KEY = 'os.gadgets'
 const DEFAULTS: Placed[] = [
   { id: 'g1', kind: 'clock', x: -200, y: 24 },
   { id: 'g2', kind: 'weather', x: -200, y: 210 },
+  { id: 'g3', kind: 'pinned', x: -200, y: 396 },
 ]
 
 function load(): Placed[] {
@@ -122,7 +124,45 @@ function Gadget({
       {item.kind === 'clock' ? <ClockGadget /> : null}
       {item.kind === 'weather' ? <WeatherGadget /> : null}
       {item.kind === 'calendar' ? <CalendarGadget /> : null}
+      {item.kind === 'pinned' ? <PinnedGadget /> : null}
     </div>
+  )
+}
+
+/* ---------------- pinned repo ---------------- */
+function PinnedGadget() {
+  const [repo, setRepo] = useState<Pinned | null>(null)
+
+  useEffect(() => {
+    let dead = false
+    void loadPinned().then(({ repo }) => { if (!dead) setRepo(repo) })
+    /* The file is rewritten by a scheduled Action, so a desktop left open
+       for days should pick up a change without a reload. */
+    const id = window.setInterval(() => {
+      void loadPinned().then(({ repo }) => { if (!dead) setRepo(repo) })
+    }, 30 * 60 * 1000)
+    return () => { dead = true; window.clearInterval(id) }
+  }, [])
+
+  if (!repo) return <div className="gad__pin gad__pin--wait">Loading</div>
+
+  return (
+    <a
+      className="gad__pin"
+      href={repo.url}
+      target="_blank"
+      rel="noreferrer noopener"
+      title={`Open ${repo.name} on GitHub`}
+    >
+      <span className="gad__pinTop">Pinned</span>
+      <b className="gad__pinName">{repo.name}</b>
+      {repo.description ? <span className="gad__pinDesc">{repo.description}</span> : null}
+      <span className="gad__pinFoot">
+        {repo.language ? <i className="gad__pinLang">{repo.language}</i> : null}
+        {repo.stars > 0 ? <i>{repo.stars} stars</i> : null}
+        {repo.pushedAt ? <i>{since(repo.pushedAt)}</i> : null}
+      </span>
+    </a>
   )
 }
 

@@ -1,0 +1,10 @@
+{
+  "name": "Galaxy-Compass",
+  "description": "Placeholder written by hand. The Action overwrites this on its next run.",
+  "url": "https://github.com/Anya-Louni/Galaxy-Compass",
+  "stars": 4,
+  "forks": 1,
+  "pushedAt": "2026-08-25T10:00:00Z",
+  "language": "Python",
+  "topics": ["astronomy", "ml"]
+}

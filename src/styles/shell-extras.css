@@ -837,3 +837,48 @@
 @media (prefers-reduced-motion: reduce) {
   .pet__stars { animation: none; }
 }
+
+/* ---- pinned repo gadget ---- */
+.gad__pin {
+  display: grid;
+  gap: 3px;
+  width: 168px;
+  padding: 11px 12px 12px;
+  color: #eaf3ff;
+  text-decoration: none;
+}
+.gad__pin--wait { color: #9fbcd8; font-size: 11px; }
+.gad__pinTop {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8fc4ea;
+}
+.gad__pinName {
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.gad__pinDesc {
+  font-size: 10.5px;
+  line-height: 1.4;
+  color: #b6cee4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.gad__pinFoot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 9.5px;
+  font-style: normal;
+  color: #93b2ce;
+}
+.gad__pinFoot i { font-style: normal; }
+.gad__pinLang { color: #ffd88a; }
+.gad__pin:hover .gad__pinName { text-decoration: underline; }

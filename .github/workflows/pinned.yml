@@ -1,0 +1,86 @@
+name: Refresh pinned repo
+
+# GitHub has no REST endpoint for pinned repositories. Only GraphQL knows
+# about them, and GraphQL needs a token, which cannot go in a public bundle.
+# So the lookup happens here instead and the answer is committed as a plain
+# file the site can fetch. Change your pins on GitHub and this catches up on
+# the next run.
+
+on:
+  schedule:
+    # every six hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pinned
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ask GraphQL for the first pinned repository
+        env:
+          # GITHUB_TOKEN can read public profile data. If your account or org
+          # blocks that, make a personal access token with read:user and save
+          # it as the PINNED_TOKEN secret; this picks it up automatically.
+          GH_TOKEN: ${{ secrets.PINNED_TOKEN || secrets.GITHUB_TOKEN }}
+          LOGIN: Anya-Louni
+        run: |
+          set -euo pipefail
+          gh api graphql -F login="$LOGIN" -f query='
+            query($login: String!) {
+              user(login: $login) {
+                pinnedItems(first: 1, types: REPOSITORY) {
+                  nodes {
+                    ... on Repository {
+                      name
+                      description
+                      url
+                      stargazerCount
+                      forkCount
+                      pushedAt
+                      primaryLanguage { name }
+                      repositoryTopics(first: 4) { nodes { topic { name } } }
+                    }
+                  }
+                }
+              }
+            }' > raw.json
+
+          # Shape it into what the site reads. If nothing is pinned, write null
+          # and let the site fall back to its own list.
+          jq '.data.user.pinnedItems.nodes[0] // null
+              | if . == null then null else {
+                  name,
+                  description,
+                  url,
+                  stars: .stargazerCount,
+                  forks: .forkCount,
+                  pushedAt,
+                  language: (.primaryLanguage.name // null),
+                  topics: [.repositoryTopics.nodes[].topic.name]
+                } end' raw.json > public/pinned.json
+          rm raw.json
+          cat public/pinned.json
+
+      - name: Commit if it changed
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- public/pinned.json; then
+            echo "no change"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/pinned.json
+          git commit -m "Update pinned repo"
+          git push
