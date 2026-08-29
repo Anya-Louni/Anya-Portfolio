@@ -15,7 +15,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 400px;
+  max-width: 276px;
   padding: 13px 13px 15px;
   border-radius: 20px;
   background: linear-gradient(158deg, #fdfdfe 0%, #eef1f6 16%, #dfe4ec 50%, #f2f4f8 76%, #d6dbe5 100%);
@@ -38,9 +38,8 @@
 .ipod__screen {
   position: relative;
   flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  min-height: 320px;
+  min-height: 150px;
+  max-height: 232px;
   margin-bottom: 12px;
   border-radius: 4px;
   overflow: hidden;
@@ -157,6 +156,7 @@
 }
 
 .ipod__now {
+  position: relative;
   flex: 1;
   min-height: 0;
   display: grid;
@@ -763,397 +763,18 @@
   color: #7fb6e0;
 }
 
-/* ============================================================
-   KARAOKE
-   ============================================================ */
-.kar {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 264px;
-  gap: 10px;
-  height: 100%;
-  padding: 10px;
-  background: var(--chrome-100);
-}
-.kar[data-big='true'] { grid-template-columns: minmax(0, 1fr); }
-.kar[data-big='true'] .kar__book { display: none; }
 
-.kar__stage { display: grid; grid-template-rows: minmax(0, 1fr) auto auto; gap: 8px; min-width: 0; }
-.kar__screen {
-  position: relative;
-  min-height: 0;
-  border-radius: var(--r-sm);
-  overflow: hidden;
-  background: #06131f;
-  border: 1px solid #7a93b0;
-  box-shadow: inset 0 1px 3px rgba(10, 40, 80, 0.6), 0 1px 0 #ffffff;
-}
-.kar__player { position: absolute; inset: 0; }
-.kar__player iframe { width: 100%; height: 100%; border: 0; display: block; }
-.kar__empty {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  align-content: center;
-  justify-items: center;
-  gap: 6px;
-  padding: 24px;
-  text-align: center;
-  color: #cfe6fa;
-  pointer-events: none;
-}
-.kar__empty b { font-size: 15px; }
-.kar__empty span { font-size: 12px; max-width: 340px; line-height: 1.5; color: #8fb4d4; }
-
-.kar__under {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 9px;
-  border-radius: var(--r-sm);
-  border: 1px solid var(--chrome-300);
-  background: linear-gradient(180deg, #ffffff, var(--chrome-200));
-}
-.kar__meta { display: grid; min-width: 0; margin-right: auto; }
-.kar__meta b {
-  font-size: 13px;
-  color: var(--ink-strong);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.kar__meta span { font-size: 11.5px; color: var(--ink-soft); }
-
-.kar__btn {
-  padding: 6px 11px;
-  font-size: 11.5px;
-  color: var(--ink);
-  border-radius: var(--r-xs);
-  border: 1px solid var(--chrome-400);
-  background: linear-gradient(180deg, #ffffff, var(--chrome-200));
-  white-space: nowrap;
-}
-.kar__btn:hover { border-color: #3c7fb1; background: linear-gradient(180deg, #f2fbff, #dbeffd); }
-.kar__btn[data-on='true'] {
-  border-color: #1b7fbe;
-  background: linear-gradient(180deg, #dff2ff, #a9d9f6);
-  box-shadow: inset 0 1px 0 #fff;
-  font-weight: 600;
-}
-
-/* the microphone meter: a Windows 7 progress trough, filled from the left */
-.kar__meter {
-  width: 92px;
-  height: 14px;
-  flex: none;
-  border-radius: var(--r-xs);
-  border: 1px solid #93a7bd;
-  background: linear-gradient(180deg, #e3e9f0, #f6f9fc);
-  box-shadow: inset 0 1px 2px rgba(30, 60, 100, 0.25);
-  overflow: hidden;
-  opacity: 0.5;
-}
-.kar__meter[data-on='true'] { opacity: 1; }
-.kar__meter i {
+/* ---- iPod: the flourish that fills the screen while a song plays ---- */
+.flourish {
   display: block;
-  height: 100%;
-  transform-origin: left center;
-  background: linear-gradient(180deg, #d6f5c4 0%, #9fe07a 46%, #78cc4e 47%, #4fae2a 100%);
-  transition: transform 60ms linear;
-}
-.kar__note {
-  margin: 0;
-  padding: 7px 9px;
-  border-radius: var(--r-xs);
-  background: #fff6da;
-  border: 1px solid #dcc072;
-  font-size: 11.5px;
-  line-height: 1.45;
-  color: var(--ink);
-}
-
-.kar__book {
-  display: grid;
-  grid-template-rows: auto auto auto minmax(0, 1fr);
-  gap: 7px;
-  min-height: 0;
-}
-.kar__bookHead { display: grid; }
-.kar__bookHead b { font-size: 12.5px; color: var(--ink-strong); }
-.kar__bookHead span { font-size: 10.5px; color: var(--ink-faint); }
-.kar__tools { display: flex; gap: 5px; }
-.kar__search {
-  flex: 1;
-  min-width: 0;
-  padding: 5px 8px;
-  font: inherit;
-  font-size: 11.5px;
-  border-radius: var(--r-xs);
-  border: 1px solid var(--chrome-400);
-  background: #fff;
-  color: var(--ink-strong);
-}
-.kar__add, .kar__go {
-  padding: 6px 12px;
-  font-size: 11.5px;
-  font-weight: 600;
-  color: #06305c;
-  border-radius: var(--r-xs);
-  border: 1px solid #2b7fc0;
-  background: linear-gradient(180deg, #f4fcff 0%, #d3efff 46%, #b2e0fb 47%, #93cff4 100%);
-  box-shadow: inset 0 1px 0 #fff;
-}
-.kar__go:disabled { opacity: 0.5; }
-
-.kar__form {
-  display: grid;
-  gap: 6px;
-  padding: 9px;
-  border-radius: var(--r-xs);
-  border: 1px solid var(--chrome-300);
-  background: linear-gradient(180deg, #ffffff, var(--chrome-100));
-}
-.kar__form label { display: grid; gap: 2px; font-size: 10.5px; color: var(--ink-soft); }
-.kar__form input {
-  padding: 5px 7px;
-  font: inherit;
-  font-size: 12px;
-  border-radius: var(--r-xs);
-  border: 1px solid var(--chrome-400);
-  background: #fff;
-  color: var(--ink-strong);
-}
-.kar__thumb { width: 100%; border-radius: var(--r-xs); border: 1px solid var(--chrome-400); }
-.kar__error { margin: 0; font-size: 11px; color: #b23; }
-.kar__small { margin: 0; font-size: 10px; line-height: 1.4; color: var(--ink-faint); }
-
-.kar__list { margin: 0; padding: 0; list-style: none; overflow-y: auto; display: grid; gap: 2px; }
-.kar__song {
-  display: grid;
-  grid-template-columns: 52px minmax(0, 1fr);
-  gap: 8px;
-  align-items: center;
-  width: 100%;
-  padding: 4px;
-  text-align: left;
-  border-radius: var(--r-xs);
-  border: 1px solid transparent;
-}
-.kar__song:hover { border-color: var(--chrome-400); background: linear-gradient(180deg, #ffffff, var(--chrome-100)); }
-.kar__song[data-on='true'] {
-  border-color: #8fd0ef;
-  background: linear-gradient(180deg, #eafaff, #d3ecfb);
-}
-.kar__song img { width: 52px; height: 30px; object-fit: cover; border-radius: 2px; }
-.kar__song span { display: grid; min-width: 0; }
-.kar__song b {
-  font-size: 12px;
-  color: var(--ink-strong);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.kar__song em { font-style: normal; font-size: 10.5px; color: var(--ink-soft); }
-.kar__none { padding: 10px 4px; font-size: 11.5px; color: var(--ink-faint); }
-
-@media (max-width: 768px) {
-  .kar { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); }
-}
-
-
-/* ---- iPod: the video and the panel under it ---- */
-/* 16:9 across the full screen width. The body is sized so this lands at about
-   366 by 206 — an embed may not be smaller than 200 by 200, and the height is
-   the dimension that runs out first on a portrait device like this one. */
-.ipod__video {
-  flex: none;
-  aspect-ratio: 16 / 9;
-  background: #000;
-}
-.ipod__video > div,
-.ipod__video iframe {
   width: 100%;
   height: 100%;
-  border: 0;
-  display: block;
 }
-
-.ipod__panel {
-  position: relative;
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1px;
-  min-height: 0;
-  padding: 10px;
-  text-align: center;
-}
-.ipod__lists { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
-.flourish { display: block; width: 100%; height: 100%; }
 .ipod__flourish {
   position: absolute;
   inset: 0;
   pointer-events: none;
   opacity: 0.9;
 }
-.ipod__panel > p { position: relative; z-index: 1; margin: 0; }
-.ipod__where {
-  margin-top: 8px !important;
-  font-size: 9.5px;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: #7fb6e0;
-}
-
-/* ---- Karaoke: the words ---- */
-.kar__tabs { display: flex; gap: 3px; }
-.kar__tabs button {
-  padding: 4px 10px;
-  font-size: 11.5px;
-  color: var(--ink);
-  border-radius: var(--r-xs) var(--r-xs) 0 0;
-  border: 1px solid var(--chrome-400);
-  border-bottom: 0;
-  background: linear-gradient(180deg, var(--chrome-200), var(--chrome-100));
-}
-.kar__tabs button[data-on='true'] {
-  background: linear-gradient(180deg, #ffffff, #eaf6ff);
-  border-color: #8fd0ef;
-  font-weight: 600;
-  color: var(--ink-strong);
-}
-.kar__tabs button:disabled { opacity: 0.45; }
-
-/* the display over the video: the line being sung, with its neighbours */
-.lyr__stage {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: grid;
-  gap: 2px;
-  padding: 14px 18px 16px;
-  text-align: center;
-  pointer-events: none;
-  background: linear-gradient(180deg, rgba(4, 14, 30, 0), rgba(4, 14, 30, 0.78) 45%);
-}
-.lyr__line {
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.35;
-  color: rgba(210, 232, 250, 0.55);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
-  transition: color 140ms linear, transform 140ms ease;
-}
-.lyr__line[data-past='true'] { color: rgba(160, 190, 220, 0.34); }
-.lyr__line[data-now='true'] {
-  color: #ffffff;
-  font-weight: 700;
-  transform: scale(1.06);
-}
-.lyr__stage[data-big='true'] { padding: 24px 34px 30px; }
-.lyr__stage[data-big='true'] .lyr__line { font-size: 24px; }
-.lyr__stage[data-big='true'] .lyr__line[data-now='true'] { font-size: 30px; }
-
-.lyr__panel { display: grid; gap: 7px; min-height: 0; grid-template-rows: auto auto auto minmax(0, 1fr); }
-.lyr__hint { margin: 0; font-size: 10.5px; line-height: 1.45; color: var(--ink-faint); }
-.lyr__area,
-.lyr__version textarea,
-.lyr__version input {
-  width: 100%;
-  padding: 6px 8px;
-  font: inherit;
-  font-size: 12px;
-  border-radius: var(--r-xs);
-  border: 1px solid var(--chrome-400);
-  background: #fff;
-  color: var(--ink-strong);
-  resize: vertical;
-}
-.lyr__row { display: flex; gap: 5px; }
-.lyr__go, .lyr__btn {
-  padding: 6px 11px;
-  font-size: 11.5px;
-  border-radius: var(--r-xs);
-  border: 1px solid var(--chrome-400);
-  background: linear-gradient(180deg, #ffffff, var(--chrome-200));
-  color: var(--ink);
-}
-.lyr__go {
-  font-weight: 600;
-  color: #06305c;
-  border-color: #2b7fc0;
-  background: linear-gradient(180deg, #f4fcff 0%, #d3efff 46%, #b2e0fb 47%, #93cff4 100%);
-  box-shadow: inset 0 1px 0 #fff;
-}
-.lyr__go:disabled { opacity: 0.5; }
-.lyr__go[data-on='true'] {
-  color: #4a1616;
-  border-color: #b4595c;
-  background: linear-gradient(180deg, #fff4f4 0%, #fbd9da 46%, #f3b8ba 47%, #e79598 100%);
-}
-
-.lyr__scripts { display: flex; flex-wrap: wrap; gap: 3px; }
-.lyr__script {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  font-size: 11px;
-  border-radius: var(--r-pill);
-  border: 1px solid var(--chrome-400);
-  background: linear-gradient(180deg, #ffffff, var(--chrome-200));
-  color: var(--ink);
-}
-.lyr__script[data-on='true'] {
-  border-color: #1b7fbe;
-  background: linear-gradient(180deg, #dff2ff, #a9d9f6);
-  font-weight: 600;
-}
-.lyr__script i { font-style: normal; color: var(--ink-faint); cursor: inherit; }
-.lyr__script--add { color: var(--ink-soft); border-style: dashed; }
-.lyr__version { display: grid; gap: 5px; }
-
-.lyr__tap {
-  display: grid;
-  gap: 1px;
-  padding: 10px;
-  border-radius: var(--r-sm);
-  border: 1px solid #2b7fc0;
-  background: linear-gradient(180deg, #f4fcff 0%, #d3efff 46%, #b2e0fb 47%, #93cff4 100%);
-  color: #06305c;
-}
-.lyr__tap b { font-size: 15px; }
-.lyr__tap span { font-size: 10.5px; opacity: 0.8; }
-
-.lyr__lines {
-  margin: 0;
-  padding: 4px;
-  list-style: none;
-  overflow-y: auto;
-  display: grid;
-  gap: 1px;
-  border-radius: var(--r-xs);
-  border: 1px solid var(--chrome-300);
-  background: #fff;
-}
-.lyr__lines li {
-  display: grid;
-  grid-template-columns: 44px minmax(0, 1fr);
-  gap: 6px;
-  align-items: baseline;
-  padding: 2px 3px;
-  border-radius: 2px;
-  font-size: 11.5px;
-  color: var(--ink);
-}
-.lyr__lines li[data-now='true'] { background: #eaf6ff; font-weight: 600; color: var(--ink-strong); }
-.lyr__lines li[data-next='true'] { box-shadow: inset 0 0 0 1px #f0b93c; }
-.lyr__seek {
-  font-size: 10px;
-  color: var(--ink-faint);
-  font-variant-numeric: tabular-nums;
-  text-align: left;
-}
-.lyr__seek:disabled { opacity: 0.5; }
+/* everything else on Now Playing sits over it */
+.ipod__now > *:not(.ipod__flourish) { position: relative; z-index: 1; }

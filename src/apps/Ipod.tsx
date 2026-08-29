@@ -1,109 +1,155 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { listSongs, type Song } from '../lib/songs'
-import { youtubeApi, type YtPlayer } from '../lib/youtube'
-import { Flourish } from '../art/Flourish'
-import { launch } from '../os/registry'
+import { PLAYLIST } from '../content/playlist'
+import { addTrack, listTracks, removeTrack, type StoredTrack } from '../lib/tracks'
 import { sound } from '../os/sound'
+import { Flourish } from '../art/Flourish'
 
 /**
  * iPod.
  *
- * Screen on top, click wheel below. The wheel really is a wheel — drag around
- * it and the selection scrolls, one step per 30° of rotation, the way the
- * original felt.
+ * First-generation shell: screen on top, click wheel below. The wheel really
+ * is a wheel — drag around it and the selection scrolls, one step per 30° of
+ * rotation, the way the original felt.
  *
- * It has its own player and its own copy of the songbook, and it shares no
- * state with Karaoke: playing something here does nothing there, and closing
- * one leaves the other alone. They only have the songbook itself in common,
- * which is a table, not a connection.
+ * Nothing is uploaded. The built-in tracks ship with the app and anything a
+ * visitor adds is held in this browser, which is what lets the flourish read
+ * the audio at all: a file we hold can be measured, and one served from
+ * somewhere else cannot.
  *
- * Now Playing puts the video at the top of the screen and gives the rest to a
- * flourish that draws itself while the song runs — curling stems, rosettes,
- * scattered dots, all in one pale blue.
+ * While a song plays the screen fills with that flourish — curling stems,
+ * rosettes, scattered dots — drawing itself in a single pale blue, and
+ * breathing with the loudness of the track.
  */
+
+interface Track {
+  id: string
+  title: string
+  artist: string
+  src: string
+  mine?: boolean
+}
 
 type Screen = 'menu' | 'songs' | 'now'
 
-const MENU = ['Songbook', 'Now Playing', 'Shuffle', 'Add a song', 'About'] as const
+const MENU = ['Music', 'Now Playing', 'Shuffle Songs', 'Add Music', 'About'] as const
 
 export default function Ipod() {
+  const audioRef = useRef<HTMLAudioElement>(null)
   const wheelRef = useRef<HTMLDivElement>(null)
-  const holderRef = useRef<HTMLDivElement>(null)
-  const playerRef = useRef<YtPlayer | null>(null)
-  const readyRef = useRef(false)
-  const wantRef = useRef<string | null>(null)
+  const fileRef = useRef<HTMLInputElement>(null)
   const angle = useRef<number | null>(null)
   const accum = useRef(0)
+  const urls = useRef<string[]>([])
+  const acRef = useRef<AudioContext | null>(null)
+  const analyserRef = useRef<AnalyserNode | null>(null)
 
-  const [songs, setSongs] = useState<Song[]>([])
+  const [mine, setMine] = useState<StoredTrack[]>([])
   const [screen, setScreen] = useState<Screen>('menu')
   const [menuAt, setMenuAt] = useState(0)
   const [songAt, setSongAt] = useState(0)
-  const [current, setCurrent] = useState<number | null>(null)
   const [playing, setPlaying] = useState(false)
+  const [current, setCurrent] = useState<number | null>(null)
+  const [time, setTime] = useState(0)
+  const [dur, setDur] = useState(0)
   const [status, setStatus] = useState('')
+  const [level, setLevel] = useState(0)
 
-  const songsRef = useRef(songs)
-  songsRef.current = songs
+  /* built-in playlist plus whatever this visitor added */
+  const tracks: Track[] = [
+    ...PLAYLIST.map((t, i) => ({ id: `p${i}`, title: t.title, artist: t.artist, src: t.src })),
+    ...mine.map((t) => ({
+      id: t.id,
+      title: t.title,
+      artist: t.artist,
+      src: URL.createObjectURL(t.blob),
+      mine: true,
+    })),
+  ]
 
-  const load = useCallback(async () => setSongs(await listSongs()), [])
-  useEffect(() => { void load() }, [load])
-
-  /* ---------------- its own player ---------------- */
   useEffect(() => {
-    let dead = false
-    void youtubeApi().then((YT) => {
-      if (dead || !holderRef.current || playerRef.current) return
-      playerRef.current = new YT.Player(holderRef.current, {
-        width: '100%',
-        height: '100%',
-        playerVars: { rel: 0, modestbranding: 1, playsinline: 1 },
-        events: {
-          onReady: () => {
-            readyRef.current = true
-            if (wantRef.current) playerRef.current?.loadVideoById(wantRef.current)
-          },
-          onStateChange: (e: { data: number }) => {
-            setPlaying(e.data === YT.PlayerState.PLAYING)
-            if (e.data === YT.PlayerState.ENDED) {
-              setCurrent((n) => (n !== null && n + 1 < songsRef.current.length ? n + 1 : null))
-            }
-          },
-        },
-      })
-    })
-    return () => {
-      dead = true
-      readyRef.current = false
-      playerRef.current?.destroy()
-      playerRef.current = null
+    void listTracks().then(setMine)
+    return () => urls.current.forEach((u) => URL.revokeObjectURL(u))
+  }, [])
+
+  useEffect(() => {
+    tracks.filter((t) => t.mine).forEach((t) => urls.current.push(t.src))
+  })
+
+  /* Routed through an analyser so the flourish can breathe with the music.
+     createMediaElementSource may only be called once for an element, and it
+     takes the audio out of the default path — so it has to be connected on to
+     the destination or the iPod goes silent. */
+  const listen = useCallback(() => {
+    const el = audioRef.current
+    if (!el || acRef.current) return
+    const C = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+    if (!C) return
+    const ctx = new C()
+    const src = ctx.createMediaElementSource(el)
+    const analyser = ctx.createAnalyser()
+    analyser.fftSize = 512
+    src.connect(analyser)
+    analyser.connect(ctx.destination)
+    acRef.current = ctx
+    analyserRef.current = analyser
+  }, [])
+
+  useEffect(() => {
+    if (!playing) { setLevel(0); return }
+    const analyser = analyserRef.current
+    if (!analyser) return
+    const buf = new Uint8Array(analyser.frequencyBinCount)
+    let raf = 0
+    const tick = () => {
+      raf = requestAnimationFrame(tick)
+      analyser.getByteTimeDomainData(buf)
+      let sum = 0
+      for (let i = 0; i < buf.length; i++) {
+        const v = (buf[i] - 128) / 128
+        sum += v * v
+      }
+      setLevel(Math.min(1, Math.sqrt(sum / buf.length) * 3))
     }
-  }, [])
+    tick()
+    return () => cancelAnimationFrame(raf)
+  }, [playing])
 
-  useEffect(() => {
-    if (current === null) return
-    const s = songs[current]
-    if (!s) return
-    wantRef.current = s.video_id
-    if (readyRef.current) playerRef.current?.loadVideoById(s.video_id)
-  }, [current, songs])
+  useEffect(() => () => { void acRef.current?.close() }, [])
 
-  const play = useCallback((index: number) => {
-    if (!songsRef.current[index]) return
-    setCurrent(index)
-    setSongAt(index)
-    setScreen('now')
-  }, [])
+  const play = useCallback(
+    (index: number) => {
+      const t = tracks[index]
+      if (!t) return
+      setCurrent(index)
+      setScreen('now')
+      const el = audioRef.current
+      if (!el) return
+      listen()
+      void acRef.current?.resume()
+      el.src = t.src
+      el.play().then(
+        () => setPlaying(true),
+        () => setStatus('That file would not play'),
+      )
+    },
+    [tracks, listen],
+  )
 
   const toggle = () => {
-    if (current === null) return
-    if (playing) playerRef.current?.pauseVideo()
-    else playerRef.current?.playVideo()
+    const el = audioRef.current
+    if (!el || current === null) return
+    if (el.paused) {
+      void el.play()
+      setPlaying(true)
+    } else {
+      el.pause()
+      setPlaying(false)
+    }
   }
 
   const skip = (d: number) => {
-    if (!songs.length) return
-    play(((current ?? songAt) + d + songs.length) % songs.length)
+    if (current === null || !tracks.length) return
+    play((current + d + tracks.length) % tracks.length)
   }
 
   /* ---------------- the wheel ---------------- */
@@ -111,7 +157,11 @@ export default function Ipod() {
     if (!steps) return
     sound.click(1.5)
     if (screen === 'menu') setMenuAt((n) => Math.min(MENU.length - 1, Math.max(0, n + steps)))
-    else if (screen === 'songs') setSongAt((n) => Math.min(songs.length - 1, Math.max(0, n + steps)))
+    else if (screen === 'songs') setSongAt((n) => Math.min(tracks.length - 1, Math.max(0, n + steps)))
+    else if (screen === 'now') {
+      const el = audioRef.current
+      if (el && el.duration) el.currentTime = Math.min(el.duration, Math.max(0, el.currentTime + steps * 5))
+    }
   }
 
   const wheelDown = (e: React.PointerEvent) => {
@@ -120,7 +170,9 @@ export default function Ipod() {
        the events to the wheel and the button's click never fires. */
     if ((e.target as HTMLElement).closest('.ipod__wkey, .ipod__centre')) return
     const r = wheelRef.current!.getBoundingClientRect()
-    angle.current = Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2))
+    const cx = r.left + r.width / 2
+    const cy = r.top + r.height / 2
+    angle.current = Math.atan2(e.clientY - cy, e.clientX - cx)
     accum.current = 0
     wheelRef.current?.setPointerCapture(e.pointerId)
   }
@@ -128,7 +180,9 @@ export default function Ipod() {
   const wheelMove = (e: React.PointerEvent) => {
     if (angle.current === null) return
     const r = wheelRef.current!.getBoundingClientRect()
-    const a = Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2))
+    const cx = r.left + r.width / 2
+    const cy = r.top + r.height / 2
+    const a = Math.atan2(e.clientY - cy, e.clientX - cx)
     let d = a - angle.current
     if (d > Math.PI) d -= Math.PI * 2
     if (d < -Math.PI) d += Math.PI * 2
@@ -141,91 +195,128 @@ export default function Ipod() {
     }
   }
 
-  const wheelUp = () => { angle.current = null }
+  const wheelUp = () => {
+    angle.current = null
+  }
 
   const select = () => {
     sound.click(0.9)
     if (screen === 'menu') {
       const pick = MENU[menuAt]
-      if (pick === 'Songbook') setScreen('songs')
+      if (pick === 'Music') setScreen('songs')
       else if (pick === 'Now Playing') setScreen(current === null ? 'songs' : 'now')
-      else if (pick === 'Shuffle') {
-        if (songs.length) play(Math.floor(Math.random() * songs.length))
-        else setStatus('The songbook is empty')
-      } else if (pick === 'Add a song') launch('karaoke')
+      else if (pick === 'Shuffle Songs') {
+        if (tracks.length) play(Math.floor(Math.random() * tracks.length))
+      } else if (pick === 'Add Music') fileRef.current?.click()
       else setStatus('')
-    } else if (screen === 'songs') play(songAt)
-    else toggle()
+    } else if (screen === 'songs') {
+      play(songAt)
+    } else {
+      toggle()
+    }
   }
 
   const back = () => {
     sound.click(0.8)
-    setScreen((s) => (s === 'now' ? 'songs' : 'menu'))
+    setScreen((s) => (s === 'now' ? 'songs' : s === 'songs' ? 'menu' : 'menu'))
   }
 
-  const song = current !== null ? songs[current] : undefined
+  const upload = async (files: FileList | null) => {
+    if (!files?.length) return
+    setStatus('Adding…')
+    for (const f of Array.from(files).slice(0, 12)) {
+      if (!f.type.startsWith('audio/')) continue
+      await addTrack(f)
+    }
+    setMine(await listTracks())
+    setStatus('')
+    setScreen('songs')
+  }
+
+  const drop = async (id: string) => {
+    await removeTrack(id)
+    setMine(await listTracks())
+  }
+
+  const fmt = (n: number) =>
+    `${Math.floor(n / 60)}:${String(Math.floor(n % 60)).padStart(2, '0')}`
+
+  const track = current !== null ? tracks[current] : null
 
   return (
     <div className="ipod">
       <div className="ipod__body">
+        {/* screen */}
         <div className="ipod__screen">
-          {/* The player stays mounted and stays visible, whichever screen you
-              are on: browsing the menu should not stop the song, and the embed
-              is not something to hide behind a list. */}
-          <div className="ipod__video">
-            <div ref={holderRef} />
+          <div className="ipod__bar">
+            <span>{screen === 'menu' ? 'iPod' : screen === 'songs' ? 'Songs' : 'Now Playing'}</span>
+            <span className="ipod__battery" aria-hidden />
           </div>
 
-          {screen === 'now' ? (
-            <div className="ipod__panel">
-              <Flourish playing={playing} className="ipod__flourish" />
-              <p className="ipod__title">{song?.title ?? '—'}</p>
-              <p className="ipod__artist">{song?.artist ?? ''}</p>
-              <p className="ipod__where">{playing ? 'Playing' : 'Paused'}</p>
-            </div>
-          ) : (
-          <div className="ipod__lists">
-            <div className="ipod__bar">
-              <span>{screen === 'menu' ? 'iPod' : 'Songbook'}</span>
-              <span className="ipod__battery" aria-hidden />
-            </div>
+          {screen === 'menu' ? (
+            <ul className="ipod__list">
+              {MENU.map((m, i) => (
+                <li key={m} className="ipod__item" data-on={i === menuAt}>
+                  <span>{m}</span>
+                  <b>›</b>
+                </li>
+              ))}
+            </ul>
+          ) : null}
 
-            {screen === 'menu' ? (
-              <ul className="ipod__list">
-                {MENU.map((m, i) => (
-                  <li key={m} className="ipod__item" data-on={i === menuAt}>
-                    <span>{m}</span>
-                    <b>›</b>
-                  </li>
-                ))}
-              </ul>
-            ) : songs.length ? (
+          {screen === 'songs' ? (
+            tracks.length ? (
               <ul className="ipod__list ipod__list--songs">
-                {songs.map((s, i) => (
-                  <li key={s.id} className="ipod__item" data-on={i === songAt}>
+                {tracks.map((t, i) => (
+                  <li key={t.id} className="ipod__item" data-on={i === songAt}>
                     <span className="ipod__song">
-                      <b>{s.title}</b>
-                      <em>{s.artist}</em>
+                      <b>{t.title}</b>
+                      <em>{t.artist}</em>
                     </span>
-                    <b>›</b>
+                    {t.mine ? (
+                      <button
+                        className="ipod__drop"
+                        aria-label={`Remove ${t.title}`}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          void drop(t.id)
+                        }}
+                      >
+                        ×
+                      </button>
+                    ) : null}
                   </li>
                 ))}
               </ul>
             ) : (
               <div className="ipod__empty">
-                <p>The songbook is empty.</p>
+                <p>No songs yet.</p>
                 <p className="ipod__emptySub">
-                  Anyone can add to it — an artist, a song name and a YouTube link.
+                  Add your own — they stay in this browser and are never uploaded.
                 </p>
-                <button className="ipod__addBtn" onClick={() => launch('karaoke')}>
-                  Add the first
+                <button className="ipod__addBtn" onClick={() => fileRef.current?.click()}>
+                  Add music
                 </button>
               </div>
-            )}
+            )
+          ) : null}
 
-            {status ? <p className="ipod__status">{status}</p> : null}
-          </div>
-          )}
+          {screen === 'now' ? (
+            <div className="ipod__now">
+              <Flourish playing={playing} level={level} className="ipod__flourish" />
+              <p className="ipod__title">{track?.title ?? '—'}</p>
+              <p className="ipod__artist">{track?.artist ?? ''}</p>
+              <div className="ipod__scrub">
+                <i style={{ width: dur ? `${(time / dur) * 100}%` : '0%' }} />
+              </div>
+              <div className="ipod__times">
+                <span>{fmt(time)}</span>
+                <span>{dur ? `-${fmt(Math.max(0, dur - time))}` : '--:--'}</span>
+              </div>
+            </div>
+          ) : null}
+
+          {status ? <p className="ipod__status">{status}</p> : null}
         </div>
 
         {/* click wheel */}
@@ -262,6 +353,24 @@ export default function Ipod() {
           <button className="ipod__centre" aria-label="Select" onClick={select} />
         </div>
       </div>
+
+      <input
+        ref={fileRef}
+        type="file"
+        accept="audio/*"
+        multiple
+        hidden
+        onChange={(e) => void upload(e.target.files)}
+      />
+
+      <audio
+        ref={audioRef}
+        onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
+        onDurationChange={(e) => setDur(e.currentTarget.duration || 0)}
+        onEnded={() => skip(1)}
+        onPause={() => setPlaying(false)}
+        onPlay={() => setPlaying(true)}
+      />
     </div>
   )
 }

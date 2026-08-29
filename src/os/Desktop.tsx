@@ -39,7 +39,6 @@ const SHORTCUTS: Shortcut[] = [
   { id: 'photobooth', label: 'Photo Booth', icon: 'camera', run: () => launch('photobooth') },
   { id: 'ipod', label: 'iPod', icon: 'ipod', run: () => launch('ipod') },
   { id: 'wmp', label: 'Media Player', icon: 'wmp', run: () => launch('wmp') },
-  { id: 'karaoke', label: 'Karaoke', icon: 'wmp', run: () => launch('karaoke') },
   { id: 'ascii', label: 'ASCII Studio', icon: 'ascii', run: () => launch('ascii') },
   { id: 'sketchpad', label: 'Draw Music', icon: 'sketchpad', run: () => launch('sketchpad') },
   { id: 'games', label: 'Games', icon: 'games', run: () => launch('games') },
