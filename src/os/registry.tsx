@@ -13,6 +13,7 @@ import FreeCell from '../apps/games/FreeCell'
 import Minesweeper from '../apps/games/Minesweeper'
 import BubbleBeat from '../apps/games/BubbleBeat'
 import Chess from '../apps/games/chess/Chess'
+import NightLine from '../apps/games/NightLine'
 import Guestbook from '../apps/Guestbook'
 import FishPainter from '../apps/FishPainter'
 import PaintApp from '../apps/Paint'
@@ -181,6 +182,17 @@ export const APPS: AppDef[] = [
     minW: 560,
     minH: 460,
     Component: AvatarMaker,
+  },
+  {
+    id: 'nightline',
+    title: 'The Night Line',
+    icon: 'notes',
+    blurb: 'Seventeen stops, seventeen clues, one name',
+    w: 900,
+    h: 620,
+    minW: 560,
+    minH: 440,
+    Component: NightLine,
   },
   {
     id: 'chess',
