@@ -287,9 +287,10 @@ export default function Terminal() {
 
       case 'privacy':
         print(
-          '  No account, no tracking, no analytics.',
+          '  No account, no advertising, nothing sold.',
           '  Settings, coins, the tank and any audio you add stay in this browser.',
           '  Notes and fish go to the database, and only when you send them.',
+          '  Visits are counted: how long, which apps. No name, no cookie.',
           '  Embeds (YouTube, archive.org, DuckDuckGo, Wokwi) set their own cookies.',
           '  open privacy   for the whole thing',
           '',

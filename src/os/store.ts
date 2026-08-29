@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { IconName } from '../ui/Icon'
 import { sound } from './sound'
+import { noteApp, startVisit } from '../lib/visits'
 
 export type Phase = 'boot' | 'login' | 'desktop'
 export type SnapZone = 'left' | 'right' | 'top' | null
@@ -174,6 +175,7 @@ export const useOS = create<OSState>((set, get) => ({
     const clean = name.trim().slice(0, 24)
     writeLS('os.user', clean)
     set({ userName: clean, phase: 'desktop' })
+    startVisit()
   },
 
   signOut: () => set({ phase: 'login', wins: [], activeId: null, startOpen: false }),
@@ -205,6 +207,7 @@ export const useOS = create<OSState>((set, get) => ({
   },
 
   open: (spec) => {
+    noteApp(spec.appId)
     const { wins, topZ } = get()
     if (!spec.multi) {
       const existing = wins.find((w) => w.appId === spec.appId)

@@ -23,7 +23,7 @@ const THIRD_PARTY = [
   ['DuckDuckGo', 'Searching in Internet Explorer sends the words you typed to them.', 'https://duckduckgo.com/privacy'],
   ['Open-Meteo', 'The weather panel asks for Algiers. It never asks where you are.', 'https://open-meteo.com/en/terms'],
   ['Wokwi', 'One project page shows a circuit simulation from them.', 'https://wokwi.com/legal/privacy'],
-  ['Supabase', 'Stores the notes you send and the fish you draw. Nothing else.', 'https://supabase.com/privacy'],
+  ['Supabase', 'Stores the notes you send, the fish you draw, and the visit count. Nothing else.', 'https://supabase.com/privacy'],
 ]
 
 const BUILT_WITH = [
@@ -38,8 +38,8 @@ export default function Privacy() {
     <div className="legal">
       <h2>Privacy</h2>
       <p className="legal__lede">
-        There is no sign up, no tracking and no advertising. Nothing about you
-        is measured, kept or sold.
+        There is no sign up, no advertising and nothing is ever sold. Visits
+        are counted, and that is the only thing measured here.
       </p>
 
       <h3>Kept on your own device</h3>
@@ -89,6 +89,23 @@ export default function Privacy() {
           </div>
         ))}
       </dl>
+
+      <h3>Counting visits</h3>
+      <p>
+        Anya keeps a count of how the site is doing. When you sign in it
+        records that a visit happened, and when you leave it records how long
+        you stayed and which apps you opened. That is the whole list.
+      </p>
+      <p>
+        There is no name, no address, nothing you typed or drew, and no cookie
+        or code that stays on your device. Nothing joins one visit to another,
+        so coming back tomorrow looks like a different person. It is a tally,
+        not a profile.
+      </p>
+      <p>
+        If your browser sends Do Not Track or Global Privacy Control, you are
+        not counted at all.
+      </p>
 
       <h3>Cookies</h3>
       <p>

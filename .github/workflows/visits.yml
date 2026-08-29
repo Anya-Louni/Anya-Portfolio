@@ -1,0 +1,33 @@
+name: Daily visit summary
+
+# Reads the visits table with the service role key, which bypasses row-level
+# security and therefore must never appear in the front end. It lives only in
+# this repository's Actions secrets.
+
+on:
+  schedule:
+    # 07:00 UTC, every day
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: visits
+  cancel-in-progress: true
+
+jobs:
+  summary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read yesterday and send it
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          VISIT_EMAIL_TO: ${{ secrets.VISIT_EMAIL_TO }}
+          VISIT_EMAIL_FROM: ${{ secrets.VISIT_EMAIL_FROM }}
+        run: node .github/scripts/visit-summary.mjs
