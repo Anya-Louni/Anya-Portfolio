@@ -17,43 +17,10 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { addSong, isRemote, listSongs, thumbFor, videoIdFrom, type Song } from '../lib/songs'
-import { nowPlaying, usePlayVersion } from '../os/nowPlaying'
+import { youtubeApi, KARAOKE_HINT, type YtPlayer } from '../lib/youtube'
+import { loadSheet, saveSheet, type Sheet } from '../lib/lyrics'
+import { LyricsPanel, LyricsStage, ORIGINAL } from './karaoke/Lyrics'
 import { sound } from '../os/sound'
-
-/* The IFrame API arrives as a global and calls a global back. Both are
-   YouTube's contract, so they are declared rather than wrapped. */
-declare global {
-  interface Window {
-    YT?: {
-      Player: new (el: HTMLElement | string, opts: Record<string, unknown>) => YtPlayer
-      PlayerState: { PLAYING: number; PAUSED: number; ENDED: number }
-    }
-    onYouTubeIframeAPIReady?: () => void
-  }
-}
-interface YtPlayer {
-  loadVideoById(id: string): void
-  playVideo(): void
-  pauseVideo(): void
-  destroy(): void
-  getPlayerState(): number
-  getCurrentTime(): number
-  getDuration(): number
-  setVolume(v: number): void
-}
-
-let apiPromise: Promise<void> | null = null
-function loadApi(): Promise<void> {
-  if (window.YT?.Player) return Promise.resolve()
-  if (apiPromise) return apiPromise
-  apiPromise = new Promise((resolve) => {
-    window.onYouTubeIframeAPIReady = () => resolve()
-    const tag = document.createElement('script')
-    tag.src = 'https://www.youtube.com/iframe_api'
-    document.head.appendChild(tag)
-  })
-  return apiPromise
-}
 
 export default function Karaoke() {
   const [songs, setSongs] = useState<Song[]>([])
@@ -67,6 +34,10 @@ export default function Karaoke() {
   const [mic, setMic] = useState<'off' | 'asking' | 'on' | 'denied'>('off')
   const [level, setLevel] = useState(0)
   const [query, setQuery] = useState('')
+  const [tab, setTab] = useState<'book' | 'words'>('book')
+  const [sheet, setSheet] = useState<Sheet>({ lines: [], versions: {} })
+  const [script, setScript] = useState(ORIGINAL)
+  const [time, setTime] = useState(0)
 
   const holderRef = useRef<HTMLDivElement>(null)
   const playerRef = useRef<YtPlayer | null>(null)
@@ -76,25 +47,6 @@ export default function Karaoke() {
   const wantRef = useRef<string | null>(null)
 
   const song = at >= 0 ? songs[at] : undefined
-
-  /* The iPod hands songs over through the store. Taking the request here
-     rather than from window params means it works whether this window was
-     already open or has just been created by the hand-over. */
-  const version = usePlayVersion()
-  useEffect(() => {
-    const want = nowPlaying.take()
-    if (!want) return
-    const i = songs.findIndex((s) => s.video_id === want.videoId)
-    if (i >= 0) setAt(i)
-    else {
-      // the list here is older than the one the iPod was reading
-      void listSongs().then((rows) => {
-        setSongs(rows)
-        const j = rows.findIndex((s) => s.video_id === want.videoId)
-        if (j >= 0) setAt(j)
-      })
-    }
-  }, [version, songs])
 
   const load = useCallback(async () => {
     const rows = await listSongs()
@@ -106,9 +58,9 @@ export default function Karaoke() {
   /* ---------------- the player ---------------- */
   useEffect(() => {
     let dead = false
-    void loadApi().then(() => {
+    void youtubeApi().then((YT) => {
       if (dead || !holderRef.current || playerRef.current) return
-      playerRef.current = new window.YT!.Player(holderRef.current, {
+      playerRef.current = new YT.Player(holderRef.current, {
         width: '100%',
         height: '100%',
         playerVars: { rel: 0, modestbranding: 1, playsinline: 1 },
@@ -119,9 +71,8 @@ export default function Karaoke() {
             if (wantRef.current) playerRef.current?.loadVideoById(wantRef.current)
           },
           onStateChange: (e: { data: number }) => {
-            const S = window.YT!.PlayerState
-            setPlaying(e.data === S.PLAYING)
-            if (e.data === S.ENDED) setAt((n) => (n + 1 < songs.length ? n + 1 : -1))
+            setPlaying(e.data === YT.PlayerState.PLAYING)
+            if (e.data === YT.PlayerState.ENDED) setAt((n) => (n + 1 < songs.length ? n + 1 : -1))
           },
         },
       })
@@ -136,17 +87,32 @@ export default function Karaoke() {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    if (!song) { setSheet({ lines: [], versions: {} }); return }
+    setSheet(loadSheet(song.video_id))
+    setScript(ORIGINAL)
+  }, [song])
+
+  const editSheet = useCallback((next: Sheet) => {
+    setSheet(next)
+    if (song) saveSheet(song.video_id, next)
+  }, [song])
+
+  /* The clock the highlight runs on. Polled rather than pushed, because the
+     player reports its position on request and not as it moves. */
+  useEffect(() => {
+    if (!playing) return
+    const id = window.setInterval(() => {
+      const t = playerRef.current?.getCurrentTime?.()
+      if (typeof t === 'number') setTime(t)
+    }, 120)
+    return () => window.clearInterval(id)
+  }, [playing])
+
+  useEffect(() => {
     if (!song) return
     wantRef.current = song.video_id
     if (readyRef.current) playerRef.current?.loadVideoById(song.video_id)
   }, [song])
-
-  /* The iPod's screen listens to this, so the flourish and the track name it
-     shows follow whatever is playing here. */
-  useEffect(() => {
-    nowPlaying.set(song ? { artist: song.artist, title: song.title, playing } : null)
-  }, [song, playing])
-  useEffect(() => () => nowPlaying.set(null), [])
 
   /* ---------------- the microphone ---------------- */
   const listen = async () => {
@@ -224,12 +190,12 @@ export default function Karaoke() {
           <div className="kar__player">
             <div ref={holderRef} />
           </div>
+          {song ? <LyricsStage sheet={sheet} script={script} time={time} big={big} /> : null}
           {!song ? (
             <div className="kar__empty">
               <b>Pick a song</b>
               <span>
-                Anything on YouTube plays here. Search for a karaoke version and the words come
-                with the picture.
+                Anything on YouTube plays here. {KARAOKE_HINT}
               </span>
             </div>
           ) : null}
@@ -238,7 +204,10 @@ export default function Karaoke() {
         <div className="kar__under">
           <div className="kar__meta">
             <b>{song ? song.title : '—'}</b>
-            <span>{song ? song.artist : 'Nothing playing'}</span>
+            <span>
+              {song ? song.artist : 'Nothing playing'}
+              {song ? <i data-on={playing}>{playing ? ' · playing' : ' · paused'}</i> : null}
+            </span>
           </div>
 
           <button className="kar__btn" onClick={() => setBig((b) => !b)}>
@@ -264,10 +233,31 @@ export default function Karaoke() {
 
       <aside className="kar__book">
         <header className="kar__bookHead">
-          <b>Songbook</b>
-          <span>{songs.length} added{isRemote ? '' : ' · this browser only'}</span>
+          <div className="kar__tabs">
+            <button data-on={tab === 'book'} onClick={() => setTab('book')}>Songbook</button>
+            <button data-on={tab === 'words'} onClick={() => setTab('words')} disabled={!song}>
+              Words
+            </button>
+          </div>
+          <span>
+            {tab === 'book'
+              ? `${songs.length} added${isRemote ? '' : ' · this browser only'}`
+              : 'Yours, and kept in this browser'}
+          </span>
         </header>
 
+        {tab === 'words' && song ? (
+          <LyricsPanel
+            sheet={sheet}
+            onChange={editSheet}
+            script={script}
+            onScript={setScript}
+            time={time}
+            seek={(t) => { playerRef.current?.seekTo?.(t, true); setTime(t) }}
+          />
+        ) : null}
+
+        {tab === 'book' ? (<>
         <div className="kar__tools">
           <input
             className="kar__search"
@@ -346,6 +336,7 @@ export default function Karaoke() {
             </li>
           ) : null}
         </ul>
+        </>) : null}
       </aside>
     </div>
   )
