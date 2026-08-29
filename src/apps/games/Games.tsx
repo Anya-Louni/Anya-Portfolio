@@ -6,6 +6,7 @@ const TILES: { id: string; name: string; desc: string; icon: IconName }[] = [
   { id: 'spider', name: 'Spider Solitaire', desc: 'One, two or four suits', icon: 'spider' },
   { id: 'freecell', name: 'FreeCell', desc: 'Every deal is winnable-ish', icon: 'freecell' },
   { id: 'minesweeper', name: 'Minesweeper', desc: 'Beginner to expert', icon: 'mine' },
+  { id: 'chess', name: 'Chess', desc: 'Full rules, four strengths', icon: 'games' },
   { id: 'bubblebeat', name: 'Bubble Beat', desc: 'Catch the notes, hear the tune', icon: 'arcade' },
 ]
 

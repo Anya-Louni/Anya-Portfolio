@@ -12,6 +12,7 @@ import Spider from '../apps/games/Spider'
 import FreeCell from '../apps/games/FreeCell'
 import Minesweeper from '../apps/games/Minesweeper'
 import BubbleBeat from '../apps/games/BubbleBeat'
+import Chess from '../apps/games/chess/Chess'
 import Guestbook from '../apps/Guestbook'
 import FishPainter from '../apps/FishPainter'
 import PaintApp from '../apps/Paint'
@@ -180,6 +181,17 @@ export const APPS: AppDef[] = [
     minW: 560,
     minH: 460,
     Component: AvatarMaker,
+  },
+  {
+    id: 'chess',
+    title: 'Chess',
+    icon: 'games',
+    blurb: 'Full rules, four strengths',
+    w: 860,
+    h: 660,
+    minW: 520,
+    minH: 460,
+    Component: Chess,
   },
   {
     id: 'bubblebeat',
