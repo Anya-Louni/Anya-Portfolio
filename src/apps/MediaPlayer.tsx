@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { PLAYLIST } from '../content/playlist'
-import { addTrack, listTracks, type StoredTrack } from '../lib/tracks'
+import { addFile, listTracks, type StoredTrack } from '../lib/tracks'
 
 /**
  * Windows Media Player.
@@ -47,9 +47,15 @@ export default function MediaPlayer() {
   const [viz, setViz] = useState<Viz>('bars')
   vizRef.current = viz
 
+  /* Files only. The visualiser reads the waveform, and a track that is a
+     YouTube link has no waveform here to read — the audio is inside a
+     cross-origin frame, which is exactly why the iPod shows the video for
+     those instead of a flourish. */
   const tracks: Track[] = [
     ...PLAYLIST.map((t, i) => ({ id: `p${i}`, title: t.title, artist: t.artist, src: t.src })),
-    ...mine.map((t) => ({ id: t.id, title: t.title, artist: t.artist, src: URL.createObjectURL(t.blob) })),
+    ...mine
+      .filter((t) => t.kind === 'file' && t.blob)
+      .map((t) => ({ id: t.id, title: t.title, artist: t.artist, src: URL.createObjectURL(t.blob!) })),
   ]
 
   useEffect(() => {
@@ -243,7 +249,7 @@ export default function MediaPlayer() {
   const upload = async (files: FileList | null) => {
     if (!files?.length) return
     for (const f of Array.from(files).slice(0, 12)) {
-      if (f.type.startsWith('audio/')) await addTrack(f)
+      if (f.type.startsWith('audio/')) await addFile(f, 'You', f.name.replace(/\.[^.]+$/, ''))
     }
     setMine(await listTracks())
   }

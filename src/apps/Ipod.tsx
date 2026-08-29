@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { PLAYLIST } from '../content/playlist'
-import { addTrack, listTracks, removeTrack, type StoredTrack } from '../lib/tracks'
-import { sound } from '../os/sound'
+import {
+  addFile, addLink, listTracks, removeTrack, videoIdFrom, youtubeApi,
+  type StoredTrack, type TrackKind, type YtPlayer,
+} from '../lib/tracks'
 import { Flourish } from '../art/Flourish'
+import { sound } from '../os/sound'
 
 /**
  * iPod.
@@ -11,32 +14,40 @@ import { Flourish } from '../art/Flourish'
  * is a wheel — drag around it and the selection scrolls, one step per 30° of
  * rotation, the way the original felt.
  *
- * Nothing is uploaded. The built-in tracks ship with the app and anything a
- * visitor adds is held in this browser, which is what lets the flourish read
- * the audio at all: a file we hold can be measured, and one served from
- * somewhere else cannot.
+ * Two kinds of track live in it. A file stays in this browser and is never
+ * uploaded, and because it is ours to measure the screen fills with a flourish
+ * that breathes with the music. A YouTube link stores an eleven-character id
+ * and no audio at all, and plays in YouTube's own player, which fills the
+ * screen while it runs — an embed is not something to hide, and hiding it is
+ * the one thing that would turn a link into a problem.
  *
- * While a song plays the screen fills with that flourish — curling stems,
- * rosettes, scattered dots — drawing itself in a single pale blue, and
- * breathing with the loudness of the track.
+ * Either way the artist and the song name are typed by hand. A filename is a
+ * poor guess at both and a link is worse.
  */
 
 interface Track {
   id: string
   title: string
   artist: string
-  src: string
+  kind: TrackKind
+  /** an object URL, for a file */
+  src?: string
+  videoId?: string
   mine?: boolean
 }
 
-type Screen = 'menu' | 'songs' | 'now'
+type Screen = 'menu' | 'songs' | 'now' | 'add'
 
 const MENU = ['Music', 'Now Playing', 'Shuffle Songs', 'Add Music', 'About'] as const
 
 export default function Ipod() {
   const audioRef = useRef<HTMLAudioElement>(null)
   const wheelRef = useRef<HTMLDivElement>(null)
-  const fileRef = useRef<HTMLInputElement>(null)
+  const listRef = useRef<HTMLUListElement>(null)
+  const holderRef = useRef<HTMLDivElement>(null)
+  const ytRef = useRef<YtPlayer | null>(null)
+  const ytReady = useRef(false)
+  const ytWant = useRef<string | null>(null)
   const angle = useRef<number | null>(null)
   const accum = useRef(0)
   const urls = useRef<string[]>([])
@@ -53,15 +64,21 @@ export default function Ipod() {
   const [dur, setDur] = useState(0)
   const [status, setStatus] = useState('')
   const [level, setLevel] = useState(0)
+  const [form, setForm] = useState({ artist: '', title: '', link: '' })
+  const [file, setFile] = useState<File | null>(null)
 
-  /* built-in playlist plus whatever this visitor added */
+  /* the built-in playlist plus whatever this visitor added */
   const tracks: Track[] = [
-    ...PLAYLIST.map((t, i) => ({ id: `p${i}`, title: t.title, artist: t.artist, src: t.src })),
+    ...PLAYLIST.map((t, i) => ({
+      id: `p${i}`, title: t.title, artist: t.artist, kind: 'file' as const, src: t.src,
+    })),
     ...mine.map((t) => ({
       id: t.id,
       title: t.title,
       artist: t.artist,
-      src: URL.createObjectURL(t.blob),
+      kind: t.kind,
+      src: t.blob ? URL.createObjectURL(t.blob) : undefined,
+      videoId: t.videoId,
       mine: true,
     })),
   ]
@@ -72,9 +89,44 @@ export default function Ipod() {
   }, [])
 
   useEffect(() => {
-    tracks.filter((t) => t.mine).forEach((t) => urls.current.push(t.src))
+    tracks.filter((t) => t.mine && t.src).forEach((t) => urls.current.push(t.src!))
   })
 
+  const track = current !== null ? tracks[current] : null
+
+  const skipRef = useRef<(d: number) => void>(() => {})
+
+  /* ---------------- the link half ---------------- */
+  useEffect(() => {
+    let dead = false
+    void youtubeApi().then((YT) => {
+      if (dead || !holderRef.current || ytRef.current) return
+      ytRef.current = new YT.Player(holderRef.current, {
+        width: '100%',
+        height: '100%',
+        playerVars: { rel: 0, modestbranding: 1, playsinline: 1 },
+        events: {
+          onReady: () => {
+            ytReady.current = true
+            // whatever was asked for while it was still starting up
+            if (ytWant.current) ytRef.current?.loadVideoById(ytWant.current)
+          },
+          onStateChange: (e: { data: number }) => {
+            setPlaying(e.data === YT.PlayerState.PLAYING)
+            if (e.data === YT.PlayerState.ENDED) skipRef.current(1)
+          },
+        },
+      })
+    })
+    return () => {
+      dead = true
+      ytReady.current = false
+      ytRef.current?.destroy()
+      ytRef.current = null
+    }
+  }, [])
+
+  /* ---------------- the file half ---------------- */
   /* Routed through an analyser so the flourish can breathe with the music.
      createMediaElementSource may only be called once for an element, and it
      takes the audio out of the default path — so it has to be connected on to
@@ -94,8 +146,10 @@ export default function Ipod() {
     analyserRef.current = analyser
   }, [])
 
+  const fileKind = track?.kind !== 'youtube'
+
   useEffect(() => {
-    if (!playing) { setLevel(0); return }
+    if (!playing || !fileKind) { setLevel(0); return }
     const analyser = analyserRef.current
     if (!analyser) return
     const buf = new Uint8Array(analyser.frequencyBinCount)
@@ -112,45 +166,52 @@ export default function Ipod() {
     }
     tick()
     return () => cancelAnimationFrame(raf)
-  }, [playing])
+  }, [playing, fileKind])
 
   useEffect(() => () => { void acRef.current?.close() }, [])
 
-  const play = useCallback(
-    (index: number) => {
-      const t = tracks[index]
-      if (!t) return
-      setCurrent(index)
-      setScreen('now')
-      const el = audioRef.current
-      if (!el) return
-      listen()
-      void acRef.current?.resume()
-      el.src = t.src
-      el.play().then(
-        () => setPlaying(true),
-        () => setStatus('That file would not play'),
-      )
-    },
-    [tracks, listen],
-  )
+  /* ---------------- playing ---------------- */
+  const play = useCallback((index: number) => {
+    const t = tracks[index]
+    if (!t) return
+    setCurrent(index)
+    setSongAt(index)
+    setScreen('now')
+    const el = audioRef.current
+
+    if (t.kind === 'youtube' && t.videoId) {
+      el?.pause()
+      ytWant.current = t.videoId
+      if (ytReady.current) ytRef.current?.loadVideoById(t.videoId)
+      return
+    }
+    ytRef.current?.pauseVideo()
+    if (!el || !t.src) return
+    listen()
+    void acRef.current?.resume()
+    el.src = t.src
+    el.play().then(() => setPlaying(true), () => setStatus('That file would not play'))
+  }, [tracks, listen])
 
   const toggle = () => {
-    const el = audioRef.current
-    if (!el || current === null) return
-    if (el.paused) {
-      void el.play()
-      setPlaying(true)
-    } else {
-      el.pause()
-      setPlaying(false)
+    if (!track) return
+    if (track.kind === 'youtube') {
+      if (playing) ytRef.current?.pauseVideo()
+      else ytRef.current?.playVideo()
+      return
     }
+    const el = audioRef.current
+    if (!el) return
+    if (el.paused) { void el.play(); setPlaying(true) }
+    else { el.pause(); setPlaying(false) }
   }
 
-  const skip = (d: number) => {
-    if (current === null || !tracks.length) return
-    play((current + d + tracks.length) % tracks.length)
-  }
+  const skip = useCallback((d: number) => {
+    if (!tracks.length) return
+    const from = current ?? songAt
+    play((((from + d) % tracks.length) + tracks.length) % tracks.length)
+  }, [tracks.length, current, songAt, play])
+  skipRef.current = skip
 
   /* ---------------- the wheel ---------------- */
   const move = (steps: number) => {
@@ -158,11 +219,21 @@ export default function Ipod() {
     sound.click(1.5)
     if (screen === 'menu') setMenuAt((n) => Math.min(MENU.length - 1, Math.max(0, n + steps)))
     else if (screen === 'songs') setSongAt((n) => Math.min(tracks.length - 1, Math.max(0, n + steps)))
-    else if (screen === 'now') {
+    else if (screen === 'now' && track?.kind === 'file') {
       const el = audioRef.current
       if (el && el.duration) el.currentTime = Math.min(el.duration, Math.max(0, el.currentTime + steps * 5))
     }
   }
+
+  /* Keep the highlighted row on screen. The wheel moves a selection, not a
+     scrollbar, so past the fifth song the list simply stopped following —
+     which is what it looked like when it would not scroll. */
+  useEffect(() => {
+    const at = screen === 'songs' ? songAt : screen === 'menu' ? menuAt : -1
+    if (at < 0) return
+    const el = listRef.current?.children[at] as HTMLElement | undefined
+    el?.scrollIntoView({ block: 'nearest' })
+  }, [songAt, menuAt, screen])
 
   const wheelDown = (e: React.PointerEvent) => {
     /* Only the ring scrolls. If the press landed on one of the five
@@ -170,9 +241,7 @@ export default function Ipod() {
        the events to the wheel and the button's click never fires. */
     if ((e.target as HTMLElement).closest('.ipod__wkey, .ipod__centre')) return
     const r = wheelRef.current!.getBoundingClientRect()
-    const cx = r.left + r.width / 2
-    const cy = r.top + r.height / 2
-    angle.current = Math.atan2(e.clientY - cy, e.clientX - cx)
+    angle.current = Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2))
     accum.current = 0
     wheelRef.current?.setPointerCapture(e.pointerId)
   }
@@ -180,9 +249,7 @@ export default function Ipod() {
   const wheelMove = (e: React.PointerEvent) => {
     if (angle.current === null) return
     const r = wheelRef.current!.getBoundingClientRect()
-    const cx = r.left + r.width / 2
-    const cy = r.top + r.height / 2
-    const a = Math.atan2(e.clientY - cy, e.clientX - cx)
+    const a = Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2))
     let d = a - angle.current
     if (d > Math.PI) d -= Math.PI * 2
     if (d < -Math.PI) d += Math.PI * 2
@@ -195,9 +262,7 @@ export default function Ipod() {
     }
   }
 
-  const wheelUp = () => {
-    angle.current = null
-  }
+  const wheelUp = () => { angle.current = null }
 
   const select = () => {
     sound.click(0.9)
@@ -207,30 +272,39 @@ export default function Ipod() {
       else if (pick === 'Now Playing') setScreen(current === null ? 'songs' : 'now')
       else if (pick === 'Shuffle Songs') {
         if (tracks.length) play(Math.floor(Math.random() * tracks.length))
-      } else if (pick === 'Add Music') fileRef.current?.click()
+        else setStatus('Nothing to shuffle yet')
+      } else if (pick === 'Add Music') { setStatus(''); setScreen('add') }
       else setStatus('')
-    } else if (screen === 'songs') {
-      play(songAt)
-    } else {
-      toggle()
-    }
+    } else if (screen === 'songs') play(songAt)
+    else if (screen === 'now') toggle()
   }
 
   const back = () => {
     sound.click(0.8)
-    setScreen((s) => (s === 'now' ? 'songs' : s === 'songs' ? 'menu' : 'menu'))
+    setStatus('')
+    setScreen((s) => (s === 'now' ? 'songs' : s === 'songs' || s === 'add' ? 'menu' : 'menu'))
   }
 
-  const upload = async (files: FileList | null) => {
-    if (!files?.length) return
-    setStatus('Adding…')
-    for (const f of Array.from(files).slice(0, 12)) {
-      if (!f.type.startsWith('audio/')) continue
-      await addTrack(f)
+  /* ---------------- adding ---------------- */
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const artist = form.artist.trim()
+    const title = form.title.trim()
+    if (!artist || !title) { setStatus('Both names, please'); return }
+
+    if (file) {
+      await addFile(file, artist, title)
+    } else {
+      const id = videoIdFrom(form.link)
+      if (!id) { setStatus('That is not a YouTube link'); return }
+      await addLink(id, artist, title)
     }
     setMine(await listTracks())
+    setForm({ artist: '', title: '', link: '' })
+    setFile(null)
     setStatus('')
     setScreen('songs')
+    sound.click(1.1)
   }
 
   const drop = async (id: string) => {
@@ -238,85 +312,142 @@ export default function Ipod() {
     setMine(await listTracks())
   }
 
-  const fmt = (n: number) =>
-    `${Math.floor(n / 60)}:${String(Math.floor(n % 60)).padStart(2, '0')}`
-
-  const track = current !== null ? tracks[current] : null
+  const fmt = (n: number) => `${Math.floor(n / 60)}:${String(Math.floor(n % 60)).padStart(2, '0')}`
+  const onLink = screen === 'now' && track?.kind === 'youtube'
 
   return (
     <div className="ipod">
       <div className="ipod__body">
-        {/* screen */}
         <div className="ipod__screen">
-          <div className="ipod__bar">
-            <span>{screen === 'menu' ? 'iPod' : screen === 'songs' ? 'Songs' : 'Now Playing'}</span>
-            <span className="ipod__battery" aria-hidden />
+          {/* Mounted once and shown whenever a link is the current track. It
+              is never hidden while it is playing. */}
+          <div className="ipod__yt" data-show={onLink}>
+            <div ref={holderRef} />
           </div>
 
-          {screen === 'menu' ? (
-            <ul className="ipod__list">
-              {MENU.map((m, i) => (
-                <li key={m} className="ipod__item" data-on={i === menuAt}>
-                  <span>{m}</span>
-                  <b>›</b>
-                </li>
-              ))}
-            </ul>
-          ) : null}
-
-          {screen === 'songs' ? (
-            tracks.length ? (
-              <ul className="ipod__list ipod__list--songs">
-                {tracks.map((t, i) => (
-                  <li key={t.id} className="ipod__item" data-on={i === songAt}>
-                    <span className="ipod__song">
-                      <b>{t.title}</b>
-                      <em>{t.artist}</em>
-                    </span>
-                    {t.mine ? (
-                      <button
-                        className="ipod__drop"
-                        aria-label={`Remove ${t.title}`}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          void drop(t.id)
-                        }}
-                      >
-                        ×
-                      </button>
-                    ) : null}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div className="ipod__empty">
-                <p>No songs yet.</p>
-                <p className="ipod__emptySub">
-                  Add your own — they stay in this browser and are never uploaded.
-                </p>
-                <button className="ipod__addBtn" onClick={() => fileRef.current?.click()}>
-                  Add music
-                </button>
+          {onLink ? null : (
+            <>
+              <div className="ipod__bar">
+                <span>
+                  {screen === 'menu' ? 'iPod'
+                    : screen === 'songs' ? 'Songs'
+                    : screen === 'add' ? 'Add Music'
+                    : 'Now Playing'}
+                </span>
+                <span className="ipod__battery" aria-hidden />
               </div>
-            )
-          ) : null}
 
-          {screen === 'now' ? (
-            <div className="ipod__now">
-              <Flourish playing={playing} level={level} className="ipod__flourish" />
-              <p className="ipod__title">{track?.title ?? '—'}</p>
-              <p className="ipod__artist">{track?.artist ?? ''}</p>
-              <div className="ipod__scrub">
-                <i style={{ width: dur ? `${(time / dur) * 100}%` : '0%' }} />
-              </div>
-              <div className="ipod__times">
-                <span>{fmt(time)}</span>
-                <span>{dur ? `-${fmt(Math.max(0, dur - time))}` : '--:--'}</span>
-              </div>
-            </div>
-          ) : null}
+              {screen === 'menu' ? (
+                <ul className="ipod__list" ref={listRef}>
+                  {MENU.map((m, i) => (
+                    <li key={m} className="ipod__item" data-on={i === menuAt}>
+                      <span>{m}</span>
+                      <b>›</b>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
 
-          {status ? <p className="ipod__status">{status}</p> : null}
+              {screen === 'songs' ? (
+                tracks.length ? (
+                  <ul className="ipod__list ipod__list--songs" ref={listRef}>
+                    {tracks.map((t, i) => (
+                      <li key={t.id} className="ipod__item" data-on={i === songAt}>
+                        <span className="ipod__song">
+                          <b>{t.title}</b>
+                          <em>{t.artist}{t.kind === 'youtube' ? ' · link' : ''}</em>
+                        </span>
+                        {t.mine ? (
+                          <button
+                            className="ipod__drop"
+                            aria-label={`Remove ${t.title}`}
+                            onClick={(e) => { e.stopPropagation(); void drop(t.id) }}
+                          >
+                            ×
+                          </button>
+                        ) : null}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="ipod__empty">
+                    <p>No songs yet.</p>
+                    <p className="ipod__emptySub">
+                      Add a file from this machine, or paste a YouTube link.
+                    </p>
+                    <button className="ipod__addBtn" onClick={() => setScreen('add')}>
+                      Add music
+                    </button>
+                  </div>
+                )
+              ) : null}
+
+              {screen === 'add' ? (
+                <form className="ipod__add" onSubmit={(e) => void submit(e)}>
+                  <label>
+                    <span>Artist</span>
+                    <input
+                      value={form.artist}
+                      onChange={(e) => setForm({ ...form, artist: e.target.value })}
+                      maxLength={40}
+                    />
+                  </label>
+                  <label>
+                    <span>Song</span>
+                    <input
+                      value={form.title}
+                      onChange={(e) => setForm({ ...form, title: e.target.value })}
+                      maxLength={60}
+                    />
+                  </label>
+                  {file ? (
+                    <div className="ipod__chosen">
+                      <b>{file.name}</b>
+                      <button type="button" onClick={() => setFile(null)}>use a link instead</button>
+                    </div>
+                  ) : (
+                    <>
+                      <label>
+                        <span>YouTube link</span>
+                        <input
+                          value={form.link}
+                          onChange={(e) => setForm({ ...form, link: e.target.value })}
+                          placeholder="youtube.com/watch?v=…"
+                        />
+                      </label>
+                      <label className="ipod__pick">
+                        <span>or a file from this machine</span>
+                        <input
+                          type="file"
+                          accept="audio/*"
+                          hidden
+                          onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                        />
+                      </label>
+                    </>
+                  )}
+                  <button className="ipod__addBtn" type="submit">Add it</button>
+                </form>
+              ) : null}
+
+              {screen === 'now' ? (
+                <div className="ipod__now">
+                  <Flourish playing={playing} level={level} className="ipod__flourish" />
+                  <p className="ipod__title">{track?.title ?? '—'}</p>
+                  <p className="ipod__artist">{track?.artist ?? ''}</p>
+                  <div className="ipod__scrub">
+                    <i style={{ width: dur ? `${(time / dur) * 100}%` : '0%' }} />
+                  </div>
+                  <div className="ipod__times">
+                    <span>{fmt(time)}</span>
+                    <span>{dur ? `-${fmt(Math.max(0, dur - time))}` : '--:--'}</span>
+                  </div>
+                </div>
+              ) : null}
+
+              {status ? <p className="ipod__status">{status}</p> : null}
+            </>
+          )}
         </div>
 
         {/* click wheel */}
@@ -353,15 +484,6 @@ export default function Ipod() {
           <button className="ipod__centre" aria-label="Select" onClick={select} />
         </div>
       </div>
-
-      <input
-        ref={fileRef}
-        type="file"
-        accept="audio/*"
-        multiple
-        hidden
-        onChange={(e) => void upload(e.target.files)}
-      />
 
       <audio
         ref={audioRef}
