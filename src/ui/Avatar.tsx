@@ -104,7 +104,8 @@ export function useAvatar(): AvatarSpec {
 
 /* The head is an egg that tapers to a chin, not a circle; the torso flares
    from the neck and is cut off square at the bottom of the tile. */
-const HEAD = 'M48 19c10 0 17.5 8.4 17.5 18.6 0 12.4-7.8 21.4-17.5 21.4s-17.5-9-17.5-21.4C30.5 27.4 38 19 48 19Z'
+/* Drawn 5 units lower than it was, so the jaw reaches the collar. */
+const HEAD = 'M48 24c10 0 17.5 8.4 17.5 18.6 0 12.4-7.8 21.4-17.5 21.4s-17.5-9-17.5-21.4C30.5 32.4 38 24 48 24Z'
 const TORSO = 'M7 96c0-17.5 14-29 41-29s41 11.5 41 29Z'
 
 export function Avatar({
@@ -141,6 +142,12 @@ export function Avatar({
           <stop offset="0.42" stopColor={skin} />
           <stop offset="1" stopColor={shade(skin, -0.22)} />
         </radialGradient>
+        {/* Top to bottom, and barely: hair reads as form, not as plastic. */}
+        <linearGradient id={`${id}hair`} x1="0.3" y1="0" x2="0.7" y2="1">
+          <stop offset="0" stopColor={shade(hair, 0.16)} />
+          <stop offset="0.55" stopColor={hair} />
+          <stop offset="1" stopColor={shade(hair, -0.14)} />
+        </linearGradient>
         <linearGradient id={`${id}shirt`} x1="0.15" y1="0" x2="0.85" y2="1">
           <stop offset="0" stopColor={shade(shirt, 0.34)} />
           <stop offset="0.4" stopColor={shirt} />
@@ -165,45 +172,49 @@ export function Avatar({
         <path d="M40.5 66.5 48 82l7.5-15.5c-4.5-1.6-10.5-1.6-15 0Z" fill="#f4f8fc" />
         <path d="M48 82v14" stroke={shade(shirt, -0.3)} strokeWidth="1.4" strokeLinecap="round" />
 
-        {/* head. No face — the era's avatars were blank, and that is the charm */}
+        {/* head. No face, and no ears. */}
         <path d={HEAD} fill={`url(#${id}skin)`} />
-        <ellipse cx="30.5" cy="42" rx="3" ry="4.4" fill={shade(skin, -0.08)} />
-        <ellipse cx="65.5" cy="42" rx="3" ry="4.4" fill={shade(skin, -0.14)} />
         <path d={HEAD} fill="none" stroke={shade(skin, -0.32)} strokeWidth="1.1" />
-        {/* the crescent of shadow down the right, where the light does not reach */}
+        {/* shadow down the right, away from the light */}
         <path
-          d="M65 33c1.6 4 2 8 2 11 0 12-8 21-17 21 12-2 17-11 17-21 0-4-.6-8-2-11Z"
+          d="M65 38c1.6 4 2 8 2 11 0 12-8 21-17 21 12-2 17-11 17-21 0-4-.6-8-2-11Z"
           fill={shade(skin, -0.3)}
           opacity="0.65"
         />
 
-        {/* hair */}
+        {/* hair. Matte: a shallow gradient for form, no highlight streak. */}
         {a.hair % 4 === 0 ? (
-          <path d="M28 41c0-14 9-23 20-23s20 9 20 23c0-9-8-12-20-12s-20 3-20 12Z" fill={hair} />
+          <path
+            d="M30.5 48c0-14.5 7.5-25 17.5-25s17.5 10.5 17.5 25c0-7-3-11.5-8-13-3.5 2.5-16.5 2.5-20 0-5 1.5-7 6-7 13Z"
+            fill={`url(#${id}hair)`}
+          />
         ) : null}
         {a.hair % 4 === 1 ? (
           <>
-            <path d="M28 43c0-15 9-25 20-25s20 10 20 25v7c-2-11-4-15-9-17-6 3-18 3-23-1-5 3-6 6-8 11Z" fill={hair} />
-            <path d="M26 45c0 14 3 22 6 26-6-6-9-16-6-26Z" fill={hair} />
-            <path d="M70 45c0 14-3 22-6 26 6-6 9-16 6-26Z" fill={hair} />
+            <path
+              d="M30.5 48c0-14.5 7.5-25 17.5-25s17.5 10.5 17.5 25c0-7-3-11.5-8-13-3.5 2.5-16.5 2.5-20 0-5 1.5-7 6-7 13Z"
+              fill={`url(#${id}hair)`}
+            />
+            <path d="M31 43c-3 12-3 23 0 31 0-11 2-22 5-29Z" fill={`url(#${id}hair)`} />
+            <path d="M65 43c3 12 3 23 0 31 0-11-2-22-5-29Z" fill={`url(#${id}hair)`} />
           </>
         ) : null}
         {a.hair % 4 === 2 ? (
           <>
-            <path d="M28 42c0-14 9-24 20-24s20 10 20 24c0-8-9-11-20-11s-20 3-20 11Z" fill={hair} />
-            <circle cx="27" cy="31" r="8" fill={hair} />
-            <circle cx="69" cy="31" r="8" fill={hair} />
+            <path
+              d="M30.5 48c0-14.5 7.5-25 17.5-25s17.5 10.5 17.5 25c0-7-3-11.5-8-13-3.5 2.5-16.5 2.5-20 0-5 1.5-7 6-7 13Z"
+              fill={`url(#${id}hair)`}
+            />
+            <circle cx="29" cy="30" r="7.5" fill={`url(#${id}hair)`} />
+            <circle cx="67" cy="30" r="7.5" fill={`url(#${id}hair)`} />
           </>
         ) : null}
         {a.hair % 4 === 3 ? (
-          <path d="M29 45c-1-18 8-27 19-27s20 9 19 27c2-17-4-23-8-25-5 6-21 7-26 2-4 3-5 11-4 23Z" fill={hair} />
+          <path
+            d="M30.5 49c0-15 7.5-26 17.5-26s17.5 11 17.5 26c-1-11-4-17-9-19-6 7-19 6-23 1-2.5 3.5-3.5 10-3 18Z"
+            fill={`url(#${id}hair)`}
+          />
         ) : null}
-        {/* one soft streak across the hair, where the light lands */}
-        <path
-          d="M35 26c3-4 8-6 13-6s10 2 13 6c-4-2-8-3-13-3s-9 1-13 3Z"
-          fill={shade(hair, 0.42)}
-          opacity="0.75"
-        />
 
         {/* accessories */}
         {a.accessory % 4 === 1 ? (

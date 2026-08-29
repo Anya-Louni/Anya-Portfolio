@@ -872,3 +872,20 @@
   color: #7fb6e0;
   text-decoration: underline;
 }
+
+
+/* The top and bottom of the centre button step the selection. They have no
+   look of their own: no background, no border, no divider. The centre keeps
+   the middle band for select. */
+.ipod__nudge {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 38%;
+  height: 13%;
+  z-index: 2;
+  background: none;
+  border: 0;
+}
+.ipod__nudge--up { top: 31%; }
+.ipod__nudge--down { bottom: 31%; }

@@ -31,7 +31,18 @@ function makeFS(): Node {
     anya: dir({
       'readme.txt': file(
         () =>
-          `This desktop is the portfolio.\n\nEverything here is real: the projects are repositories,\nthe numbers come from their own READMEs, and the games,\nthe aquarium and the paint program were written for this\nmachine. The tank is WebGL, it earns while you are away,\nand the fish with names on them were drawn by visitors.\n\nTry: ls projects, cat projects/galaxy-compass, tank, open aquarium`,
+          `This desktop is the portfolio.
+
+The projects are real repositories and the numbers come
+from their own READMEs. The games, the aquarium, the paint
+program and the rest were written for this machine.
+
+The aquarium earns while you are away. The games pay into
+the same purse. Fish with names on them were drawn by
+visitors.
+
+Try: ls projects, cat projects/galaxy-compass, apps, tank,
+coins, open chess`,
       ),
       projects: dir(
         Object.fromEntries(
@@ -146,6 +157,7 @@ export default function Terminal() {
           'open <app>       launch an app window',
           'apps             list the apps you can open',
           'tank             what is in the aquarium',
+          'coins            what is in the purse',
           'echo <text>      say it back',
           'whoami           who is signed in',
           'date             the time right now',
@@ -265,6 +277,14 @@ export default function Terminal() {
         )
         break
       }
+
+      case 'coins':
+        print(
+          `  balance   ${coinText(getCoins())}`,
+          '  Won at the games, or earned by the tank. Spent in the shop.',
+          '',
+        )
+        break
 
       case 'history':
         print(...[...history].reverse().map((h, i) => `  ${i + 1}  ${h}`), '')

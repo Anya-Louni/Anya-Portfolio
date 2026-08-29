@@ -302,6 +302,8 @@ export default function Ipod() {
     else if (key === 'next') skip(1)
     else if (key === 'play') toggle()
     else if (key === 'centre') select()
+    else if (key === 'up') move(-1)
+    else if (key === 'down') move(1)
   }
 
   const select = () => {
@@ -532,6 +534,22 @@ export default function Ipod() {
             </svg>
           </button>
           <button className="ipod__centre" data-key="centre" aria-label="Select" onClick={() => press('centre')} />
+          {/* Two invisible bands across the top and bottom of the centre
+              button. Nothing is drawn for them; the button still looks like
+              one piece. The middle band is the button itself, so select still
+              works where it always did. */}
+          <button
+            className="ipod__nudge ipod__nudge--up"
+            data-key="up"
+            aria-label="Up"
+            onClick={() => press('up')}
+          />
+          <button
+            className="ipod__nudge ipod__nudge--down"
+            data-key="down"
+            aria-label="Down"
+            onClick={() => press('down')}
+          />
         </div>
       </div>
 
