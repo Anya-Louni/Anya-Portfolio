@@ -19,6 +19,14 @@ export interface Fish {
   created_at: string
 }
 
+/* A fish drawing is a PNG data URL and nothing else. Without this check the
+   column accepts any string, so anyone holding the public anon key could
+   insert a fish whose "drawing" is a remote URL and collect the IP of every
+   visitor who opens the tank. Checked here and again by the database. */
+const PNG = /^data:image\/png;base64,[A-Za-z0-9+/=]+$/
+
+export const isDrawing = (s: string) => PNG.test(s)
+
 const LOCAL_KEY = 'os.fish.local'
 const RELEASED_KEY = 'os.fish.released'
 
@@ -57,7 +65,8 @@ export async function listFish(limit = 60): Promise<Fish[]> {
     .order('created_at', { ascending: false })
     .limit(limit)
   if (error) return []
-  return (data ?? []) as Fish[]
+  // rows predating the constraint, or inserted around it, are dropped
+  return ((data ?? []) as Fish[]).filter((f) => isDrawing(f.image))
 }
 
 export async function saveFish(
@@ -75,8 +84,9 @@ export async function saveFish(
   const name = rawName.trim().slice(0, 24)
   if (!name) return { ok: false, error: 'Give your fish a name.' }
   if (image.length > 220_000) {
-    return { ok: false, error: 'That drawing is too heavy — try fewer strokes.' }
+    return { ok: false, error: 'That drawing is too heavy. Try fewer strokes.' }
   }
+  if (!isDrawing(image)) return { ok: false, error: 'That is not a drawing.' }
 
   const db = supabase()
   if (db) {

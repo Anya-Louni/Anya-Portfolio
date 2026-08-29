@@ -10,6 +10,28 @@ const FONTS = ['Hanken Grotesk Variable', 'Fredoka Variable', 'Georgia', 'Courie
 const SIZES = [1, 2, 3, 4, 5, 6, 7]
 const COLOURS = ['#000000', '#c0392b', '#e67e22', '#f1c40f', '#27ae60', '#2980b9', '#8e44ad', '#7f8c8d']
 
+/**
+ * The document is restored with innerHTML, and anything pasted into a
+ * contenteditable comes in as markup. A script tag inserted that way does not
+ * run, but an event handler on an ordinary tag does, and this document is
+ * saved and restored on every open. So it is stripped before it goes in.
+ */
+function clean(html: string): string {
+  const doc = new DOMParser().parseFromString(html, 'text/html')
+  doc.body.querySelectorAll('script, iframe, object, embed, link, meta, style').forEach((n) => n.remove())
+  doc.body.querySelectorAll('*').forEach((el) => {
+    for (const attr of [...el.attributes]) {
+      const name = attr.name.toLowerCase()
+      const value = attr.value.replace(/\s+/g, '').toLowerCase()
+      if (name.startsWith('on')) el.removeAttribute(attr.name)
+      else if ((name === 'href' || name === 'src') && value.startsWith('javascript:')) {
+        el.removeAttribute(attr.name)
+      }
+    }
+  })
+  return doc.body.innerHTML
+}
+
 const SEED = `<h1 style="font-family:'Fredoka Variable'">Document</h1>
 <p>This is WordPad. It does the things WordPad did: <b>bold</b>, <i>italic</i>,
 <u>underline</u>, colours, sizes, alignment and lists.</p>
@@ -33,7 +55,7 @@ export default function WordPad() {
     const el = ref.current
     if (!el) return
     try {
-      el.innerHTML = localStorage.getItem('os.wordpad') || SEED
+      el.innerHTML = clean(localStorage.getItem('os.wordpad') || SEED)
     } catch {
       el.innerHTML = SEED
     }
