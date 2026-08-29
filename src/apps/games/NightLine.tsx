@@ -31,12 +31,23 @@ const STATIONS = [
   'Whitlow Sands', 'Terminus',
 ]
 
+/* Deliberately spread thin: every letter of the alphabet starts at least one
+   name, lengths run from four to eleven, and doubled letters, repeated
+   letters and vowel counts are all over the place. The clue set can only cut
+   a list finely if the names differ finely. */
 const POOL = [
-  'Ashcombe', 'Bell', 'Carrow', 'Deverel', 'Elmslie', 'Fairweather', 'Gant',
-  'Halloway', 'Ingles', 'Jessop', 'Kettle', 'Larkspur', 'Mordaunt', 'Nettles',
-  'Ollerenshaw', 'Pemberton', 'Quill', 'Ravenscroft', 'Sallow', 'Thirlwell',
-  'Underhill', 'Vance', 'Whitlock', 'Yardley', 'Bramble', 'Corbin',
+  'Ashcombe', 'Ambrose', 'Bell', 'Bramble', 'Braithwaite', 'Carrow', 'Corbin',
+  'Cadwallader', 'Deverel', 'Dunmore', 'Elmslie', 'Everard', 'Fairweather',
+  'Ferris', 'Gant', 'Greaves', 'Halloway', 'Hobbes', 'Ingles', 'Iveson',
+  'Jessop', 'Jarrow', 'Kettle', 'Kinnaird', 'Larkspur', 'Lowther', 'Mordaunt',
+  'Mellor', 'Nettles', 'Nunn', 'Ollerenshaw', 'Oakes', 'Pemberton', 'Prynne',
+  'Quill', 'Quennell', 'Ravenscroft', 'Redmayne', 'Sallow', 'Stiggins',
+  'Thirlwell', 'Trevanion', 'Underhill', 'Upcott', 'Vance', 'Verity',
+  'Whitlock', 'Wrenn', 'Yardley', 'Yeo', 'Zouche', 'Zennor',
 ]
+
+/** how many passengers are aboard each run */
+const SUSPECTS = 28
 
 const VOWELS = 'aeiou'
 const letters = (n: string) => n.toLowerCase()
@@ -153,7 +164,7 @@ function shuffled<T>(list: T[], rng: () => number): T[] {
  * station left, and the last station has to land on exactly one.
  */
 function attempt(rng: () => number): Puzzle | null {
-  const suspects = shuffled(POOL, rng).slice(0, 24).sort()
+  const suspects = shuffled(POOL, rng).slice(0, SUSPECTS).sort()
   const killer = suspects[Math.floor(rng() * suspects.length)]
   const stops = STATIONS.length
   const start = suspects.length

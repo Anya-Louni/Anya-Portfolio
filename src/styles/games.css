@@ -1059,7 +1059,7 @@
 
 .nl__body {
   display: grid;
-  grid-template-columns: 152px minmax(0, 1fr) 170px;
+  grid-template-columns: 146px minmax(0, 1fr) minmax(232px, 274px);
   gap: 10px;
   min-height: 0;
   padding: 10px;
@@ -1162,10 +1162,22 @@
 }
 .nl__notebook b { color: var(--ink-faint); font-weight: 600; }
 
-.nl__suspects { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; }
+.nl__suspects {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  /* two columns, so twenty-eight passengers fit without a scrollbar and each
+     name gets room to be read rather than squeezed */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 2px;
+}
 .nl__suspect {
   width: 100%;
-  padding: 5px 8px;
+  padding: 5px 9px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   text-align: left;
   font-size: 12px;
   color: var(--ink-strong);

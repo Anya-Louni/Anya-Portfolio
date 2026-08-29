@@ -6,14 +6,15 @@ import { useOS } from './store'
  *
  * Lives above the desktop, not inside a window. Walks the bottom edge, climbs
  * the sides, sits down when it gets bored, notices the cursor, and can be
- * picked up and dropped — it falls, lands, and shakes it off.
+ * picked up and dropped — it screws its eyes shut on the way down, lands
+ * flat, sees stars for a couple of seconds, and then shakes it off.
  *
  * Four original characters, no fandom sprites. Each is drawn, not a sheet, so
  * they stay sharp and weigh nothing.
  */
 
 export type PetKind = 'blob' | 'cat' | 'bird' | 'jelly'
-type State = 'walk' | 'idle' | 'sit' | 'climb' | 'fall' | 'held'
+type State = 'walk' | 'idle' | 'sit' | 'climb' | 'fall' | 'held' | 'dazed'
 
 export const PETS: { id: PetKind; name: string }[] = [
   { id: 'blob', name: 'Bloop' },
@@ -48,6 +49,9 @@ export function Pet() {
     blink: 0,
     bob: 0,
     wall: 0 as 0 | -1 | 1,
+    /* true only for a fall the visitor caused, so climbing down a wall does
+       not leave it dizzy on the floor */
+    dropped: false,
   })
   const [, force] = useState(0)
   const grab = useRef<{ dx: number; dy: number } | null>(null)
@@ -88,8 +92,14 @@ export function Pet() {
         if (s.y >= F) {
           s.y = F
           s.vy = 0
-          s.state = 'idle'
-          s.timer = 700
+          if (s.dropped) {
+            s.dropped = false
+            s.state = 'dazed'
+            s.timer = 2000
+          } else {
+            s.state = 'idle'
+            s.timer = 700
+          }
         }
       } else if (s.state === 'climb') {
         s.y -= 0.05 * dt
@@ -97,6 +107,13 @@ export function Pet() {
           s.state = 'fall'
           s.wall = 0
           s.vy = 0
+        }
+      } else if (s.state === 'dazed') {
+        s.y = F
+        s.timer -= dt
+        if (s.timer <= 0) {
+          s.state = 'idle'
+          s.timer = 500
         }
       } else {
         s.timer -= dt
@@ -177,6 +194,7 @@ export function Pet() {
     grab.current = null
     st.current.state = 'fall'
     st.current.vy = 0
+    st.current.dropped = true
   }
 
   const menu = (e: React.MouseEvent) => {
@@ -221,9 +239,43 @@ export function Pet() {
 }
 
 function PetArt({ kind, state, blink }: { kind: PetKind; state: State; blink: boolean }) {
-  const squash = state === 'sit' ? 0.86 : 1
-  const eye = (cx: number) =>
-    blink ? (
+  /* Falling and dazed both flatten it, and dazed flattens it more: dropped, it
+     lies on the floor rather than standing there looking dizzy. */
+  const squash = state === 'dazed' ? 0.66 : state === 'sit' ? 0.86 : 1
+  const braced = state === 'fall' || state === 'held'
+
+  const eye = (cx: number) => {
+    // screwed shut on the way down: the > < face
+    if (braced) {
+      const dir = cx < 26 ? 1 : -1
+      return (
+        <path
+          d={`M${cx - 3.4 * dir} 22.6 L${cx + 3 * dir} 26 L${cx - 3.4 * dir} 29.4`}
+          stroke="#1a1a2e"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="none"
+        />
+      )
+    }
+    // seeing stars: a spiral, which is the only way to draw dizzy without a mouth
+    if (state === 'dazed') {
+      return (
+        <path
+          d={`M${cx} 26
+              m -3.4 0
+              a 3.4 3.4 0 1 1 3.4 3.4
+              a 2.2 2.2 0 1 1 -2.2 -2.2
+              a 1.1 1.1 0 1 1 1.1 1.1`}
+          stroke="#1a1a2e"
+          strokeWidth="1.5"
+          fill="none"
+          strokeLinecap="round"
+        />
+      )
+    }
+    return blink ? (
       <path d={`M${cx - 3} 26h6`} stroke="#1a1a2e" strokeWidth="2" strokeLinecap="round" />
     ) : (
       <>
@@ -231,6 +283,7 @@ function PetArt({ kind, state, blink }: { kind: PetKind; state: State; blink: bo
         <circle cx={cx + 0.9} cy={24.8} r="0.9" fill="#fff" />
       </>
     )
+  }
 
   return (
     <svg viewBox="0 0 52 52" width={52} height={52} aria-hidden>
@@ -271,6 +324,20 @@ function PetArt({ kind, state, blink }: { kind: PetKind; state: State; blink: bo
         <ellipse cx="14" cy="32" rx="3.4" ry="2.2" fill="#ff9db0" opacity="0.45" />
         <ellipse cx="38" cy="32" rx="3.4" ry="2.2" fill="#ff9db0" opacity="0.45" />
       </g>
+      {state === 'dazed' ? (
+        <g className="pet__stars">
+          {[0, 1, 2].map((i) => (
+            <path
+              key={i}
+              d="M0-4 1.1-1.1 4 0 1.1 1.1 0 4 -1.1 1.1 -4 0 -1.1-1.1Z"
+              fill="#ffd23f"
+              stroke="#e0a90c"
+              strokeWidth="0.6"
+              transform={`rotate(${i * 120} 26 14) translate(26 4)`}
+            />
+          ))}
+        </g>
+      ) : null}
     </svg>
   )
 }

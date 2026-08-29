@@ -825,3 +825,15 @@
   color: #7f97ba;
   line-height: 1.5;
 }
+
+/* the stars a dropped pet sees, turning slowly around its head */
+.pet__stars {
+  transform-origin: 26px 14px;
+  animation: petStars 1.1s linear infinite;
+}
+@keyframes petStars {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pet__stars { animation: none; }
+}
