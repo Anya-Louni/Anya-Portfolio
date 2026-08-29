@@ -30,7 +30,7 @@ export function BootScreen({ onDone }: { onDone: () => void }) {
         <Mark className="boot__mark" />
       </div>
       <p className="boot__caption">
-        Starting <b>Anya OS</b>
+        Starting <b>OSnya</b>
       </p>
       <button className="boot__skip" onClick={onDone}>
         Skip

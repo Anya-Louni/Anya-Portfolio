@@ -1,4 +1,3 @@
-import { coarse } from '../lib/touch'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 import { useOS, type IconSize, type MenuItem, type Rect } from './store'
@@ -8,6 +7,7 @@ import { addGadget } from './Gadgets'
 import { Icon, type IconName } from '../ui/Icon'
 import { STICKIES, type Sticky } from '../content/notes'
 import { GITHUB_PROFILE } from '../content/projects'
+import { coarse } from '../lib/touch'
 
 interface Shortcut {
   id: string
@@ -20,20 +20,6 @@ interface Shortcut {
 const SHORTCUTS: Shortcut[] = [
   { id: 'computer', label: 'Computer', icon: 'computer', run: () => launch('computer') },
   { id: 'finder', label: 'Projects', icon: 'folderProjects', run: () => launch('finder') },
-  {
-    id: 'galaxy',
-    label: 'Galaxy Compass',
-    icon: 'star',
-    shortcut: true,
-    run: () => launch('project', { slug: 'galaxy-compass' }),
-  },
-  {
-    id: 'deepsea',
-    label: 'Deep-Sea OOD',
-    icon: 'aquarium',
-    shortcut: true,
-    run: () => launch('project', { slug: 'deep-sea-ood' }),
-  },
   { id: 'aquarium', label: 'Aquarium', icon: 'aquarium', run: () => launch('aquarium') },
   { id: 'explorer', label: 'Internet Explorer', icon: 'explorer', run: () => launch('explorer') },
   { id: 'paint', label: 'Paint', icon: 'paint', run: () => launch('paint') },
@@ -44,7 +30,7 @@ const SHORTCUTS: Shortcut[] = [
   { id: 'sketchpad', label: 'Draw Music', icon: 'sketchpad', run: () => launch('sketchpad') },
   { id: 'games', label: 'Games', icon: 'games', run: () => launch('games') },
   { id: 'contacts', label: 'Contacts', icon: 'contacts', run: () => launch('contacts') },
-  { id: 'guestbook', label: 'Leave a note', icon: 'guestbook', run: () => launch('guestbook') },
+  { id: 'notes', label: 'Notes', icon: 'sticky', run: () => launch('notes') },
   { id: 'control', label: 'Control Panel', icon: 'control', run: () => launch('control') },
   {
     id: 'github',

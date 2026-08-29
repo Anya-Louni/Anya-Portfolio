@@ -8,7 +8,7 @@
  * the way to an angelfish.
  *
  * A game may only pay once per deal. Every caller passes a token that changes
- * when a new game starts, and a second call with the same token pays nothing —
+ * when a new game starts, and a second call with the same token pays nothing,
  * otherwise a component re-rendering after the win would pay again, which is
  * exactly what happened the first time this was wired up.
  */

@@ -2,7 +2,7 @@
  * Project records.
  *
  * Framing text and every number come from each repository's own README or its
- * GitHub description — nothing here is invented. Live demo links are the
+ * GitHub description, nothing here is invented. Live demo links are the
  * project's GitHub Pages build, checked to resolve.
  */
 
@@ -39,7 +39,7 @@ export const PROJECTS: Project[] = [
     blurb:
       'Galaxy morphology carries no preferred orientation, so most classifiers learn rotation invariance by being shown rotated copies. This one encodes the symmetry in the architecture instead, using E(2)-steerable convolutions, and measures what the encoding is worth under a controlled comparison on Galaxy10 DECaLS.',
     finding:
-      'The steerable network reaches the dense CNN’s all-label accuracy at roughly 14% of the labels — a label-efficiency factor near 7 — while carrying 11.8× fewer parameters.',
+      'The steerable network reaches the dense CNN’s all-label accuracy at roughly 14% of the labels, a label-efficiency factor near 7, while carrying 11.8× fewer parameters.',
     results: [
       { label: 'Accuracy at 5% labels', value: '0.6930 vs 0.6366  (+5.6 pp)' },
       { label: 'Accuracy at 100% labels', value: '0.8217 vs 0.7745  (+4.7 pp)' },
@@ -58,14 +58,14 @@ export const PROJECTS: Project[] = [
     name: 'Deep-Sea OOD',
     kicker: 'Open-set recognition on ROV footage',
     blurb:
-      'Four out-of-distribution detectors — MSP, Energy, Mahalanobis and ViM — evaluated on deep-sea ROV footage of gelatinous zooplankton from FathomNet, across 230 species under a 73.8× class imbalance, with novel species stratified by taxonomic distance.',
+      'Four out-of-distribution detectors, MSP, Energy, Mahalanobis and ViM, evaluated on deep-sea ROV footage of gelatinous zooplankton from FathomNet, across 230 species under a 73.8× class imbalance, with novel species stratified by taxonomic distance.',
     finding:
       'The clean-data ranking flips under degradation. ViM leads on clean data at AUROC 0.677; once low light, blur, scale loss and compression are applied, Mahalanobis is the most robust and ViM degrades the most.',
     results: [
       { label: 'Closed-set top-1', value: '59.3%  (82.5% top-3)' },
       { label: 'Best clean AUROC', value: 'ViM, 0.677' },
       { label: 'Most robust degraded', value: 'Mahalanobis, 0.539' },
-      { label: 'Hardest degradation', value: 'low light — chance by severity 2' },
+      { label: 'Hardest degradation', value: 'low light, at chance by severity 2' },
     ],
     tags: ['ViM / Mahalanobis / Energy', 'FathomNet', 'degradation battery'],
     github: `${GITHUB_PROFILE}/Deep-Sea-OOD`,
@@ -81,7 +81,7 @@ export const PROJECTS: Project[] = [
     blurb:
       'DNA reads the same on both strands, so a regulatory-element classifier should score a sequence and its reverse complement identically. Strandwise builds that symmetry into the convolution weights rather than learning it from augmentation, and benchmarks it against a 485M-parameter genomic language model.',
     finding:
-      'Exact invariance at float32, matched against the language model at 1/2500th of the parameters — alongside an ancestry-stratified audit of SIFT and PolyPhen-2 calibration.',
+      'Exact invariance at float32, matched against the language model at 1/2500th of the parameters, alongside an ancestry-stratified audit of SIFT and PolyPhen-2 calibration.',
     results: [
       { label: 'Parameter ratio vs gLM', value: '1 / 2500' },
       { label: 'Invariance', value: 'exact at float32, before training' },
@@ -121,7 +121,7 @@ export const PROJECTS: Project[] = [
     blurb:
       'Six TGS gas-sensor channels, classified on the microcontroller itself: moving-average filtering, L1 normalisation into a feature vector, then a nearest-centroid model with distance-based rejection so outliers are declined rather than forced into a class.',
     finding:
-      '98.4% held-out accuracy on a public breath-VOC dataset — 1,000 samples, a 75/25 stratified split at seed 42. The repository is explicit that this is a demonstration exercise and the output is a demo label, not a medical result.',
+      '98.4% held-out accuracy on a public breath-VOC dataset, 1,000 samples, a 75/25 stratified split at seed 42. The repository is explicit that this is a demonstration exercise and the output is a demo label, not a medical result.',
     results: [
       { label: 'Held-out accuracy', value: '98.4%' },
       { label: 'Split', value: '75/25 stratified, seed 42' },
@@ -141,11 +141,11 @@ export const PROJECTS: Project[] = [
     name: 'Mini-Games',
     kicker: 'An arcade with no mouse and no keyboard',
     blurb:
-      'A webcam-controlled mini-arcade in a single HTML file. MediaPipe tracks hands and body, and you select a game by hovering a hand over it — three games driven entirely by gesture: slicing, a timed cooking loop, and a full-body flight game you steer by flapping your arms.',
+      'A webcam-controlled mini-arcade in a single HTML file. MediaPipe tracks hands and body, and you select a game by hovering a hand over it, three games driven entirely by gesture: slicing, a timed cooking loop, and a full-body flight game you steer by flapping your arms.',
     finding:
       'Everything runs client-side in the browser off one webcam feed. There is no input device at any point, including the menu.',
     results: [
-      { label: 'Input', value: 'webcam only — hands and body' },
+      { label: 'Input', value: 'webcam only, hands and body' },
       { label: 'Tracking', value: 'MediaPipe hand and pose landmarks' },
       { label: 'Games', value: 'three, plus a gesture-driven menu' },
       { label: 'Delivery', value: 'a single HTML file' },

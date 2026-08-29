@@ -58,8 +58,8 @@ export default function Explorer() {
     setAddress(tab?.url ?? '')
   }, [tab?.url, active])
 
-  /* A framed page that never fires load is either very slow — the Archive
-     often is — or refusing to be embedded. Say so in that order. */
+  /* A framed page that never fires load is either very slow, the Archive
+     often is, or refusing to be embedded. Say so in that order. */
   useEffect(() => {
     if (!src) return
     setLoading(true)
@@ -211,7 +211,7 @@ export default function Explorer() {
       <div className="ie__faves">
         <span className="ie__favesLabel">Favorites</span>
         {STOPS.map((s) => (
-          <button key={s.title} className="ie__fave" title={`${s.url} · ${s.year} — ${s.note}`} onClick={() => go(s.url, s.year)}>
+          <button key={s.title} className="ie__fave" title={`${s.url} · ${s.year} · ${s.note}`} onClick={() => go(s.url, s.year)}>
             {s.title}
             <em>{s.year}</em>
           </button>
@@ -241,7 +241,7 @@ export default function Explorer() {
           <div className="ie__error">
             <h2>Internet Explorer cannot display the webpage</h2>
             <ul>
-              <li>The page may still be coming — the Internet Archive is often slow.</li>
+              <li>The page may still be loading. The Internet Archive is often slow.</li>
               <li>Or the site refuses to be shown inside another page. Most sites
                   built after about 2010 do that on purpose.</li>
             </ul>
@@ -279,7 +279,7 @@ export default function Explorer() {
         )}
         {loading ? <div className="ie__progress" /> : null}
         {slow && loading ? (
-          <p className="ie__slow">Still opening — the Internet Archive takes its time.</p>
+          <p className="ie__slow">Still opening. The Internet Archive takes its time.</p>
         ) : null}
       </div>
 

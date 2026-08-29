@@ -6,7 +6,8 @@ import { StartMenu } from './StartMenu'
 import { useMenu } from './ContextMenu'
 import { viewport, type MenuItem } from './store'
 
-const PINNED = ['finder', 'explorer', 'paint', 'ipod', 'games', 'aquarium', 'control']
+/* Kept short on purpose. Everything else is on the desktop and in Start. */
+const PINNED = ['finder', 'explorer', 'games', 'aquarium']
 
 interface Slot {
   key: string
@@ -70,7 +71,7 @@ export function Taskbar() {
     else focus(first)
   }
 
-  /* jump list — right-clicking a taskbar button in Windows 7 */
+  /* jump list, right-clicking a taskbar button in Windows 7 */
   const jumpList = (e: React.MouseEvent, slot: Slot) => {
     const items: MenuItem[] = [
       { id: 'head', label: slot.title, bold: true, icon: slot.icon, disabled: true },
@@ -157,7 +158,7 @@ export function Taskbar() {
               <button
                 key={slot.key}
                 className="taskbtn"
-                aria-label={running ? `${slot.title} — switch` : `Open ${slot.title}`}
+                aria-label={running ? `${slot.title}, switch` : `Open ${slot.title}`}
                 data-running={running}
                 data-focused={focused}
                 onClick={() => onSlot(slot)}
@@ -188,7 +189,7 @@ export function Taskbar() {
           <button
             className="tray__btn"
             aria-label="Network: connected"
-            title="Local session — nothing leaves this browser"
+            title="Local session, nothing leaves this browser"
             onClick={() => launch('computer')}
           >
             <Glyph.network />

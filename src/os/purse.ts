@@ -78,7 +78,7 @@ export function setCoins(n: number) {
 }
 
 /* The balance moves several times a second while the aquarium is open, so the
-   snapshot is a version counter rather than the number itself — React only
+   snapshot is a version counter rather than the number itself. React only
    needs to know that something changed, and comparing an integer is free. */
 function subscribe(l: () => void) {
   listeners.add(l)

@@ -129,7 +129,7 @@ export default function Computer() {
         </div>
         <div>
           <dt>Session storage</dt>
-          <dd>Local only — nothing leaves this browser</dd>
+          <dd>Local only. Nothing leaves this browser</dd>
         </div>
       </dl>
     </div>

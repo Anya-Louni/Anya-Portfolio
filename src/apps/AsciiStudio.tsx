@@ -40,6 +40,35 @@ const SETS: { name: string; chars: string }[] = [
   { name: 'Stars', chars: '*+.·•◦°✦✧☆★' },
 ]
 
+/* ---- kaomoji parts ----
+   A kaomoji is arms, then a bracket, an eye, a mouth, the other eye and the
+   closing bracket. Pick one of each and you have made a face. */
+const ARMS: { name: string; l: string; r: string }[] = [
+  { name: 'Still', l: '', r: '' },
+  { name: 'Wave', l: '', r: 'ﾉ' },
+  { name: 'Cheer', l: '\\', r: '/' },
+  { name: 'Raise', l: 'ヽ', r: 'ノ' },
+  { name: 'Shrug', l: '¯\\_', r: '_/¯' },
+  { name: 'Hug', l: '⊂', r: '⊃' },
+  { name: 'Flip', l: '', r: '╯︵ ┻━┻' },
+  { name: 'Offer', l: '', r: '⊃━☆ﾟ' },
+]
+
+const BRACKETS: { name: string; l: string; r: string }[] = [
+  { name: '( )', l: '(', r: ')' },
+  { name: '[ ]', l: '[', r: ']' },
+  { name: '{ }', l: '{', r: '}' },
+  { name: '（ ）', l: '（', r: '）' },
+  { name: 'ʕ ʔ', l: 'ʕ', r: 'ʔ' },
+  { name: 'none', l: '', r: '' },
+]
+
+const EYES = ['◕', '・', 'ˆ', 'ˇ', 'ಠ', '⌒', '•', '￣', '°', 'ᐛ', 'T', '＞', 'ʘ', '´']
+const MOUTHS = ['‿', 'ω', 'ヮ', 'ᴥ', '‸', '□', '益', '﹏', '³', 'ε', '▽', '_', 'ᴗ', 'ㅅ']
+
+/** Ready made, for when you want one and not a workshop. */
+const PRESETS = ['(◕‿◕)', '(ﾉ◕ヮ◕)ﾉ', '¯\\_(ツ)_/¯', '(╯°□°)╯︵ ┻━┻', 'ʕ•ᴥ•ʔ', '(¬‿¬)', '(＞ᴗ＜)', '(ಠ_ಠ)']
+
 const THEMES: { id: string; name: string; ink: string; paper: string; glow: string }[] = [
   { id: 'phosphor', name: 'Phosphor', ink: '#7dfba4', paper: '#04160c', glow: 'rgba(80,255,150,0.5)' },
   { id: 'amber', name: 'Amber', ink: '#ffc266', paper: '#1a0f02', glow: 'rgba(255,180,70,0.5)' },
@@ -146,6 +175,13 @@ export default function AsciiStudio() {
   const [status, setStatus] = useState('')
   const [recording, setRecording] = useState(false)
 
+  /* kaomoji builder */
+  const [arms, setArms] = useState(0)
+  const [brack, setBrack] = useState(0)
+  const [eye, setEye] = useState(0)
+  const [mouth, setMouth] = useState(0)
+  const [face, setFace] = useState<string | null>(null)
+
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
   const dragFrom = useRef<Cell | null>(null)
@@ -163,6 +199,48 @@ export default function AsciiStudio() {
     if (undo.current.length > MAX_UNDO) undo.current.shift()
     redo.current.length = 0
   }, [frames, at])
+
+  /* ---------------- kaomoji ---------------- */
+  /** The face as it stands: arms, bracket, eye, mouth, eye, bracket, arms. */
+  const kaomoji =
+    face ??
+    ARMS[arms].l +
+      BRACKETS[brack].l +
+      EYES[eye] +
+      MOUTHS[mouth] +
+      EYES[eye] +
+      BRACKETS[brack].r +
+      ARMS[arms].r
+
+  /** Write a string across the board, one character per cell. */
+  const stampText = (text: string) => {
+    const glyphs = [...text]
+    const start = caret ?? {
+      c: Math.max(0, Math.floor((cols - glyphs.length) / 2)),
+      r: Math.floor(rows / 2),
+    }
+    remember()
+    setFrames((all) => {
+      const copy = all.slice()
+      const f = copyFrame(copy[at])
+      glyphs.forEach((g, i) => {
+        const c = start.c + i
+        if (start.r >= 0 && start.r < f.length && c >= 0 && c < f[0].length) f[start.r][c] = g
+      })
+      copy[at] = f
+      return copy
+    })
+    setStatus(`Stamped ${text}`)
+  }
+
+  const copyFace = async () => {
+    try {
+      await navigator.clipboard.writeText(kaomoji)
+      setStatus('Copied the face')
+    } catch {
+      setStatus('The browser would not let us reach the clipboard')
+    }
+  }
 
   const stepBack = () => {
     const prev = undo.current.pop()
@@ -231,7 +309,7 @@ export default function AsciiStudio() {
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
     /* Only when it actually changes. Assigning canvas.width resets the
        drawing buffer even if the value is identical, and that reset stops
-       captureStream from ever seeing a frame — the recording comes out as a
+       captureStream from ever seeing a frame, the recording comes out as a
        WebM header with no video in it. */
     if (canvas.width !== Math.round(w * dpr) || canvas.height !== Math.round(h * dpr)) {
       canvas.width = Math.round(w * dpr)
@@ -554,6 +632,36 @@ export default function AsciiStudio() {
           </div>
         </div>
 
+        <div className="asc__group asc__group--kao">
+          <span className="asc__label">Kaomoji</span>
+          <div className="asc__kao">
+            <output className="asc__kaoFace">{kaomoji}</output>
+            <div className="asc__kaoRows">
+              <Pick label="Arms" value={arms} names={ARMS.map((a) => a.name)} onPick={(n) => { setArms(n); setFace(null) }} />
+              <Pick label="Face" value={brack} names={BRACKETS.map((b) => b.name)} onPick={(n) => { setBrack(n); setFace(null) }} />
+              <Pick label="Eyes" value={eye} names={EYES} onPick={(n) => { setEye(n); setFace(null) }} />
+              <Pick label="Mouth" value={mouth} names={MOUTHS} onPick={(n) => { setMouth(n); setFace(null) }} />
+            </div>
+            <div className="asc__kaoRow">
+              {PRESETS.map((f) => (
+                <button
+                  key={f}
+                  className="asc__kaoPreset"
+                  onClick={() => setFace(f)}
+                  title="Use this one"
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+            <div className="asc__kaoRow">
+              <button className="asc__btn" onClick={copyFace}>Copy</button>
+              <button className="asc__btn" onClick={() => stampText(kaomoji)}>Put it on the board</button>
+              {face ? <button className="asc__btn" onClick={() => setFace(null)}>Back to mine</button> : null}
+            </div>
+          </div>
+        </div>
+
         <div className="asc__group">
           <span className="asc__label">Look</span>
           <div className="asc__themes">
@@ -665,6 +773,32 @@ export default function AsciiStudio() {
           </label>
         </div>
         <p className="asc__status">{status || TOOLS.find((t) => t.id === tool)?.hint}</p>
+      </div>
+    </div>
+  )
+}
+
+/** One labelled row of choices, used by the kaomoji builder. */
+function Pick({
+  label,
+  value,
+  names,
+  onPick,
+}: {
+  label: string
+  value: number
+  names: string[]
+  onPick: (n: number) => void
+}) {
+  return (
+    <div className="asc__kaoPick">
+      <span>{label}</span>
+      <div>
+        {names.map((n, i) => (
+          <button key={n + i} data-on={i === value} onClick={() => onPick(i)} title={n}>
+            {n}
+          </button>
+        ))}
       </div>
     </div>
   )

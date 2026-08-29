@@ -141,8 +141,8 @@ export default function ControlPanel() {
 
               <h2 className="cpl__h cpl__h--sub">Desktop background</h2>
               <p className="cpl__p">
-                A theme brings a picture with it, but you can put any of these behind it —
-                the window colour stays where you left it.
+                A theme comes with its own picture, but you can put any of these behind it.
+                The window colour stays where you left it.
               </p>
               <div className="cpl__walls">
                 {WALLPAPERS.map((w) => (

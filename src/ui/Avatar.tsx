@@ -9,7 +9,7 @@
  * Two details do most of the work, and both come straight from Microsoft's
  * icon guidelines. The light is above, in front and slightly left, so every
  * part carries a soft highlight up there and a darker crescent on the lower
- * right. And nothing is outlined in black — each outline is a darker version
+ * right. And nothing is outlined in black, each outline is a darker version
  * of the colour it surrounds.
  *
  * The tile around it is the other half of the era: a bright gradient, bokeh,
@@ -134,7 +134,7 @@ export function Avatar({
           <stop offset="0" stopColor={bg1} />
           <stop offset="1" stopColor={bg2} />
         </linearGradient>
-        {/* light from above, in front and slightly left — so the highlight
+        {/* light from above, in front and slightly left, so the highlight
             sits on the upper left of the forehead and the colour deepens
             toward the lower right */}
         <radialGradient id={`${id}skin`} cx="0.36" cy="0.26" r="0.86">
@@ -172,14 +172,6 @@ export function Avatar({
         <path d="M40.5 66.5 48 82l7.5-15.5c-4.5-1.6-10.5-1.6-15 0Z" fill="#f4f8fc" />
         <path d="M48 82v14" stroke={shade(shirt, -0.3)} strokeWidth="1.4" strokeLinecap="round" />
 
-        {/* Long hair falls behind the head, so it is drawn before it. */}
-        {a.hair % 4 === 1 ? (
-          <path
-            d="M26 46c0-16 9.5-25 22-25s22 9 22 25c0 13 2 21 3.5 30-8-4.5-16.5-6.5-25.5-6.5s-17.5 2-25.5 6.5c1.5-9 3.5-17 3.5-30Z"
-            fill={`url(#${id}hair)`}
-          />
-        ) : null}
-
         {/* head. No face, and no ears. */}
         <path d={HEAD} fill={`url(#${id}skin)`} />
         <path d={HEAD} fill="none" stroke={shade(skin, -0.32)} strokeWidth="1.1" />
@@ -197,14 +189,26 @@ export function Avatar({
             fill={`url(#${id}hair)`}
           />
         ) : null}
+        {/* Bow: the same cap with two loops and a knot sitting on the crown. */}
         {a.hair % 4 === 1 ? (
           <>
             <path
               d="M30.5 48c0-14.5 7.5-25 17.5-25s17.5 10.5 17.5 25c0-7-3-11.5-8-13-3.5 2.5-16.5 2.5-20 0-5 1.5-7 6-7 13Z"
               fill={`url(#${id}hair)`}
             />
-            <path d="M30.5 40c-2.5 11-2.5 22-1 33 2.5-11 3-22 6.5-29Z" fill={`url(#${id}hair)`} />
-            <path d="M65.5 40c2.5 11 2.5 22 1 33-2.5-11-3-22-6.5-29Z" fill={`url(#${id}hair)`} />
+            <path
+              d="M48 25c-4.5-6-10.5-6.5-12.5-2.5-1.8 3.6 1.4 7.5 6 8.2 2.6.4 5-.7 6.5-2.2Z"
+              fill={`url(#${id}hair)`}
+              stroke={shade(hair, -0.28)}
+              strokeWidth="0.9"
+            />
+            <path
+              d="M48 25c4.5-6 10.5-6.5 12.5-2.5 1.8 3.6-1.4 7.5-6 8.2-2.6.4-5-.7-6.5-2.2Z"
+              fill={`url(#${id}hair)`}
+              stroke={shade(hair, -0.28)}
+              strokeWidth="0.9"
+            />
+            <ellipse cx="48" cy="25.6" rx="3.4" ry="2.9" fill={shade(hair, -0.16)} />
           </>
         ) : null}
         {a.hair % 4 === 2 ? (

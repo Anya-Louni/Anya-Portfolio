@@ -4,7 +4,7 @@ import { Icon } from '../ui/Icon'
 
 /**
  * Alt+Tab. Hold Alt, press Tab to walk the most-recently-used order,
- * release Alt to commit — the way Windows does it.
+ * release Alt to commit, the way Windows does it.
  */
 export function Switcher() {
   const index = useOS((s) => s.switcher)

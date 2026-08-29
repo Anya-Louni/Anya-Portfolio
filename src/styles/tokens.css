@@ -1,15 +1,15 @@
 /* ============================================================
    FRUTIGER AERO TOKEN SYSTEM
 
-   The real aesthetic is white / green / blue and *luminous* —
+   The real aesthetic is white / green / blue and *luminous*,
    glossy surfaces, cloudy skies, water, bubbles, lens flare,
    aurora, bloom. Not a dark restrained palette. Windows 7's own
    default Aero glass is a light blue-white pane, and that is what
    the chrome is built from.
 
-   Theme A "Aero"           — the default, bright and saturated.
-   Theme B "Deep Field"     — the same world at night.
-   Skin  "Luna"             — Windows XP, via xp.css.
+   Theme A "Aero"          , the default, bright and saturated.
+   Theme B "Deep Field"    , the same world at night.
+   Skin  "Luna"            . Windows XP, via xp.css.
    ============================================================ */
 
 :root {
@@ -136,7 +136,7 @@
 }
 
 /* ============================================================
-   THEME B — "Deep Field": the same world after dark.
+   THEME B, "Deep Field": the same world after dark.
    ============================================================ */
 :root[data-theme='night'] {
   --wall: url('/wall/night.webp');

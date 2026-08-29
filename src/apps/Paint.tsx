@@ -5,8 +5,8 @@ import { ColorPicker } from './ColorPicker'
 /**
  * Paint.
  *
- * The Windows 7 tool set — pencil, fill, picker, eraser, shapes, and the
- * Brushes dropdown with its natural media — plus a row of patterned brushes
+ * The Windows 7 tool set, pencil, fill, picker, eraser, shapes, and the
+ * Brushes dropdown with its natural media, plus a row of patterned brushes
  * that stamp rather than stroke, which the original never had.
  */
 

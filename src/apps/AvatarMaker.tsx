@@ -13,7 +13,7 @@ import {
 import { sound } from '../os/sound'
 import { useOS } from '../os/store'
 
-/* Out here so React keeps the same component type between renders —
+/* Out here so React keeps the same component type between renders,
    defined inline it remounts every row on every click. */
 function Row({
   label,
@@ -55,7 +55,7 @@ function Row({
   )
 }
 
-const HAIR = ['Short', 'Long', 'Buns', 'Swept']
+const HAIR = ['Short', 'Bow', 'Buns', 'Swept']
 const ACCESSORY = ['None', 'Visor', 'Headphones', 'Sparkle']
 
 export default function AvatarMaker() {
@@ -63,7 +63,7 @@ export default function AvatarMaker() {
   const [spec, setSpec] = useState<AvatarSpec>(saved)
   const pushToast = useOS((s) => s.pushToast)
 
-  /* every change lands immediately — the sign-in tile, Start menu and
+  /* every change lands immediately, the sign-in tile, Start menu and
      Contacts all read the same store, so they update as you click */
   useEffect(() => {
     saveAvatar(spec)
@@ -108,8 +108,8 @@ export default function AvatarMaker() {
           <Avatar spec={spec} size={16} />
         </div>
         <p className="am__note">
-          Changes apply straight away — this is already the picture on the sign-in tile and the
-          Start menu.
+          Changes save straight away. This is already the picture on the sign-in screen and in
+          the Start menu.
         </p>
       </div>
 

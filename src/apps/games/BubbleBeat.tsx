@@ -6,7 +6,7 @@
  * arrow keys, or by tapping the lane.
  *
  * The music is not a file. Every chart is a list of (step, lane) pairs, and
- * hitting a bubble is what plays its note — so a clean run sounds like the
+ * hitting a bubble is what plays its note, so a clean run sounds like the
  * melody and a sloppy one sounds like a melody with holes in it, which is
  * the most direct feedback a rhythm game can give. A bass arpeggio runs
  * underneath regardless, so there is always something to keep time against.

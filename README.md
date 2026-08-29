@@ -1,6 +1,6 @@
-# Anya OS
+# OSnya
 
-A web desktop environment portfolio — Windows 7 silhouette, kawaii Frutiger Aero
+A web desktop environment portfolio. Windows 7 silhouette, kawaii Frutiger Aero
 skin. React + TypeScript + Vite.
 
 ```bash
@@ -9,7 +9,7 @@ npm run dev      # http://127.0.0.1:5178
 npm run build
 ```
 
-`PRODUCT.md` holds product truth. `DESIGN.md` holds the visual system — read it
+`PRODUCT.md` holds product truth. `DESIGN.md` holds the visual system, read it
 before adding a surface.
 
 ## Where the swappable content lives

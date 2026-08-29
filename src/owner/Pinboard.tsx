@@ -4,7 +4,7 @@ import { currentUser, isRemote, readNotes, signIn, signOut, type Note } from '..
 /**
  * The owner's private inbox at /notes (or #/notes).
  *
- * The gate is Supabase Auth, not a password compared in the browser — a
+ * The gate is Supabase Auth, not a password compared in the browser, a
  * client-side check would be decoration, since the whole bundle is public and
  * anyone could read the comparison or call the API directly. Reading is denied
  * by row-level security unless the request carries a signed-in session.
@@ -97,7 +97,7 @@ export function Pinboard() {
           {notes.length} note{notes.length === 1 ? '' : 's'}
         </span>
         {!isRemote ? (
-          <span className="pin__badge">local fallback — no Supabase configured</span>
+          <span className="pin__badge">local fallback: no Supabase configured</span>
         ) : null}
         <span className="pin__spacer" />
         <button className="aero-btn" onClick={load}>

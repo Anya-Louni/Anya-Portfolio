@@ -3,7 +3,7 @@ import { SUIT_GLYPH, SUITS, isRed, rankName } from './deck'
 
 /**
  * The bouncing-cards win animation. Cards launch from the foundations, fall
- * under gravity and bounce off the bottom edge, smearing across the board —
+ * under gravity and bounce off the bottom edge, smearing across the board,
  * exactly the thing everyone remembers about winning at Solitaire.
  */
 export function WinCascade({ onDone }: { onDone: () => void }) {

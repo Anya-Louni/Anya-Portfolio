@@ -2,13 +2,13 @@
  * The Night Line.
  *
  * A deduction puzzle on a train. Seventeen stations, and at each one a clue
- * about the killer's name — its length, its letters, its vowels. The list of
+ * about the killer's name, its length, its letters, its vowels. The list of
  * suspects carries from stop to stop, shrinking, until exactly one name is
  * left at the terminus.
  *
  * The puzzle is generated rather than written, and generated backwards from
  * the answer: a killer is picked first, and only clues that are true of them
- * are ever considered — so the killer cannot be eliminated by their own case.
+ * are ever considered, so the killer cannot be eliminated by their own case.
  * Each station then takes the gentlest clue that gets the list under a ceiling
  * walking evenly down to one at the terminus. A run that cannot reach exactly
  * one name is thrown away and started again, which is what makes every board
@@ -68,7 +68,7 @@ interface Clue {
  * why: only thirty-odd clues were ever true of a given killer, and the ones
  * that removed a suspect or two were used up by the fifth station, after which
  * every remaining clue cut the list in half and the line could not be
- * finished. Negatives are what supply the fine distinctions — "contains no
+ * finished. Negatives are what supply the fine distinctions, "contains no
  * letter Z" removes only the names with a Z in them, and "does not begin with
  * G" removes exactly the one name that does.
  */
@@ -152,7 +152,7 @@ function shuffled<T>(list: T[], rng: () => number): T[] {
  * Getting this right took three goes. Asking each station only to remove
  * somebody never worked: nothing stopped the train reaching the terminus with
  * five suspects still standing. Steering toward an evenly falling count did
- * not work either, and for a more interesting reason — clues that cut a list
+ * not work either, and for a more interesting reason, clues that cut a list
  * of twenty-four down by exactly two barely exist, so the first station would
  * take a clue that halved the list, and then every station after it had to
  * remove exactly one to fill seventeen stops, which is not possible.
@@ -184,7 +184,7 @@ function attempt(rng: () => number): Puzzle | null {
 
     /* The ceiling is what makes the line finish. It walks evenly from the
        full list down to one at the terminus, and a clue is only allowed if it
-       gets the count under the ceiling for this station — so the list can
+       gets the count under the ceiling for this station, so the list can
        never dawdle at twenty and then have nowhere to go. Under that
        ceiling, the gentlest cut wins, which keeps the puzzle a slow squeeze
        rather than two clues and a shrug. */
@@ -378,7 +378,7 @@ export default function NightLine() {
         <div className="nl__verdict" data-right={verdict.right}>
           {verdict.right ? (
             <p>
-              <b>{verdict.named}.</b> That is your killer — the only name the seventeen clues leave
+              <b>{verdict.named}.</b> That is your killer. It is the only name the seventeen clues leave
               standing.
             </p>
           ) : (

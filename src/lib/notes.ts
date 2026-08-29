@@ -4,7 +4,7 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js'
  * Visitor notes.
  *
  * Visitors can only INSERT. Reading is gated in the database by row-level
- * security and requires a signed-in owner account — not a password checked in
+ * security and requires a signed-in owner account, not a password checked in
  * the browser, which would be no protection at all since anyone can read the
  * bundle. See README-NOTES.md for the SQL.
  *

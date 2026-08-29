@@ -231,7 +231,7 @@ export default function FishPainter() {
       </div>
 
       <p className="fp__hint">
-        Paint inside the fish — strokes stop at the edge. The eye gets added when you release it.
+        Paint inside the fish. Your strokes stop at the edge, and the eye is added when you let it go.
       </p>
 
       <div className="fp__foot">
@@ -260,14 +260,14 @@ export default function FishPainter() {
 
       {error ? <p className="fp__error">{error}</p> : null}
       {state === 'saved' ? (
-        <p className="fp__ok">Swimming now — open the Aquarium.</p>
+        <p className="fp__ok">Swimming now. Open the Aquarium to see it.</p>
       ) : spent ? (
         <p className="fp__note">
           You already released “{mine!.name}”. One fish per visitor, and a fish cannot be
           repainted once it is in the water.
         </p>
       ) : (
-        <p className="fp__note">One fish per visitor. Choose carefully — it cannot be repainted.</p>
+        <p className="fp__note">One fish per visitor. Choose carefully, because it cannot be repainted.</p>
       )}
     </form>
   )

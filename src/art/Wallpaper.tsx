@@ -1,5 +1,5 @@
 /**
- * "Aero" — the desktop wallpaper.
+ * "Aero", the desktop wallpaper.
  *
  * The scene itself is a rendered image (public/wall, one per theme, wired up
  * through the --wall token) rather than a stack of SVG shapes. Drawing it in

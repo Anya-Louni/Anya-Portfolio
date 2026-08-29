@@ -2,7 +2,7 @@
  * Chess.
  *
  * All the rules live in ./engine, which is pure and has been checked against
- * published perft counts for the five standard test positions — castling
+ * published perft counts for the five standard test positions, castling
  * through check, en-passant pins, promotion, the lot. This file is only the
  * board: what is selected, what is legal from here, and whose turn it is.
  *
@@ -44,7 +44,7 @@ export default function Chess() {
   const [gameId, setGameId] = useState(0)
 
   /* Repetition is a property of the game rather than of the position, so the
-     board cannot work it out alone — the list of positions seen so far comes
+     board cannot work it out alone, the list of positions seen so far comes
      from here. */
   const history = useMemo(
     () => [...past.map((s) => s.pos), pos].map((p) => toFen(p).split(' ').slice(0, 4).join(' ')),
@@ -240,7 +240,7 @@ export default function Chess() {
               ? result.reason
               : thinking
                 ? 'Thinking…'
-                : `${pos.turn === 'w' ? 'White' : 'Black'} to move${inCheck(pos) ? ' — check' : ''}`}
+                : `${pos.turn === 'w' ? 'White' : 'Black'} to move${inCheck(pos) ? ' · check' : ''}`}
           </p>
 
           <div className="chess__taken">

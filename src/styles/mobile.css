@@ -1,5 +1,5 @@
 /* ============================================================
-   Adapted desktop — the OS gets smaller, it does not go away.
+   Adapted desktop, the OS gets smaller, it does not go away.
    ============================================================ */
 
 @media (max-width: 900px) {
@@ -97,7 +97,7 @@
     gap: 4px;
   }
 
-  /* stickies would cover the icons at this width — they stack under them */
+  /* stickies would cover the icons at this width, they stack under them */
   .stickies {
     position: static;
   }
@@ -105,14 +105,14 @@
     display: none;
   }
 
-  /* Gadgets cannot float where there is no room, so they line up along the
-     bottom instead and scroll sideways. Dragging them is a mouse idea and
-     stops here. */
+  /* The one gadget worth the room sits along the bottom edge. Dragging it is
+     a mouse idea and stops here. */
   .gad__layer {
     top: auto;
     bottom: calc(var(--taskbar-h) + 10px);
     display: flex;
     align-items: flex-end;
+    justify-content: center;
     gap: 10px;
     padding: 0 10px;
     overflow-x: auto;

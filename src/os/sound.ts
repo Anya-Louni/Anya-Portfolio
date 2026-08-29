@@ -1,5 +1,5 @@
 /**
- * Sparse sound design, synthesised in the browser — no audio files ship.
+ * Sparse sound design, synthesised in the browser, no audio files ship.
  * One boot chime, one soft click, one close puff. Off until the visitor
  * signs in (which is also the gesture that unlocks WebAudio).
  */
@@ -31,7 +31,7 @@ export const sound = {
     if (v) ac()
   },
 
-  /** Soft bell-ish partials over a low pad — the sign-in chime. */
+  /** Soft bell-ish partials over a low pad, the sign-in chime. */
   chime() {
     const c = ac()
     if (!c || !master || !enabled) return

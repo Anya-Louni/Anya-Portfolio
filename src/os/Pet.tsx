@@ -6,7 +6,7 @@ import { useOS } from './store'
  *
  * Lives above the desktop, not inside a window. Walks the bottom edge, climbs
  * the sides, sits down when it gets bored, notices the cursor, and can be
- * picked up and dropped — it screws its eyes shut on the way down, lands
+ * picked up and dropped, it screws its eyes shut on the way down, lands
  * flat, sees stars for a couple of seconds, and then shakes it off.
  *
  * Four original characters, no fandom sprites. Each is drawn, not a sheet, so
@@ -231,7 +231,7 @@ export function Pet() {
       onPointerUp={up}
       onPointerCancel={up}
       onContextMenu={menu}
-      title={`${PETS.find((p) => p.id === kind)?.name} — drag it, or right-click to swap`}
+      title={`${PETS.find((p) => p.id === kind)?.name}. Drag it, or right-click to swap`}
     >
       <PetArt kind={kind} state={s.state} blink={blinking} />
     </div>

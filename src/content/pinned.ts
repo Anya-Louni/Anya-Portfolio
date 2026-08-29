@@ -60,19 +60,3 @@ export async function loadPinned(): Promise<{ repo: Pinned; live: boolean }> {
     return { repo: FALLBACK, live: false }
   }
 }
-
-/** "3 days ago", roughly. */
-export function since(iso: string | null): string {
-  if (!iso) return ''
-  const secs = (Date.now() - new Date(iso).getTime()) / 1000
-  if (!Number.isFinite(secs) || secs < 0) return ''
-  const steps: [number, string][] = [
-    [31536000, 'year'], [2592000, 'month'], [604800, 'week'],
-    [86400, 'day'], [3600, 'hour'], [60, 'minute'],
-  ]
-  for (const [size, name] of steps) {
-    const n = Math.floor(secs / size)
-    if (n >= 1) return `${n} ${name}${n > 1 ? 's' : ''} ago`
-  }
-  return 'just now'
-}

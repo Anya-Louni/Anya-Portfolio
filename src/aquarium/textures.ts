@@ -100,7 +100,7 @@ export function makeStockTexture(p: Pattern): HTMLCanvasElement {
   ctx.restore()
 
   /* Outline only. The fish have no eyes, the same way the avatars have no
-     faces and the pet has no mouth — the shapes carry it, and a pair of
+     faces and the pet has no mouth, the shapes carry it, and a pair of
      cartoon eyes on every one of them pulled the whole tank toward clip art. */
   ctx.strokeStyle = 'rgba(10,26,52,0.5)'
   ctx.lineWidth = 1.6

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CONTACT } from '../content/contact'
+import { CONTACT, CONTACT_AVATAR } from '../content/contact'
 import { PROJECTS } from '../content/projects'
 import { Avatar } from '../ui/Avatar'
 import { Glyph, Icon } from '../ui/Icon'
@@ -23,7 +23,7 @@ export default function Contacts() {
       <aside className="ct__list">
         <p className="ct__listHead">Contacts</p>
         <button className="ct__row" data-on>
-          <Avatar size={28} />
+          <Avatar spec={CONTACT_AVATAR} size={28} />
           <span>
             <strong>{CONTACT.name}</strong>
             <em>{CONTACT.handle}</em>
@@ -33,7 +33,7 @@ export default function Contacts() {
 
       <section className="ct__card">
         <header className="ct__head">
-          <Avatar size={92} className="ct__avatar" />
+          <Avatar spec={CONTACT_AVATAR} size={92} className="ct__avatar" />
           <div>
             <h1 className="ct__name">{CONTACT.name}</h1>
             <p className="ct__line">{CONTACT.line}</p>
@@ -59,6 +59,14 @@ export default function Contacts() {
             </dd>
           </div>
           <div>
+            <dt>LinkedIn</dt>
+            <dd>
+              <a href={CONTACT.linkedin} target="_blank" rel="noreferrer">
+                in/anya-louni
+              </a>
+            </dd>
+          </div>
+          <div>
             <dt>Work</dt>
             <dd>
               {PROJECTS.length} projects ·{' '}
@@ -73,8 +81,8 @@ export default function Contacts() {
           <a className="aero-btn aero-btn--primary" href={`mailto:${CONTACT.email}`}>
             <Glyph.arrowRight /> Send an email
           </a>
-          <button className="aero-btn" onClick={() => launch('guestbook')}>
-            <Icon name="guestbook" className="ct__btnIcon" /> Leave a note instead
+          <button className="aero-btn" onClick={() => launch('notes')}>
+            <Icon name="sticky" className="ct__btnIcon" /> Leave a note instead
           </button>
         </div>
       </section>

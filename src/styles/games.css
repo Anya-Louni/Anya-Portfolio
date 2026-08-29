@@ -905,7 +905,7 @@
 .chess__sq[data-check='true'] {
   box-shadow: inset 0 0 0 3px #ef5b5b, inset 0 0 24px rgba(230, 60, 60, 0.65);
 }
-/* scoped to a square: elsewhere — the taken tray, the promotion dialog —
+/* scoped to a square: elsewhere, the taken tray, the promotion dialog,
    the piece keeps the size it was asked for */
 .chess__sq .chess__piece { width: 86%; height: 86%; }
 

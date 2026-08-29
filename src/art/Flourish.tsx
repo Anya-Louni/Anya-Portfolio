@@ -8,7 +8,7 @@
  *
  * Two colours only, and neither of them pink: a pale Aero blue on the screen's
  * own dark ground. Monochrome is what keeps this readable at 230 pixels wide,
- * and it is the half of the reference that survives the shrink — at this size
+ * and it is the half of the reference that survives the shrink, at this size
  * the colour would only be mud.
  *
  * The stems draw themselves in over the first bars rather than appearing all

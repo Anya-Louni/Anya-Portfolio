@@ -21,7 +21,7 @@ export function Win({ win }: { win: WinInstance }) {
   const zone = useRef<SnapZone>(null)
   const menu = useMenu()
 
-  /* the caption's system menu — right-click the bar or left-click the icon */
+  /* the caption's system menu, right-click the bar or left-click the icon */
   const systemMenu = (e: React.MouseEvent) => {
     const items: MenuItem[] = [
       { id: 'restore', label: 'Restore', disabled: !win.maximized, run: () => toggleMax(win.id, viewport()) },

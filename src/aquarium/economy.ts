@@ -2,7 +2,7 @@
  * The tank's economy.
  *
  * Every creature you own earns a trickle of coins, and coins buy more
- * creatures. It all lives in this browser — there is no account and nothing
+ * creatures. It all lives in this browser, there is no account and nothing
  * is sent anywhere, so a visitor's tank is theirs alone. The shared part of
  * the aquarium is still the drawn fish, which come from Supabase and cost
  * nothing.

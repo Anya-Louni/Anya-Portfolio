@@ -1,7 +1,7 @@
 /**
  * The pieces, as glass.
  *
- * Staunton silhouettes drawn on a 45-unit grid — the same grid the standard
+ * Staunton silhouettes drawn on a 45-unit grid, the same grid the standard
  * open-source chess sets use, so the proportions are the ones the eye
  * expects. What is not standard is the finish: each piece is a body gradient
  * with a specular sweep down one side and a rim in a darker version of its

@@ -1,7 +1,7 @@
 /**
  * The aquarium, in WebGL.
  *
- * This module is loaded on demand — nothing imports it at the top level — so
+ * This module is loaded on demand, nothing imports it at the top level, so
  * the three.js payload only reaches visitors who actually open the tank.
  *
  * The fish are still the 128x80 textures the painter produces; what changed is
@@ -11,7 +11,7 @@
  * wave that used to be redrawn in fourteen canvas slices every frame is a
  * vertex shader now, which is both smoother and free.
  *
- * Everything the scene needs — sand, caustics, bubbles, kelp — is generated
+ * Everything the scene needs, sand, caustics, bubbles, kelp, is generated
  * here. No textures are fetched.
  */
 import * as THREE from 'three'
@@ -59,7 +59,7 @@ function canvas(w: number, h: number) {
 }
 
 /** Canvas pixels are sRGB. Saying so is what makes them match colours written
- *  as hex elsewhere in the scene — the fog, most importantly. */
+ *  as hex elsewhere in the scene, the fog, most importantly. */
 function srgb(t: THREE.Texture) {
   t.colorSpace = THREE.SRGBColorSpace
   return t
@@ -91,7 +91,7 @@ function sandTexture() {
   return t
 }
 
-/** Overlapping soft cells, scrolled in two directions — reads as caustics. */
+/** Overlapping soft cells, scrolled in two directions, reads as caustics. */
 function causticTexture() {
   const [c, g] = canvas(256, 256)
   g.fillStyle = '#000'
@@ -586,7 +586,7 @@ export function createTank(host: HTMLElement): Tank {
       if (p.z > FRONT - 1) { p.z = FRONT - 1; s.vz = -Math.abs(s.vz) }
 
       /* Turning: the fish keeps facing the camera but flips, and the flip is
-         a squash through zero rather than an instant mirror — which is what
+         a squash through zero rather than an instant mirror, which is what
          a real fish rolling over looks like from the front. */
       const want = s.vx >= 0 ? 1 : -1
       s.facing += (want - s.facing) * Math.min(1, dt * 7)
@@ -646,7 +646,7 @@ export function createTank(host: HTMLElement): Tank {
 
   function resize() {
     /* offsetWidth, not getBoundingClientRect: a window measured during its
-       open animation is still scaled, and the rect reports the scaled size —
+       open animation is still scaled, and the rect reports the scaled size,
        the canvas would end up permanently smaller than its container, and
        transforms do not retrigger a ResizeObserver so it never corrects. */
     const w = Math.max(260, host.offsetWidth)
@@ -729,7 +729,7 @@ export function createTank(host: HTMLElement): Tank {
   document.addEventListener('visibilitychange', onVisible)
 
   const onLost = (e: Event) => {
-    // Nothing to restore from — say so rather than leaving a dead black box.
+    // Nothing to restore from, say so rather than leaving a dead black box.
     e.preventDefault()
     cancelAnimationFrame(raf)
     host.dataset.glLost = 'true'

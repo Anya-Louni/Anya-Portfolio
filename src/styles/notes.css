@@ -1,5 +1,41 @@
 /* ============================================================
-   GUESTBOOK — visitor side. Write only, never a thread.
+   NOTES  (the two halves under one window)
+   ============================================================ */
+.nt {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100%;
+  background: var(--chrome-100);
+}
+.nt__tabs {
+  display: flex;
+  gap: 4px;
+  padding: 8px 10px 0;
+  background: linear-gradient(180deg, #ffffff, var(--chrome-100));
+  border-bottom: 1px solid var(--chrome-300);
+}
+.nt__tab {
+  padding: 7px 14px;
+  border: 1px solid var(--chrome-400);
+  border-bottom: 0;
+  border-radius: var(--r-xs) var(--r-xs) 0 0;
+  background: linear-gradient(180deg, #f7fafd, var(--chrome-200));
+  color: var(--ink-soft);
+  font-size: 12.5px;
+}
+.nt__tab[data-on='true'] {
+  background: linear-gradient(180deg, #ffffff, #eaf4fd);
+  border-color: #3c7fb1;
+  color: var(--ink-strong);
+  font-weight: 600;
+}
+.nt__panel {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ============================================================
+   GUESTBOOK, visitor side. Write only, never a thread.
    ============================================================ */
 .gb {
   display: flex;
@@ -138,7 +174,7 @@
 }
 
 /* ============================================================
-   PINBOARD — the owner's private route at /notes
+   PINBOARD, the owner's private route at /notes
    ============================================================ */
 .pin {
   min-height: 100vh;

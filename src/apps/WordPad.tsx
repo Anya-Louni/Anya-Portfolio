@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 /**
- * WordPad — the ribbon, the rich text, the save to .rtf-ish HTML.
+ * WordPad, the ribbon, the rich text, the save to .rtf-ish HTML.
  * execCommand is deprecated but it is still what every browser implements for
  * contenteditable formatting, and there is no replacement that works today.
  */

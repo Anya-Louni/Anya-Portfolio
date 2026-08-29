@@ -175,7 +175,7 @@ export default function Snipping() {
               <p className="sn2__hintTitle">Nothing snipped yet</p>
               <p>
                 <b>New snip</b> dims the screen so you can drag a rectangle. The browser will ask
-                which surface to share — pick <b>this tab</b> for an exact crop.
+                which surface to share. Pick <b>this tab</b> for an exact crop.
               </p>
               {error ? <p className="sn2__error">{error}</p> : null}
             </div>
@@ -183,7 +183,7 @@ export default function Snipping() {
         </div>
 
         <div className="sn2__status">
-          <span>{shot ? 'Ready — save it, or copy it' : 'Press New snip'}</span>
+          <span>{shot ? 'Ready. Save it or copy it' : 'Press New snip'}</span>
           <span className="game__spacer" />
           <span>Nothing is recorded</span>
         </div>

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 /**
- * "Edit colors" — Paint's colour dialog, with the wheel.
+ * "Edit colors". Paint's colour dialog, with the wheel.
  * An HSV wheel (hue around, saturation outward) plus a value slider,
  * a live preview and a hex field.
  */

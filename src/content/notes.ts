@@ -2,7 +2,7 @@
  * Desktop sticky notes.
  *
  * Empty on purpose. The last set was placeholder text I wrote, and it read as
- * random because it was — fragments about projects with no context around them.
+ * random because it was, fragments about projects with no context around them.
  * Add your own lines here and they appear on the desktop, draggable, in the
  * order given. Two or three short ones is the right amount; more than that and
  * the desktop stops looking like a desktop.

@@ -3,7 +3,7 @@
  *
  * Draw across the board and a playhead sweeps through what you drew: left to
  * right is time, up is pitch, and each of the four brushes is a different
- * voice. It is the draw-it-and-hear-it idea — Draw.Audio, Composer's
+ * voice. It is the draw-it-and-hear-it idea. Draw.Audio, Composer's
  * Sketchpad. It was called Symphony Sketchpad, which said nothing about what
  * it does; the name is now the instructions.
  *
@@ -11,7 +11,7 @@
  * whole trick: pentatonic has no interval that can clash, which means anything
  * drawn at random still sounds deliberate.
  *
- * Nothing is recorded to a server and no audio files ship — every note is
+ * Nothing is recorded to a server and no audio files ship, every note is
  * synthesised the moment the playhead reaches it.
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -220,7 +220,7 @@ export default function Sketchpad() {
 
     /* The board is a Windows 7 client area, not a night sky: a pale sunken
        panel with bar shading and hairline rules. The notes on it are Aero
-       glass buttons — a hard tonal break just under halfway, a darker edge in
+       glass buttons, a hard tonal break just under halfway, a darker edge in
        the button's own hue, and a white line inside the top. */
     const paper = ctx.createLinearGradient(0, 0, 0, h)
     paper.addColorStop(0, '#fbfdff')
@@ -388,7 +388,7 @@ export default function Sketchpad() {
       if (s % 8 === 0) next[s * PITCHES + (PITCHES - 2)] = 1
     }
     setBoard(next)
-    setStatus('Made you a phrase — redraw any of it')
+    setStatus('Made you a phrase. Redraw any of it')
   }
 
   const savePng = () => {
@@ -510,7 +510,7 @@ export default function Sketchpad() {
           </button>
         </div>
         <p className="skp__status">
-          {status || 'Draw across the board — left to right is time, up is pitch.'}
+          {status || 'Draw across the board. Left to right is time, up is pitch.'}
         </p>
       </div>
     </div>

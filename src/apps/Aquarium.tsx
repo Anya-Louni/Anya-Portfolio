@@ -7,7 +7,7 @@ import { coarse } from '../lib/touch'
  * aquarium should pay for it.
  *
  * It is also a shop. Every creature you own earns a trickle of coins and
- * coins buy more creatures, which is the whole loop — the tank fills up
+ * coins buy more creatures, which is the whole loop, the tank fills up
  * because it has been running, not because someone pressed a button. That
  * part is yours alone and lives in this browser. The fish with names on them
  * are the shared half: other visitors drew those, and they cost nothing.
@@ -48,7 +48,7 @@ export default function Aquarium() {
 
   /* Textures are built once, and so are the data URLs the shop shows. The
      coin count moves five times a second, so anything done inline in the
-     render happens five times a second — and toDataURL on nine canvases at
+     render happens five times a second, and toDataURL on nine canvases at
      that rate was by a wide margin the most expensive thing in the app. */
   const art = useMemo(() => {
     const m: Record<string, HTMLCanvasElement> = {}
@@ -141,7 +141,7 @@ export default function Aquarium() {
     const id = window.setInterval(() => {
       /* The payout happens here rather than inside the updater. A state
          updater can be called during render, and paying into the purse from
-         there sets state in every other component watching the balance —
+         there sets state in every other component watching the balance,
          which React rightly complains about. */
       const t = saveRef.current
       const boost = t.fedUntil > Date.now() / 1000 ? FED_MULTIPLIER : 1
@@ -200,7 +200,7 @@ export default function Aquarium() {
       {failed ? (
         <p className="aq__failed">
           This browser would not start WebGL, so the tank cannot run here.
-          You can still draw a fish — it will be waiting for everyone else.
+          You can still draw a fish. It will be waiting for everyone else.
         </p>
       ) : null}
 
@@ -273,7 +273,7 @@ export default function Aquarium() {
         </div>
       </aside>
 
-      <p className="aq__hint">tap the glass to feed them — they pay double for {FED_FOR}s</p>
+      <p className="aq__hint">tap the glass to feed them and they pay double for {FED_FOR}s</p>
     </div>
   )
 }

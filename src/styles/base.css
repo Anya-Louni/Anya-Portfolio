@@ -24,7 +24,7 @@ body {
 
 button, input, textarea, select { font: inherit; letter-spacing: inherit; color: inherit; }
 /* min-width/min-height reset matters: 7.css puts min-width:75px and
-   min-height:23px on every button, and a min-width beats a width — small
+   min-height:23px on every button, and a min-width beats a width, small
    controls (brush swatches, Minesweeper cells, colour chips) were being
    silently inflated to 75px. Unlayered, so it wins over the vendor layer. */
 button {
@@ -39,7 +39,7 @@ button {
    hover, ::after on press. They are the pale blue squares that kept appearing
    behind bare controls, most visibly the iPod's wheel keys. Being pseudo-
    elements they never show up in the button's own computed styles, which is
-   what made them hard to find — and they come as a pair, so removing only the
+   what made them hard to find, and they come as a pair, so removing only the
    hover one leaves the press one behind.
 
    Dropping the content removes both everywhere. Anything of ours that wants a
@@ -63,7 +63,7 @@ h1, h2, h3, h4 { font-weight: 600; line-height: 1.15; letter-spacing: var(--trac
 :where(input, textarea) { caret-color: var(--accent); }
 
 /* No border-radius here. It used to set one, which squared off every
-   round control the moment it took focus — the iPod's centre button,
+   round control the moment it took focus, the iPod's centre button,
    the Start orb, the sign-in arrow. The outline follows the element's
    own shape on its own. */
 :focus-visible {
@@ -98,7 +98,7 @@ h1, h2, h3, h4 { font-weight: 600; line-height: 1.15; letter-spacing: var(--trac
   --cur-text:  url("/cursors/text.svg") 8 12, text;
 }
 html { cursor: var(--cur-arrow); }
-/* Windows shows the hand for hyperlinks only — buttons keep the arrow. */
+/* Windows shows the hand for hyperlinks only, buttons keep the arrow. */
 a[href], .clickable { cursor: var(--cur-hand); }
 :where(input[type='text'], input[type='search'], input[type='password'], textarea, [contenteditable]) { cursor: var(--cur-text); }
 

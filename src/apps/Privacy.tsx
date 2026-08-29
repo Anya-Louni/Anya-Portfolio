@@ -7,23 +7,23 @@ import { isRemote } from '../lib/notes'
  */
 
 const LOCAL = [
-  ['os.avatar', 'your sign-in picture'],
-  ['os.theme, os.skin, os.wallpaper', 'appearance'],
-  ['os.coins', 'coins won at the games'],
-  ['os.tank', 'what the aquarium holds'],
-  ['os.pet', 'which desktop pet'],
-  ['os.sound, os.iconSize', 'preferences'],
-  ['os.fish.released', 'that you already drew a fish'],
-  ['IndexedDB os.ipod', 'audio files you added to the iPod'],
+  ['Your picture', 'the one you make in Change Picture'],
+  ['How it looks', 'theme, colours and wallpaper'],
+  ['Coins', 'what you have won at the games'],
+  ['The aquarium', 'which creatures you have bought'],
+  ['Your pet', 'which one is walking around'],
+  ['Settings', 'sound on or off, icon size'],
+  ['Your fish', 'that you have already drawn one'],
+  ['Music', 'any audio files you added to the iPod'],
 ]
 
 const THIRD_PARTY = [
-  ['YouTube', 'Only when you add a link to the iPod and play it. The embed is theirs, and it can set cookies.', 'https://policies.google.com/privacy'],
-  ['Internet Archive', 'Internet Explorer loads old pages from web.archive.org.', 'https://archive.org/about/terms.php'],
-  ['DuckDuckGo', 'Searching in Internet Explorer opens a DuckDuckGo result.', 'https://duckduckgo.com/privacy'],
-  ['Open-Meteo', 'The weather gadget asks for Algiers. Fixed coordinates, no location of yours.', 'https://open-meteo.com/en/terms'],
-  ['Wokwi', 'One project page embeds a Wokwi simulation.', 'https://wokwi.com/legal/privacy'],
-  ['Supabase', 'Holds the notes you send and the fish you draw. Nothing else.', 'https://supabase.com/privacy'],
+  ['YouTube', 'Only if you add a link to the iPod and play it. The player is theirs and can set cookies.', 'https://policies.google.com/privacy'],
+  ['Internet Archive', 'Internet Explorer loads old web pages from them.', 'https://archive.org/about/terms.php'],
+  ['DuckDuckGo', 'Searching in Internet Explorer sends the words you typed to them.', 'https://duckduckgo.com/privacy'],
+  ['Open-Meteo', 'The weather panel asks for Algiers. It never asks where you are.', 'https://open-meteo.com/en/terms'],
+  ['Wokwi', 'One project page shows a circuit simulation from them.', 'https://wokwi.com/legal/privacy'],
+  ['Supabase', 'Stores the notes you send and the fish you draw. Nothing else.', 'https://supabase.com/privacy'],
 ]
 
 const BUILT_WITH = [
@@ -38,11 +38,15 @@ export default function Privacy() {
     <div className="legal">
       <h2>Privacy</h2>
       <p className="legal__lede">
-        No account, no tracking, no analytics. Nothing about you is measured or sold.
+        There is no sign up, no tracking and no advertising. Nothing about you
+        is measured, kept or sold.
       </p>
 
-      <h3>Kept in this browser</h3>
-      <p>Cleared when you clear site data. Never uploaded.</p>
+      <h3>Kept on your own device</h3>
+      <p>
+        This is saved in your browser and nowhere else. It goes away when you
+        clear your browsing data. It is never sent anywhere.
+      </p>
       <dl className="legal__keys">
         {LOCAL.map(([k, v]) => (
           <div key={k}>
@@ -52,26 +56,29 @@ export default function Privacy() {
         ))}
       </dl>
 
-      <h3>Sent away, and only when you act</h3>
+      <h3>Sent away, and only if you send it</h3>
       <p>
-        Two things leave this browser, both because you chose to send them.
-        A note written in Leave a note, and a fish drawn for the aquarium.
-        {isRemote ? '' : ' Neither is configured right now, so both stay local.'}
+        Two things leave your device, and only when you choose to send them.
+        A note written in Notes, and a fish drawn for the aquarium.
+        {isRemote ? '' : ' Neither is switched on right now, so nothing leaves at all.'}
       </p>
       <ul>
         <li>
-          <b>Notes</b> are write only. The database refuses to read them back to
-          anyone but the owner. There is no delete from here.
+          <b>Notes</b> go to Anya and nobody else. They cannot be read back from
+          this site, not even by you, and there is no way to delete one here.
         </li>
         <li>
-          <b>Fish</b> are public: a name you type and a small drawing. Once released
-          they cannot be edited or removed from the browser.
+          <b>Fish</b> are public: the name you type and the small drawing you
+          make. Once you let one go you cannot edit or remove it.
         </li>
       </ul>
-      <p>Do not put anything private in either. Both are visible to the site owner.</p>
+      <p>Please do not put anything private in either one. Anya can see both.</p>
 
-      <h3>Other people&apos;s servers</h3>
-      <p>These are contacted only by the app that needs them.</p>
+      <h3>Other companies</h3>
+      <p>
+        A few parts of this site load things from elsewhere. That only happens
+        when you open the app that needs it.
+      </p>
       <dl className="legal__keys">
         {THIRD_PARTY.map(([name, what, url]) => (
           <div key={name}>
@@ -85,11 +92,11 @@ export default function Privacy() {
 
       <h3>Cookies</h3>
       <p>
-        This site sets none. Embedded players and pages may set their own, under
-        their own policies, once you open them.
+        This site sets none of its own. The videos and pages listed above may
+        set theirs once you open them, under their own rules.
       </p>
 
-      <h3>Built with</h3>
+      <h3>Made with</h3>
       <dl className="legal__keys">
         {BUILT_WITH.map(([what, licence]) => (
           <div key={what}>
@@ -110,7 +117,7 @@ export default function Privacy() {
 
       <h3>Asking</h3>
       <p>
-        To have a note or a fish removed, write to <b>{CONTACT.email}</b> and say
+        To have a note or a fish removed, email <b>{CONTACT.email}</b> and say
         which one.
       </p>
     </div>

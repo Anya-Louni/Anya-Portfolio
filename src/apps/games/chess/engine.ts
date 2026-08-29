@@ -1,7 +1,7 @@
 /**
  * A complete chess engine: rules, move generation, and an opponent.
  *
- * The board is a 0x88 array — 128 squares, of which the real ones are those
+ * The board is a 0x88 array, 128 squares, of which the real ones are those
  * where `sq & 0x88` is zero. It costs sixty-four wasted entries and buys the
  * only thing that actually matters here: a square that walks off the edge
  * fails that one test, so no move generator ever needs a file-and-rank
@@ -123,7 +123,7 @@ export function findKing(p: Position, colour: Colour): number {
  *
  * This walks outward from the square rather than scanning every piece on the
  * board. Both answer the same question, but the scan costs 128 squares times
- * eight directions on every single legality check — and legality checking is
+ * eight directions on every single legality check, and legality checking is
  * most of what the search does. Walking out from the square is about thirty
  * lookups, and it took the engine's thinking time from seconds to a fifth of
  * a second.
@@ -233,7 +233,7 @@ function pseudoLegal(p: Position): Move[] {
   }
 
   /* Castling. The king may not start in check, pass through an attacked
-     square, or land on one — and the squares between must be empty. The
+     square, or land on one, and the squares between must be empty. The
      rook's own square being attacked is famously fine. */
   const kingSq = me === 'w' ? 0x04 : 0x74
   const rights = me === 'w' ? ['K', 'Q'] : ['k', 'q']
@@ -321,7 +321,7 @@ export function outcome(p: Position, history: string[] = []): Outcome {
       return {
         over: true,
         result: p.turn === 'w' ? '0-1' : '1-0',
-        reason: `Checkmate — ${p.turn === 'w' ? 'Black' : 'White'} wins`,
+        reason: `Checkmate, ${p.turn === 'w' ? 'Black' : 'White'} wins`,
       }
     }
     return { over: true, result: '1/2-1/2', reason: 'Stalemate' }
@@ -496,7 +496,7 @@ function ordered(moves: Move[]): Move[] {
 }
 
 /* The search is bounded by a clock, not by a depth. A fixed depth is fast in
-   the opening and unbearable in a sharp middlegame — the same three ply that
+   the opening and unbearable in a sharp middlegame, the same three ply that
    took under a second from the start position took eleven seconds once the
    board opened up, and the window is frozen for every one of them. So: search
    depth one, then two, then three, keeping the best move from the last depth
@@ -585,8 +585,8 @@ export function chooseMove(p: Position, skill: number): Move | null {
  * Count the leaves of the move tree to a given depth.
  *
  * This exists to be checked against published numbers. Move generators are
- * easy to get subtly wrong — a missing en-passant pin, a castle through
- * check — and perft is the only way to find that out short of losing a game
+ * easy to get subtly wrong, a missing en-passant pin, a castle through
+ * check, and perft is the only way to find that out short of losing a game
  * to it.
  */
 export function perft(p: Position, depth: number): number {

@@ -3,7 +3,7 @@ import { SUIT_GLYPH, isRed, rankName, type Card } from './deck'
 
 /**
  * A playing card in the Windows Solitaire proportions (71x96 at 1x).
- * Face cards get a simple ornamental panel rather than a portrait — the
+ * Face cards get a simple ornamental panel rather than a portrait, the
  * originals used bitmaps we obviously cannot ship.
  */
 export function CardView({
@@ -74,7 +74,7 @@ export function CardView({
   )
 }
 
-/** An empty pile outline — where a card may be dropped. */
+/** An empty pile outline, where a card may be dropped. */
 export function Slot({
   style,
   label,

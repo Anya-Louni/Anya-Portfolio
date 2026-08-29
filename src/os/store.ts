@@ -146,7 +146,7 @@ function writeLS(key: string, value: unknown) {
   try {
     localStorage.setItem(key, JSON.stringify(value))
   } catch {
-    /* private mode — the OS just forgets */
+    /* private mode, the OS just forgets */
   }
 }
 
@@ -185,7 +185,7 @@ export const useOS = create<OSState>((set, get) => ({
   },
 
   /* Kept apart from the theme on purpose. A theme carries a picture, but
-     picking a picture should not drag a whole window colour with it — which
+     picking a picture should not drag a whole window colour with it, which
      is exactly how Windows 7 separates the two. */
   setWallpaper: (wallpaper) => {
     writeLS('os.wallpaper', wallpaper)

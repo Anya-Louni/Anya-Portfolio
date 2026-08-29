@@ -64,8 +64,8 @@ export default function Guestbook() {
   return (
     <form className="gb" onSubmit={submit}>
       <p className="gb__lead">
-        Leave a note. It goes to a private inbox — it is never shown on this site, to you or to
-        anyone else who visits.
+        Write something for Anya. Only she can read it. It is never shown on this site, not to
+        you and not to anyone else who visits.
       </p>
 
       <div className="gb__note" data-tint={colour}>

@@ -11,7 +11,7 @@ import { sound } from '../os/sound'
  * iPod.
  *
  * First-generation shell: screen on top, click wheel below. The wheel really
- * is a wheel — drag around it and the selection scrolls, one step per 30° of
+ * is a wheel, drag around it and the selection scrolls, one step per 30° of
  * rotation, the way the original felt.
  *
  * Two kinds of track live in it. A file stays in this browser and is never
@@ -20,7 +20,7 @@ import { sound } from '../os/sound'
  *
  * Either way the screen shows the flourish rather than a picture. For a file
  * it breathes with the music, because a file is ours to measure. For a link it
- * draws on its own timing — the audio is inside a cross-origin frame and
+ * draws on its own timing, the audio is inside a cross-origin frame and
  * cannot be read from out here.
  *
  * Either way the artist and the song name are typed by hand. A filename is a
@@ -131,7 +131,7 @@ export default function Ipod() {
   /* ---------------- the file half ---------------- */
   /* Routed through an analyser so the flourish can breathe with the music.
      createMediaElementSource may only be called once for an element, and it
-     takes the audio out of the default path — so it has to be connected on to
+     takes the audio out of the default path, so it has to be connected on to
      the destination or the iPod goes silent. */
   const listen = useCallback(() => {
     const el = audioRef.current
@@ -242,7 +242,7 @@ export default function Ipod() {
   }
 
   /* Keep the highlighted row on screen. The wheel moves a selection, not a
-     scrollbar, so past the fifth song the list simply stopped following —
+     scrollbar, so past the fifth song the list simply stopped following,
      which is what it looked like when it would not scroll. */
   useEffect(() => {
     const at = screen === 'songs' ? songAt : screen === 'menu' ? menuAt : -1
@@ -252,7 +252,7 @@ export default function Ipod() {
   }, [songAt, menuAt, screen])
 
   /* The four labels sit on the top, bottom, left and right of the ring, which
-     is most of it — so refusing to start a drag on them left only the four
+     is most of it, so refusing to start a drag on them left only the four
      diagonal scraps of wheel actually draggable, and the menu looked stuck.
      Now the whole ring drags, and a press that never moved is treated as a
      press of whatever was under it. */
@@ -485,7 +485,7 @@ export default function Ipod() {
               {screen === 'now' ? (
                 <div className="ipod__now">
                   <Flourish playing={playing} level={level} className="ipod__flourish" />
-                  <p className="ipod__title">{track?.title ?? '—'}</p>
+                  <p className="ipod__title">{track?.title ?? 'Nothing playing'}</p>
                   <p className="ipod__artist">{track?.artist ?? ''}</p>
                   <div className="ipod__scrub">
                     <i style={{ width: dur ? `${(time / dur) * 100}%` : '0%' }} />

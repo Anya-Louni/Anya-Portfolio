@@ -1,66 +1,5 @@
-import { useEffect, useReducer, useRef, useState } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import { sound } from '../os/sound'
-
-/* ============================================================
-   NOTEPAD
-   ============================================================ */
-export function Notepad() {
-  const [text, setText] = useState(() => localStorage.getItem('os.notepad') ?? '')
-  const [wrap, setWrap] = useState(true)
-  const ref = useRef<HTMLTextAreaElement>(null)
-
-  useEffect(() => {
-    const id = window.setTimeout(() => {
-      try {
-        localStorage.setItem('os.notepad', text)
-      } catch {
-        /* nothing to do */
-      }
-    }, 400)
-    return () => window.clearTimeout(id)
-  }, [text])
-
-  const save = () => {
-    const a = document.createElement('a')
-    a.download = 'untitled.txt'
-    a.href = URL.createObjectURL(new Blob([text], { type: 'text/plain' }))
-    a.click()
-    URL.revokeObjectURL(a.href)
-  }
-
-  const lines = text ? text.split('\n').length : 1
-  const chars = text.length
-
-  return (
-    <div className="np">
-      <div className="np__menu">
-        <button className="np__menuItem" onClick={save}>File</button>
-        <button className="np__menuItem" onClick={() => setText('')}>Edit</button>
-        <button className="np__menuItem" data-on={wrap} onClick={() => setWrap(!wrap)}>
-          Format
-        </button>
-        <span className="game__spacer" />
-        <button className="game__btn" onClick={save}>Save as .txt</button>
-      </div>
-      <textarea
-        ref={ref}
-        className="np__area"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        spellCheck={false}
-        wrap={wrap ? 'soft' : 'off'}
-        placeholder=""
-        aria-label="Notepad document"
-      />
-      <div className="np__status">
-        <span>Ln {lines}</span>
-        <span>{chars} characters</span>
-        <span className="game__spacer" />
-        <span>{wrap ? 'Word wrap on' : 'Word wrap off'}</span>
-      </div>
-    </div>
-  )
-}
 
 /* ============================================================
    CALCULATOR
@@ -69,7 +8,7 @@ type Mode = 'standard' | 'scientific'
 
 /* Declared out here on purpose. A component defined inside another
    component is a new type on every render, so React unmounts and
-   remounts the entire keypad each keypress — presses land on nodes
+   remounts the entire keypad each keypress, presses land on nodes
    that are about to be thrown away, and the thing feels dead. */
 function Btn({ label, onClick, kind }: { label: string; onClick: () => void; kind?: string }) {
   return (
@@ -82,7 +21,7 @@ function Btn({ label, onClick, kind }: { label: string; onClick: () => void; kin
 /* Every press is one reducer action.
    With plain useState the handlers read `display` and `fresh` from the
    render they were created in, so two clicks landing before React
-   re-renders both saw the old values — pressing 7 + 5 = gave 75. A
+   re-renders both saw the old values, pressing 7 + 5 = gave 75. A
    reducer always sees the current state, however fast you press. */
 interface CalcState {
   display: string

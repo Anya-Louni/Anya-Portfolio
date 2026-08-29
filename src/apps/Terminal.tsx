@@ -12,7 +12,7 @@ import { useOS } from '../os/store'
  *
  * A real little shell over a virtual filesystem built from the OS's own
  * contents, so `ls` and `cat` show the actual projects and `open` launches
- * actual windows. No assistant, no network — everything it prints is already
+ * actual windows. No assistant, no network, everything it prints is already
  * in the bundle.
  */
 
@@ -32,7 +32,7 @@ function makeFS(): Node {
       'readme.txt': file(
         () =>
           [
-            'Anya OS 6.1',
+            'OSnya 6.1',
             '',
             'Portfolio desktop. Projects are real repositories.',
             'Apps and games written for this machine.',
@@ -83,7 +83,8 @@ function makeFS(): Node {
   }),
     apps: dir(
       Object.fromEntries(
-        APPS.filter((a) => a.id !== 'project').map((a) => [a.id, file(() => `${a.title} — ${a.blurb}`)]),
+        APPS.filter((a) => a.id !== 'project').map((a) => [a.id, file(() => `${a.title}
+${a.blurb}`)]),
       ),
     ),
   })
@@ -110,7 +111,7 @@ export default function Terminal() {
   const FS = useMemo(makeFS, [])
   const [cwd, setCwd] = useState<string[]>(HOME)
   const [lines, setLines] = useState<string[]>([
-    'Anya OS  [Version 6.1.7601]',
+    'OSnya  [Version 6.1.7601]',
     'Type help for the list of commands.',
     '',
   ])
@@ -125,7 +126,7 @@ export default function Terminal() {
     endRef.current?.scrollIntoView({ block: 'end' })
   }, [lines])
 
-  const prompt = `${(userName || 'guest').toLowerCase()}@anya-os:${
+  const prompt = `${(userName || 'guest').toLowerCase()}@osnya:${
     cwd.join('/') === HOME.join('/') ? '~' : '/' + cwd.join('/')
   }$`
 
@@ -149,24 +150,24 @@ export default function Terminal() {
     switch (cmd) {
       case 'help':
         print(
-          'ls [path]        list a directory',
-          'cd <path>        change directory',
-          'pwd              print the working directory',
+          'ls [path]        list a folder',
+          'cd <path>        change folder',
+          'pwd              print current folder',
           'cat <file>       print a file',
-          'tree             show everything at once',
-          'open <app>       launch an app window',
-          'apps             list the apps you can open',
-          'tank             what is in the aquarium',
-          'coins            what is in the purse',
-          'privacy          what is kept and what is sent',
-          'license          what this is built from',
-          'echo <text>      say it back',
-          'whoami           who is signed in',
-          'date             the time right now',
-          'uname            what this machine claims to be',
-          'neofetch         the obligatory system readout',
-          'history          what you have typed',
-          'clear            wipe the screen',
+          'tree             print the whole tree',
+          'open <app>       open an app',
+          'apps             list the apps',
+          'tank             aquarium status',
+          'coins            coin balance',
+          'privacy          privacy summary',
+          'license          licences and credits',
+          'echo <text>      repeat the text',
+          'whoami           current user',
+          'date             current date and time',
+          'uname            system name',
+          'neofetch         system summary',
+          'history          past commands',
+          'clear            clear the screen',
           '',
         )
         break
@@ -246,14 +247,14 @@ export default function Terminal() {
         break
 
       case 'uname':
-        print('Anya OS 6.1 (aero) x86_64', '')
+        print('OSnya 6.1 (aero) x86_64', '')
         break
 
       case 'neofetch':
         print(
-          `  ▄▄▄▄▄▄▄   ${(userName || 'guest').toLowerCase()}@anya-os`,
+          `  ▄▄▄▄▄▄▄   ${(userName || 'guest').toLowerCase()}@osnya`,
           `  █ █ █ █   ${'-'.repeat((userName || 'guest').length + 9)}`,
-          `  █ █ █ █   OS       Anya OS 6.1 (aero)`,
+          `  █ █ █ █   OS       OSnya 6.1 (aero)`,
           `  █ █ █ █   Shell    a very small one`,
           `  ▀▀▀▀▀▀▀   Apps     ${APPS.length}`,
           `            Projects ${PROJECTS.length} featured, ${REPOS.length} more`,

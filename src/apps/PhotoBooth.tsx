@@ -446,8 +446,8 @@ export default function PhotoBooth() {
             <div className="pb__off">
               <p className="pb__offTitle">Camera is off</p>
               <p className="pb__offBody">
-                Nothing is recorded and nothing is uploaded — photos stay in this window until you
-                close it.
+                Nothing is recorded and nothing is sent anywhere. Photos stay in this window until
+                you close it.
               </p>
               {error ? <p className="pb__error">{error}</p> : null}
               <button className="aero-btn aero-btn--primary" onClick={start}>

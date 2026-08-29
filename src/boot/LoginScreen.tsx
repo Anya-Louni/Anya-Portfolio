@@ -31,7 +31,7 @@ export function LoginScreen() {
       pushToast({
         icon: 'star',
         title: `Welcome, ${who}`,
-        body: 'Double-click anything. Nothing here can break.',
+        body: 'Open anything you like. Have a look around.',
       })
     }, 560)
   }
@@ -65,14 +65,14 @@ export function LoginScreen() {
           </button>
         </form>
         <p className="login__hint">
-          Guest session. No password, nothing stored anywhere but this browser.
+          No password needed. Your name is only used to say hello.
         </p>
       </div>
 
       <div className="login__bar">
         <span className="login__brand">
           <Mark />
-          Anya OS
+          OSnya
         </span>
         <div className="login__ease">
           <button

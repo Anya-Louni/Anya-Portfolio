@@ -1,5 +1,5 @@
 /* ============================================================
-   DESKTOP PET — lives above the desktop, below the taskbar
+   DESKTOP PET, lives above the desktop, below the taskbar
    ============================================================ */
 .pet {
   position: fixed;
@@ -188,7 +188,7 @@
 }
 
 /* ============================================================
-   PHOTO BOOTH — effects on the left, frames on the right, the
+   PHOTO BOOTH, effects on the left, frames on the right, the
    picture in the middle at whatever size is going spare.
    ============================================================ */
 .pb {

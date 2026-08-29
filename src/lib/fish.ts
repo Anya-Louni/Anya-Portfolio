@@ -3,7 +3,7 @@ import { isRemote, supabase } from './notes'
 /**
  * The visitors' fish.
  *
- * One fish per visitor, and once released it cannot be changed — the table
+ * One fish per visitor, and once released it cannot be changed, the table
  * grants anon `select` and `insert` only, so there is no edit path to abuse.
  * The per-visitor limit is held in this browser; clearing site data gets round
  * it, which is the honest limit of counting people without asking them to sign
@@ -52,7 +52,7 @@ function markReleased(id: string, name: string) {
   try {
     localStorage.setItem(RELEASED_KEY, JSON.stringify({ id, name }))
   } catch {
-    /* storage blocked — the limit just cannot be remembered */
+    /* storage blocked, the limit just cannot be remembered */
   }
 }
 

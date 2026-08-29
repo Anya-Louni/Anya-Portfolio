@@ -6,7 +6,7 @@ import { addFile, listTracks, type StoredTrack } from '../lib/tracks'
  * Windows Media Player.
  *
  * The visualiser is the point. Real FFT off the playing audio drives four
- * modes: Bars, Scope, Ambience and Ocean Mist — the last two being the ones
+ * modes: Bars, Scope, Ambience and Ocean Mist, the last two being the ones
  * that made people leave WMP open with the music off.
  *
  * It shares the iPod's library, so anything added in one shows in the other.
@@ -48,7 +48,7 @@ export default function MediaPlayer() {
   vizRef.current = viz
 
   /* Files only. The visualiser reads the waveform, and a track that is a
-     YouTube link has no waveform here to read — the audio is inside a
+     YouTube link has no waveform here to read, the audio is inside a
      cross-origin frame, which is exactly why the iPod shows the video for
      those instead of a flourish. */
   const tracks: Track[] = [
@@ -127,7 +127,7 @@ export default function MediaPlayer() {
 
     const size = () => {
       /* offsetWidth, not getBoundingClientRect: a window measured during its
-         open animation is still scaled, and the rect reports the scaled size —
+         open animation is still scaled, and the rect reports the scaled size,
          the canvas ends up permanently 92% of its container. Transforms do not
          retrigger a ResizeObserver, so it never corrects itself. */
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
@@ -153,7 +153,7 @@ export default function MediaPlayer() {
         an.getByteFrequencyData(freq)
         an.getByteTimeDomainData(wave)
       } else {
-        // nothing playing yet — a slow idle wave so it never looks broken
+        // nothing playing yet, a slow idle wave so it never looks broken
         for (let i = 0; i < freq.length; i++) {
           freq[i] = Math.max(0, Math.sin(i / 24 + t / 40) * 40 + 46 - i / 22)
         }
@@ -340,7 +340,7 @@ export default function MediaPlayer() {
           </ul>
         ) : (
           <p className="wmp__empty">
-            No music yet. Add files — they stay in this browser and are shared with the iPod.
+            No music yet. Add some files. They stay in this browser, and the iPod plays them too.
           </p>
         )}
       </div>

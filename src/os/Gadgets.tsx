@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useOS } from './store'
-import { loadPinned, since, type Pinned } from '../content/pinned'
+import { loadPinned, type Pinned } from '../content/pinned'
+import { coarse } from '../lib/touch'
 
 /**
- * Desktop gadgets — the Windows 7 sidebar ones, floating loose on the desktop.
+ * Desktop gadgets, the Windows 7 sidebar ones, floating loose on the desktop.
  * Draggable, closable, and remembered. Weather comes from Open-Meteo, which
  * needs no key and allows cross-origin requests.
  */
@@ -56,9 +57,13 @@ export function Gadgets() {
 
   if (phase !== 'desktop') return null
 
+  /* A phone already has a clock and a weather app. The pinned repository is
+     the only one worth the room. */
+  const shown = coarse ? items.filter((g) => g.kind === 'pinned') : items
+
   return (
     <div className="gad__layer">
-      {items.map((g) => (
+      {shown.map((g) => (
         <Gadget key={g.id} item={g} onMove={move} onClose={close} />
       ))}
     </div>
@@ -160,7 +165,6 @@ function PinnedGadget() {
       <span className="gad__pinFoot">
         {repo.language ? <i className="gad__pinLang">{repo.language}</i> : null}
         {repo.stars > 0 ? <i>{repo.stars} stars</i> : null}
-        {repo.pushedAt ? <i>{since(repo.pushedAt)}</i> : null}
       </span>
     </a>
   )
@@ -306,7 +310,7 @@ function WeatherGadget() {
         {sky?.icon === 'rain' || sky?.icon === 'storm' ? <span className="gad__rain" /> : null}
         {sky?.icon === 'snow' ? <span className="gad__snow" /> : null}
       </div>
-      <p className="gad__temp">{failed ? '—' : temp === null ? '··' : `${temp}°`}</p>
+      <p className="gad__temp">{failed ? 'n/a' : temp === null ? '··' : `${temp}°`}</p>
       <p className="gad__cond">{failed ? 'Offline' : (sky?.label ?? 'Loading')}</p>
       <button
         className="gad__city"

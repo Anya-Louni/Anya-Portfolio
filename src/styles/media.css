@@ -1,5 +1,5 @@
 /* ============================================================
-   iPOD — the body fills the window rather than floating in it,
+   iPOD, the body fills the window rather than floating in it,
    and the screen and wheel are sized off the available height.
    ============================================================ */
 .ipod {
@@ -94,7 +94,7 @@
   flex: 1;
   min-height: 0;
   /* It used to be overflow: hidden, which is why nothing past the fifth row
-     could be reached — the wheel moved the selection but the list had no way
+     could be reached, the wheel moved the selection but the list had no way
      to follow it. */
   overflow-y: auto;
   scrollbar-width: thin;
@@ -267,7 +267,7 @@
   /* No conic gradient. A conic always seams where the last stop wraps to the
      first, and that seam sat across the wheel as a visible wedge. A click
      wheel is matte plastic lit from above, which is two radials over one
-     vertical ramp — and has no seam anywhere. */
+     vertical ramp, and has no seam anywhere. */
   background:
     radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 56%),
     radial-gradient(circle at 50% 116%, rgba(110, 132, 168, 0.26), rgba(110, 132, 168, 0) 46%),
@@ -312,7 +312,7 @@
 .ipod__wkey--next { right: 1%; top: 50%; transform: translateY(-50%); width: 26%; height: 30%; }
 /* No hover state at all: a wheel is a moulded piece of plastic, and nothing
    on it responds to a finger passing over. Pressing puts a small warm halo
-   behind the glyph and changes nothing else — no plate, no shadow, no
+   behind the glyph and changes nothing else, no plate, no shadow, no
    movement, and the glyph keeps its own colour. */
 .ipod__wkey:active span {
   text-shadow:

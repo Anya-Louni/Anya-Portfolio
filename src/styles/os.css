@@ -75,7 +75,7 @@
    Built to the real Aero construction, not to an impression of it:
    6px radius, a 6px glass frame, 4px of backdrop blur, one 1px light
    band across the caption, a 1px dark outer border and a 1px white
-   inner ring. Focus does not add a glow — the pane simply becomes
+   inner ring. Focus does not add a glow, the pane simply becomes
    more opaque and its ring brightens.
    ---------------------------------------- */
 .win {
@@ -93,7 +93,7 @@
   will-change: transform;
 }
 /* Aero's caption highlight is a single 1px light band about two-thirds
-   down the caption — not a wash over the whole pane. */
+   down the caption, not a wash over the whole pane. */
 .win::before {
   content: "";
   position: absolute;
@@ -182,7 +182,7 @@
 }
 
 /* caption buttons: flush with the window's top edge, rounded only at
-   the bottom, hairline-separated. 30x19, close 46 — Aero's geometry. */
+   the bottom, hairline-separated. 30x19, close 46. Aero's geometry. */
 .win__ctrls {
   position: absolute;
   top: 0;
@@ -253,7 +253,7 @@
   opacity: 0.6;
 }
 
-/* client area: square, hairline-bordered, ringed in white — Aero */
+/* client area: square, hairline-bordered, ringed in white. Aero */
 .win__body {
   position: relative;
   flex: 1;
@@ -297,7 +297,7 @@
 }
 
 /* ============================================================
-   TASKBAR — 40px, the Windows 7 default. Translucent dark glass
+   TASKBAR, 40px, the Windows 7 default. Translucent dark glass
    with a single bright hairline on top. Not a mirror.
    ============================================================ */
 .taskbar {
