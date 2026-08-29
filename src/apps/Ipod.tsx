@@ -15,11 +15,13 @@ import { sound } from '../os/sound'
  * rotation, the way the original felt.
  *
  * Two kinds of track live in it. A file stays in this browser and is never
- * uploaded, and because it is ours to measure the screen fills with a flourish
- * that breathes with the music. A YouTube link stores an eleven-character id
- * and no audio at all, and plays in YouTube's own player, which fills the
- * screen while it runs — an embed is not something to hide, and hiding it is
- * the one thing that would turn a link into a problem.
+ * uploaded; a YouTube link stores an eleven-character id and no audio at all,
+ * and plays through YouTube's own player.
+ *
+ * Either way the screen shows the flourish rather than a picture. For a file
+ * it breathes with the music, because a file is ours to measure. For a link it
+ * draws on its own timing — the audio is inside a cross-origin frame and
+ * cannot be read from out here.
  *
  * Either way the artist and the song name are typed by hand. A filename is a
  * poor guess at both and a link is worse.
@@ -170,6 +172,20 @@ export default function Ipod() {
 
   useEffect(() => () => { void acRef.current?.close() }, [])
 
+  /* A link reports its position on request rather than as it moves, so the
+     scrub bar has to ask. The audio element pushes its own timeupdate, which
+     is why this only runs for links. */
+  useEffect(() => {
+    if (fileKind || !playing) return
+    const id = window.setInterval(() => {
+      const p = ytRef.current
+      if (!p) return
+      setTime(p.getCurrentTime?.() ?? 0)
+      setDur(p.getDuration?.() ?? 0)
+    }, 250)
+    return () => window.clearInterval(id)
+  }, [fileKind, playing])
+
   /* ---------------- playing ---------------- */
   const play = useCallback((index: number) => {
     const t = tracks[index]
@@ -235,11 +251,20 @@ export default function Ipod() {
     el?.scrollIntoView({ block: 'nearest' })
   }, [songAt, menuAt, screen])
 
+  /* The four labels sit on the top, bottom, left and right of the ring, which
+     is most of it — so refusing to start a drag on them left only the four
+     diagonal scraps of wheel actually draggable, and the menu looked stuck.
+     Now the whole ring drags, and a press that never moved is treated as a
+     press of whatever was under it. */
+  const dragged = useRef(false)
+  const pressed = useRef<string | null>(null)
+  const from = useRef({ x: 0, y: 0 })
+
   const wheelDown = (e: React.PointerEvent) => {
-    /* Only the ring scrolls. If the press landed on one of the five
-       buttons, leave the pointer alone — capturing it here retargets
-       the events to the wheel and the button's click never fires. */
-    if ((e.target as HTMLElement).closest('.ipod__wkey, .ipod__centre')) return
+    const key = (e.target as HTMLElement).closest<HTMLElement>('[data-key]')
+    pressed.current = key?.dataset.key ?? null
+    dragged.current = false
+    from.current = { x: e.clientX, y: e.clientY }
     const r = wheelRef.current!.getBoundingClientRect()
     angle.current = Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2))
     accum.current = 0
@@ -248,6 +273,9 @@ export default function Ipod() {
 
   const wheelMove = (e: React.PointerEvent) => {
     if (angle.current === null) return
+    // a few pixels of slop, so a slightly shaky click is still a click
+    if (!dragged.current && Math.hypot(e.clientX - from.current.x, e.clientY - from.current.y) < 7) return
+    dragged.current = true
     const r = wheelRef.current!.getBoundingClientRect()
     const a = Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2))
     let d = a - angle.current
@@ -262,7 +290,19 @@ export default function Ipod() {
     }
   }
 
-  const wheelUp = () => { angle.current = null }
+  const wheelUp = () => {
+    if (!dragged.current && pressed.current) press(pressed.current)
+    angle.current = null
+    pressed.current = null
+  }
+
+  const press = (key: string) => {
+    if (key === 'menu') back()
+    else if (key === 'prev') skip(-1)
+    else if (key === 'next') skip(1)
+    else if (key === 'play') toggle()
+    else if (key === 'centre') select()
+  }
 
   const select = () => {
     sound.click(0.9)
@@ -314,18 +354,28 @@ export default function Ipod() {
 
   const fmt = (n: number) => `${Math.floor(n / 60)}:${String(Math.floor(n % 60)).padStart(2, '0')}`
   const onLink = screen === 'now' && track?.kind === 'youtube'
+  void onLink
 
   return (
-    <div className="ipod">
+    <div
+      className="ipod"
+      /* The ring is charming and fiddly. A scroll wheel over the iPod moves the
+         same selection, which is what most people reach for first. */
+      onWheel={(e) => {
+        if (screen !== 'menu' && screen !== 'songs') return
+        e.preventDefault()
+        move(e.deltaY > 0 ? 1 : -1)
+      }}
+    >
       <div className="ipod__body">
         <div className="ipod__screen">
           {/* Mounted once and shown whenever a link is the current track. It
               is never hidden while it is playing. */}
-          <div className="ipod__yt" data-show={onLink}>
+          <div className="ipod__yt">
             <div ref={holderRef} />
           </div>
 
-          {onLink ? null : (
+          {(
             <>
               <div className="ipod__bar">
                 <span>
@@ -459,29 +509,29 @@ export default function Ipod() {
           onPointerUp={wheelUp}
           onPointerCancel={wheelUp}
         >
-          <button className="ipod__wkey ipod__wkey--menu" onClick={back}>
+          <button className="ipod__wkey ipod__wkey--menu" data-key="menu" onClick={() => press('menu')}>
             <span>MENU</span>
           </button>
-          <button className="ipod__wkey ipod__wkey--prev" aria-label="Previous" onClick={() => skip(-1)}>
+          <button className="ipod__wkey ipod__wkey--prev" data-key="prev" aria-label="Previous" onClick={() => press('prev')}>
             <svg viewBox="0 0 16 16" aria-hidden>
               <path d="M13 3 6.5 8 13 13Z" fill="currentColor" />
               <rect x="3.5" y="3" width="2" height="10" rx="0.6" fill="currentColor" />
             </svg>
           </button>
-          <button className="ipod__wkey ipod__wkey--next" aria-label="Next" onClick={() => skip(1)}>
+          <button className="ipod__wkey ipod__wkey--next" data-key="next" aria-label="Next" onClick={() => press('next')}>
             <svg viewBox="0 0 16 16" aria-hidden>
               <path d="M3 3 9.5 8 3 13Z" fill="currentColor" />
               <rect x="10.5" y="3" width="2" height="10" rx="0.6" fill="currentColor" />
             </svg>
           </button>
-          <button className="ipod__wkey ipod__wkey--play" aria-label="Play or pause" onClick={toggle}>
+          <button className="ipod__wkey ipod__wkey--play" data-key="play" aria-label="Play or pause" onClick={() => press('play')}>
             <svg viewBox="0 0 22 16" aria-hidden>
               <path d="M2 3 8 8 2 13Z" fill="currentColor" />
               <rect x="12" y="3.5" width="2.2" height="9" rx="0.6" fill="currentColor" />
               <rect x="16" y="3.5" width="2.2" height="9" rx="0.6" fill="currentColor" />
             </svg>
           </button>
-          <button className="ipod__centre" aria-label="Select" onClick={select} />
+          <button className="ipod__centre" data-key="centre" aria-label="Select" onClick={() => press('centre')} />
         </div>
       </div>
 

@@ -62,6 +62,10 @@
 }
 
 .ipod__bar {
+  position: relative;
+  /* above the Now Playing panel, which covers the whole screen */
+  z-index: 2;
+  background: #0d1420;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -84,6 +88,9 @@
 }
 
 .ipod__list {
+  position: relative;
+  z-index: 1;
+  background: #0d1420;
   flex: 1;
   min-height: 0;
   /* It used to be overflow: hidden, which is why nothing past the fifth row
@@ -139,6 +146,9 @@
 .ipod__drop:hover { opacity: 1; background: rgba(232, 87, 79, 0.4); }
 
 .ipod__empty {
+  position: relative;
+  z-index: 1;
+  background: #0d1420;
   flex: 1;
   display: grid;
   place-content: center;
@@ -159,15 +169,21 @@
   font-size: 11.5px;
 }
 
-.ipod__now {
-  position: relative;
-  flex: 1;
-  min-height: 0;
+/* Absolute rather than flexed: the player sits behind the screen, and this
+   has to cover all of it rather than however much the flow gave it.
+   Qualified by the parent because a bare class here lost to something later
+   in the cascade and the panel kept coming out in flow, letting the video
+   show above it. */
+.ipod__screen > .ipod__now {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: #0d1420;
   display: grid;
   justify-items: center;
   align-content: center;
   gap: 2px;
-  padding: 10px 16px;
+  padding: 26px 16px 10px;
 }
 .ipod__art {
   width: 74px;
@@ -758,7 +774,6 @@
   z-index: 0;
   opacity: 0.9;
 }
-.ipod__screen > *:not(.ipod__flourish) { position: relative; z-index: 1; }
 .ipod__where {
   margin: 10px 0 0;
   font-size: 10px;
@@ -784,19 +799,21 @@
 .ipod__now > *:not(.ipod__flourish) { position: relative; z-index: 1; }
 
 
-/* ---- iPod: a link plays in YouTube's player, which fills the screen ---- */
+/* ---- iPod: a link plays through YouTube's player, behind the screen ---- */
 .ipod__yt {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 0;
   background: #000;
 }
-.ipod__yt[data-show='false'] { display: none; }
 .ipod__yt > div,
 .ipod__yt iframe { width: 100%; height: 100%; border: 0; display: block; }
 
 /* ---- iPod: adding a song ---- */
 .ipod__add {
+  position: relative;
+  z-index: 1;
+  background: #0d1420;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
