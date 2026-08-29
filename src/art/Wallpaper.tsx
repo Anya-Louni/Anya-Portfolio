@@ -11,6 +11,7 @@
  */
 import type { CSSProperties } from 'react'
 import { useOS } from '../os/store'
+import { coarse } from '../lib/touch'
 
 /** The pictures in public/wall, in the order the Control Panel shows them. */
 export const WALLPAPERS: { id: string; name: string; note: string }[] = [
@@ -50,7 +51,9 @@ export function Wallpaper({ still = false }: { still?: boolean }) {
   return (
     <div className="wall" data-still={still} style={style}>
       <div className="wall__bubbles">
-        {BUBBLES.map((b, i) => (
+        {/* Fourteen animated circles is a lot to ask of a phone battery for
+            decoration. Half of them, spread the same way, reads the same. */}
+        {BUBBLES.filter((_, i) => !coarse || i % 2 === 0).map((b, i) => (
           <span
             key={i}
             className="bub"

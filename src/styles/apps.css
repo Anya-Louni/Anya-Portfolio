@@ -692,6 +692,9 @@
   padding: 9px 12px;
   text-align: left;
   border-bottom: 1px solid var(--chrome-200);
+  /* 7.css clips every table cell to one line. These hold sentences. */
+  white-space: normal;
+  overflow: visible;
 }
 .doc__table th {
   font-weight: 500;

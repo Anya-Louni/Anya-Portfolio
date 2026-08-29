@@ -3,14 +3,29 @@
    ============================================================ */
 
 @media (max-width: 900px) {
+  /* One column, and short enough to fit above the taskbar. The app list
+     takes what is left and scrolls; the account panel and the footer stay
+     put. */
   .start {
     width: calc(100vw - 12px);
     grid-template-columns: 1fr;
+    max-height: calc(100vh - var(--taskbar-h) - 14px);
+    grid-template-rows: auto minmax(0, 1fr) auto;
   }
   .start__right {
+    order: 1;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     align-items: center;
+  }
+  .start__left {
+    order: 2;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .start__foot {
+    order: 3;
   }
   .start__user {
     grid-column: 1 / -1;
@@ -61,6 +76,18 @@
     --titlebar-h: 38px;
   }
 
+  /* The page is drawn edge to edge (viewport-fit=cover), so on a phone with
+     a home indicator the taskbar would sit underneath it. The bar grows by
+     the inset and pads its contents clear of it. */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    :root {
+      --taskbar-h: calc(54px + env(safe-area-inset-bottom));
+    }
+    .taskbar {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  }
+
   .desktop__field {
     grid-auto-flow: row;
     grid-template-rows: none;
@@ -75,6 +102,33 @@
     position: static;
   }
   .sticky {
+    display: none;
+  }
+
+  /* Gadgets cannot float where there is no room, so they line up along the
+     bottom instead and scroll sideways. Dragging them is a mouse idea and
+     stops here. */
+  .gad__layer {
+    top: auto;
+    bottom: calc(var(--taskbar-h) + 10px);
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    padding: 0 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .gad__layer::-webkit-scrollbar {
+    display: none;
+  }
+  .gad {
+    position: static;
+    flex: none;
+    touch-action: pan-x;
+  }
+  .gad__close {
     display: none;
   }
 
@@ -157,8 +211,71 @@
     display: none;
   }
 
+  /* Same reason as the terminal below: anything smaller than 16px and iOS
+     zooms the page in the moment the field is focused. */
+  input:not([type='range']):not([type='checkbox']):not([type='radio']):not([type='color']),
+  textarea,
+  select,
+  [contenteditable='true'] {
+    font-size: 16px;
+  }
+
+  /* iOS zooms the page into any field whose text is under 16px, and never
+     zooms back out. The terminal declares 16px to keep it away, then scales
+     the whole app back down so the columns still line up. */
+  .term {
+    font-size: 16px;
+    width: 128.2%;
+    height: 128.2%;
+    transform: scale(0.78);
+    transform-origin: top left;
+  }
+
+  /* The game toolbars are wider than a phone. They wrap rather than crush
+     the labels. */
+  .game__bar {
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
+  .game__btn {
+    flex: none;
+    white-space: nowrap;
+  }
+  .game__spacer {
+    display: none;
+  }
+  /* The free cells and the foundations are eight cards wide, the same as
+     the tableau. The breathing space between them has to go. */
+  .fc__gap {
+    display: none;
+  }
+  /* The frame is as wide as the grid, so a board wider than the phone
+     scrolls instead of being cut off by it. */
+  .ms {
+    align-items: flex-start;
+  }
+
+  /* A tall window would stretch the iPod into a slab, so it keeps a sane
+     height and sits in the middle. */
+  .ipod {
+    align-items: center;
+  }
+  .ipod__body {
+    height: min(100%, 486px);
+  }
+
+  /* The canvas is scaled to the width and leaves room underneath it. */
+  .pt__stage {
+    display: grid;
+    place-items: center;
+  }
+
   .login__input {
     width: min(58vw, 240px);
+  }
+  .login__hint {
+    max-width: 30ch;
+    text-align: center;
   }
   .login__tile {
     width: 104px;

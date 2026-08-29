@@ -381,6 +381,8 @@ export default function Terminal() {
             onKeyDown={onKey}
             spellCheck={false}
             autoComplete="off"
+            autoCapitalize="off"
+            autoCorrect="off"
             aria-label="Terminal input"
             autoFocus
           />

@@ -1,3 +1,4 @@
+import { coarse } from '../lib/touch'
 /**
  * Aquarium.
  *
@@ -36,7 +37,9 @@ export default function Aquarium() {
   const [hover, setHover] = useState<{ name: string; x: number; y: number } | null>(null)
   const [failed, setFailed] = useState(false)
   const [welcome, setWelcome] = useState<string | null>(null)
-  const [shopOpen, setShopOpen] = useState(true)
+  /* The shop takes most of a phone screen, so it starts shut there and the
+     tank gets the room. On a mouse it is open, the way a sidebar is. */
+  const [shopOpen, setShopOpen] = useState(!coarse)
 
   const caughtUp = useRef(false)
   const purse = useCoins()

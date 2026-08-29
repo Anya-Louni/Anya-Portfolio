@@ -8,6 +8,9 @@
 
 .asc {
   display: grid;
+  /* Without this the column takes the widest child rather than the window,
+     and the whole studio hangs over the edge on a phone. */
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr) auto auto;
   height: 100%;
   background: var(--chrome-100);

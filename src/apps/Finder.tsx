@@ -1,3 +1,4 @@
+import { coarse } from '../lib/touch'
 import { useState } from 'react'
 import { GITHUB_PROFILE, GITHUB_USER, PROJECTS, REPOS } from '../content/projects'
 import { Glyph, Icon } from '../ui/Icon'
@@ -87,8 +88,8 @@ export default function Finder() {
                     key={p.slug}
                     className="fitem"
                     data-selected={selected === p.slug}
-                    onClick={() => setSelected(p.slug)}
-                    onDoubleClick={() => openProject(p.slug)}
+                    onClick={() => (coarse ? openProject(p.slug) : setSelected(p.slug))}
+                    onDoubleClick={coarse ? undefined : () => openProject(p.slug)}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') openProject(p.slug)
                     }}
@@ -115,8 +116,8 @@ export default function Finder() {
                     key={r.name}
                     className="fitem"
                     data-selected={selected === r.name}
-                    onClick={() => setSelected(r.name)}
-                    onDoubleClick={() => openUrl(r.url)}
+                    onClick={() => (coarse ? openUrl(r.url) : setSelected(r.name))}
+                    onDoubleClick={coarse ? undefined : () => openUrl(r.url)}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') openUrl(r.url)
                     }}
@@ -172,7 +173,8 @@ export default function Finder() {
         ) : (
           <p className="fin__detailHint">
             {projects.length + repos.length} item
-            {projects.length + repos.length === 1 ? '' : 's'} · double-click to open
+            {projects.length + repos.length === 1 ? '' : 's'} ·{' '}
+            {coarse ? 'tap to open' : 'double-click to open'}
           </p>
         )}
       </footer>

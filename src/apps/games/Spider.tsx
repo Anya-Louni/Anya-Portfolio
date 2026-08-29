@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react'
 import { makeDeck, mulberry32, newSeed, shuffle, type Card, type Suit } from '../../games/deck'
 import { CardView, Slot } from '../../games/CardView'
+import { useFit } from '../../games/fit'
 import { useCardDrag, type DragState } from '../../games/useCardDrag'
 import { WinCascade } from '../../games/WinCascade'
 import { sound } from '../../os/sound'
 import { prize } from '../../os/prize'
 
-const CH = 96
-const FAN_DOWN = 6
-const FAN_UP = 20
 
 type Difficulty = 1 | 2 | 4
 
@@ -63,6 +61,7 @@ function grabbable(pile: Card[], i: number) {
 }
 
 export default function Spider() {
+  const [board, fit] = useFit(10, 8)
   const [g, setG] = useState<Game>(() => deal(newSeed(), 1))
   const [won, setWon] = useState(false)
 
@@ -140,7 +139,7 @@ export default function Spider() {
   const blocked = g.tableau.some((p) => p.length === 0)
 
   return (
-    <div className="game game--felt">
+    <div className="game game--felt" style={fit.style}>
       <div className="game__bar">
         <button className="game__btn" onClick={() => reset()}>
           New game
@@ -165,16 +164,16 @@ export default function Spider() {
         <span className="game__stat">Moves {g.moves}</span>
       </div>
 
-      <div className="game__board">
+      <div className="game__board" ref={board}>
         <div className="sp__tableau">
           {g.tableau.map((pile, ti) => {
             let y = 0
             return (
-              <div className="sp__col" key={ti} data-drop={`t${ti}`} style={{ minHeight: CH }}>
+              <div className="sp__col" key={ti} data-drop={`t${ti}`} style={{ minHeight: fit.ch }}>
                 {pile.length === 0 ? <Slot /> : null}
                 {pile.map((c, i) => {
                   const top = y
-                  y += c.faceUp ? FAN_UP : FAN_DOWN
+                  y += c.faceUp ? fit.fanUp : fit.fanDown
                   const run = grabbable(pile, i)
                   const live = run > 0 && i + run === pile.length
                   return (
@@ -211,7 +210,7 @@ export default function Spider() {
       {drag ? (
         <div className="game__hand" style={{ left: drag.x - drag.dx, top: drag.y - drag.dy }}>
           {drag.cards.map((c, i) => (
-            <CardView key={c.id} card={c} style={{ top: i * FAN_UP }} />
+            <CardView key={c.id} card={c} style={{ top: i * fit.fanUp }} />
           ))}
         </div>
       ) : null}

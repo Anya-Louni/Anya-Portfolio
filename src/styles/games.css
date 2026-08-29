@@ -93,7 +93,9 @@
   position: absolute;
   width: var(--cw, 71px);
   height: var(--ch, 96px);
-  border-radius: 5px;
+  /* One length drives the whole face: 10px of it at full size. */
+  font-size: calc(var(--cw, 71px) / 7.1);
+  border-radius: 0.5em;
   background: linear-gradient(180deg, #ffffff, #f4f6fa);
   border: 1px solid #97a0ad;
   box-shadow: 0 1px 2px rgba(10, 20, 40, 0.28);
@@ -122,33 +124,33 @@
   flex-direction: column;
   align-items: center;
   line-height: 1;
-  font-size: 13px;
+  font-size: 1.3em;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 .card__corner i {
   font-style: normal;
-  font-size: 12px;
-  margin-top: 1px;
+  font-size: 1.2em;
+  margin-top: 0.1em;
 }
 .card__corner--tl {
-  top: 4px;
-  left: 4px;
+  top: 0.4em;
+  left: 0.4em;
 }
 .card__corner--br {
-  bottom: 4px;
-  right: 4px;
+  bottom: 0.4em;
+  right: 0.4em;
   transform: rotate(180deg);
 }
 
 .card__pips {
   position: absolute;
-  inset: 20px 15px;
+  inset: 2em 1.5em;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   align-content: space-between;
   justify-items: center;
-  font-size: 15px;
+  font-size: 1.5em;
   line-height: 1;
 }
 .card__pips i {
@@ -157,7 +159,7 @@
 .card__pips[data-rank='1'] {
   grid-template-columns: 1fr;
   align-content: center;
-  font-size: 34px;
+  font-size: 3.4em;
 }
 .card__pips[data-rank='2'],
 .card__pips[data-rank='3'] {
@@ -171,9 +173,9 @@
 
 .card__face {
   position: absolute;
-  inset: 16px 12px;
+  inset: 1.6em 1.2em;
   border: 1px solid currentColor;
-  border-radius: 3px;
+  border-radius: 0.3em;
   display: grid;
   place-items: center;
   opacity: 0.9;
@@ -184,12 +186,12 @@
   );
 }
 .card__faceLetter {
-  font-size: 26px;
+  font-size: 2.6em;
   font-weight: 700;
   line-height: 1;
 }
 .card__facePip {
-  font-size: 15px;
+  font-size: 1.5em;
   line-height: 1;
 }
 
@@ -214,20 +216,20 @@
 .kd__top {
   position: relative;
   display: flex;
-  gap: 12px;
-  height: 96px;
+  gap: var(--gap, 12px);
+  height: var(--ch, 96px);
   margin-bottom: 16px;
 }
 .kd__stock,
 .kd__waste,
 .kd__foundation {
   position: relative;
-  width: 71px;
-  height: 96px;
+  width: var(--cw, 71px);
+  height: var(--ch, 96px);
   flex: none;
 }
 .kd__waste {
-  width: 107px;
+  width: calc(var(--cw, 71px) * 1.5);
 }
 .kd__stock {
   cursor: var(--cur-hand);
@@ -238,15 +240,15 @@
 }
 .kd__tableau {
   display: flex;
-  gap: 12px;
+  gap: var(--gap, 12px);
   align-items: flex-start;
 }
 .kd__col {
   position: relative;
-  width: 71px;
+  width: var(--cw, 71px);
   flex: none;
-  min-height: 96px;
-  padding-bottom: 160px;
+  min-height: var(--ch, 96px);
+  padding-bottom: calc(var(--ch, 96px) * 1.7);
 }
 .kd__col .card,
 .kd__col .slot {
@@ -256,25 +258,25 @@
 /* ---------------- Spider ---------------- */
 .sp__tableau {
   display: flex;
-  gap: 8px;
+  gap: var(--gap, 8px);
   align-items: flex-start;
 }
 .sp__col {
   position: relative;
-  width: 71px;
+  width: var(--cw, 71px);
   flex: none;
-  padding-bottom: 200px;
+  padding-bottom: calc(var(--ch, 96px) * 2.1);
 }
 .sp__stock {
   position: relative;
-  height: 96px;
+  height: var(--ch, 96px);
   margin-top: 8px;
 }
 .sp__stockCard {
   position: absolute;
   bottom: 0;
-  width: 71px;
-  height: 96px;
+  width: var(--cw, 71px);
+  height: var(--ch, 96px);
   border-radius: 5px;
   background:
     repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.16) 0 3px, rgba(255, 255, 255, 0) 3px 6px),
@@ -297,14 +299,14 @@
 /* ---------------- FreeCell ---------------- */
 .fc__top {
   display: flex;
-  gap: 10px;
-  height: 96px;
+  gap: var(--gap, 10px);
+  height: var(--ch, 96px);
   margin-bottom: 18px;
 }
 .fc__cell {
   position: relative;
-  width: 71px;
-  height: 96px;
+  width: var(--cw, 71px);
+  height: var(--ch, 96px);
   flex: none;
 }
 .fc__gap {
@@ -313,14 +315,14 @@
 }
 .fc__tableau {
   display: flex;
-  gap: 10px;
+  gap: var(--gap, 10px);
   align-items: flex-start;
 }
 .fc__col {
   position: relative;
-  width: 71px;
+  width: var(--cw, 71px);
   flex: none;
-  padding-bottom: 220px;
+  padding-bottom: calc(var(--ch, 96px) * 2.3);
 }
 
 /* ---------------- win cascade ---------------- */
@@ -415,8 +417,8 @@
   gap: 0;
 }
 .ms__cell {
-  width: 20px;
-  height: 20px;
+  width: var(--ms-cell, 20px);
+  height: var(--ms-cell, 20px);
   display: grid;
   place-items: center;
   background: #c0c0c0;

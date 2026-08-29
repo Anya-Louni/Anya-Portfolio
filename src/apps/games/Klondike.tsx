@@ -9,15 +9,12 @@ import {
   type Card,
 } from '../../games/deck'
 import { CardView, Slot } from '../../games/CardView'
+import { useFit } from '../../games/fit'
 import { useCardDrag, type DragState } from '../../games/useCardDrag'
 import { WinCascade } from '../../games/WinCascade'
 import { sound } from '../../os/sound'
 import { prize } from '../../os/prize'
 
-const CW = 71
-const CH = 96
-const FAN_DOWN = 6
-const FAN_UP = 20
 
 interface Game {
   stock: Card[]
@@ -60,6 +57,7 @@ const canTableau = (pile: Card[], card: Card) =>
   pile.length === 0 ? card.rank === 13 : stacksAlternating(pile[pile.length - 1], card)
 
 export default function Klondike() {
+  const [board, fit] = useFit(7, 12)
   const [g, setG] = useState<Game>(() => deal(newSeed(), 1))
   const [ticks, setTicks] = useState(0)
   const [won, setWon] = useState(false)
@@ -220,7 +218,7 @@ export default function Klondike() {
   const time = `${Math.floor(ticks / 60)}:${String(ticks % 60).padStart(2, '0')}`
 
   return (
-    <div className="game game--felt">
+    <div className="game game--felt" style={fit.style}>
       <div className="game__bar">
         <button className="game__btn" onClick={() => reset()}>
           New game
@@ -248,7 +246,7 @@ export default function Klondike() {
         <span className="game__stat">{time}</span>
       </div>
 
-      <div className="game__board" style={{ ['--cw' as string]: `${CW}px`, ['--ch' as string]: `${CH}px` }}>
+      <div className="game__board" ref={board}>
         {/* stock + waste */}
         <div className="kd__top">
           <div className="kd__stock" onClick={flipStock} data-drop="stock">
@@ -267,7 +265,7 @@ export default function Klondike() {
                 <CardView
                   key={c.id}
                   card={c}
-                  style={{ left: i * 18 }}
+                  style={{ left: i * fit.spread }}
                   className={top ? 'card--live' : ''}
                   onPointerDown={top ? (e) => start(e, [c], 'waste', abs) : undefined}
                   onDoubleClick={top ? () => sendHome('waste', abs) : undefined}
@@ -299,11 +297,11 @@ export default function Klondike() {
           {g.tableau.map((pile, ti) => {
             let y = 0
             return (
-              <div className="kd__col" key={ti} data-drop={`t${ti}`} style={{ minHeight: CH }}>
+              <div className="kd__col" key={ti} data-drop={`t${ti}`} style={{ minHeight: fit.ch }}>
                 {pile.length === 0 ? <Slot label="K" /> : null}
                 {pile.map((c, i) => {
                   const top = y
-                  y += c.faceUp ? FAN_UP : FAN_DOWN
+                  y += c.faceUp ? fit.fanUp : fit.fanDown
                   const run = c.faceUp ? runLength(pile, i, false) : 0
                   const grabbable = c.faceUp && i + run === pile.length
                   return (
@@ -331,7 +329,7 @@ export default function Klondike() {
       {drag ? (
         <div className="game__hand" style={{ left: drag.x - drag.dx, top: drag.y - drag.dy }}>
           {drag.cards.map((c, i) => (
-            <CardView key={c.id} card={c} style={{ top: i * FAN_UP }} />
+            <CardView key={c.id} card={c} style={{ top: i * fit.fanUp }} />
           ))}
         </div>
       ) : null}

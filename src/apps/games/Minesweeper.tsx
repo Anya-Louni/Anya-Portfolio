@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { sound } from '../../os/sound'
 import { prize } from '../../os/prize'
+import { coarse } from '../../lib/touch'
 
 type Level = 'beginner' | 'intermediate' | 'expert'
 const LEVELS: Record<Level, { w: number; h: number; mines: number }> = {
@@ -174,6 +175,26 @@ export default function Minesweeper() {
     })
   }
 
+  /* There is no right button on a phone, so a press held for a moment
+     plants the flag instead. The click that follows it is swallowed. */
+  const holdTimer = useRef<number | null>(null)
+  const held = useRef(false)
+
+  const hold = (i: number) => {
+    if (!coarse) return
+    held.current = false
+    holdTimer.current = window.setTimeout(() => {
+      held.current = true
+      flag(i)
+    }, 400)
+  }
+  const drop = () => {
+    if (holdTimer.current !== null) {
+      clearTimeout(holdTimer.current)
+      holdTimer.current = null
+    }
+  }
+
   /** middle-click / both-button chord: open neighbours when flags match */
   const chord = (i: number) => {
     if (status !== 'playing') return
@@ -225,7 +246,7 @@ export default function Minesweeper() {
 
         <div
           className="ms__grid"
-          style={{ gridTemplateColumns: `repeat(${w}, 20px)` }}
+          style={{ gridTemplateColumns: `repeat(${w}, var(--ms-cell, 20px))` }}
           onPointerLeave={() => setScared(false)}
           onContextMenu={(e) => e.preventDefault()}
         >
@@ -240,10 +261,24 @@ export default function Minesweeper() {
                 if (e.button === 1) {
                   e.preventDefault()
                   chord(i)
-                } else if (e.button === 0) setScared(true)
+                } else if (e.button === 0) {
+                  setScared(true)
+                  hold(i)
+                }
               }}
-              onPointerUp={() => setScared(false)}
-              onClick={() => (c.open ? chord(i) : open(i))}
+              onPointerUp={() => {
+                setScared(false)
+                drop()
+              }}
+              onPointerLeave={drop}
+              onClick={() => {
+                if (held.current) {
+                  held.current = false
+                  return
+                }
+                if (c.open) chord(i)
+                else open(i)
+              }}
               onContextMenu={(e) => {
                 e.preventDefault()
                 flag(i)
@@ -282,7 +317,13 @@ export default function Minesweeper() {
         ))}
         <span className="game__spacer" />
         <span className="game__stat">
-          {status === 'won' ? 'Cleared' : status === 'lost' ? 'Boom' : 'Right-click to flag'}
+          {status === 'won'
+            ? 'Cleared'
+            : status === 'lost'
+              ? 'Boom'
+              : coarse
+                ? 'Hold to flag'
+                : 'Right-click to flag'}
         </span>
       </div>
     </div>

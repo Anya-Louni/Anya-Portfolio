@@ -7,3 +7,5 @@ dist
 .impeccable/
 PRODUCT.md
 *.local
+
+*.tsbuildinfo

@@ -1,3 +1,4 @@
+import { coarse } from '../lib/touch'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 import { useOS, type IconSize, type MenuItem, type Rect } from './store'
@@ -197,10 +198,13 @@ export function Desktop() {
             aria-label={`Open ${s.label}`}
             data-selected={selected.includes(s.id)}
             onPointerDown={(e) => e.stopPropagation()}
-            onClick={(e) =>
+            onClick={(e) => {
               setSelected(e.ctrlKey || e.metaKey ? [...new Set([...selected, s.id])] : [s.id])
-            }
-            onDoubleClick={s.run}
+              if (coarse) s.run()
+            }}
+            /* On touch the single tap already opened it; a second tap must
+               not open it again. */
+            onDoubleClick={coarse ? undefined : s.run}
             onContextMenu={(e) => iconMenu(e, s)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') s.run()

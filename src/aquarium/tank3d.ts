@@ -15,6 +15,7 @@
  * here. No textures are fetched.
  */
 import * as THREE from 'three'
+import { coarse } from '../lib/touch'
 
 export interface FishInput {
   tex: HTMLCanvasElement | HTMLImageElement
@@ -227,8 +228,10 @@ interface Swimmer {
 }
 
 export function createTank(host: HTMLElement): Tank {
-  const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'low-power' })
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
+  /* Phones run this at full window size on a battery. Multisampling and a
+     3x buffer are what a tank of fish does not need, so both are cut there. */
+  const renderer = new THREE.WebGLRenderer({ antialias: !coarse, powerPreference: 'low-power' })
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, coarse ? 1.5 : 2))
   renderer.domElement.className = 'aq__gl'
   host.appendChild(renderer.domElement)
 

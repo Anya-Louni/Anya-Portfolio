@@ -9,13 +9,12 @@ import {
   type Card,
 } from '../../games/deck'
 import { CardView, Slot } from '../../games/CardView'
+import { useFit } from '../../games/fit'
 import { useCardDrag, type DragState } from '../../games/useCardDrag'
 import { WinCascade } from '../../games/WinCascade'
 import { sound } from '../../os/sound'
 import { prize } from '../../os/prize'
 
-const CH = 96
-const FAN = 22
 
 interface Game {
   free: (Card | null)[]
@@ -39,6 +38,7 @@ const canTableau = (pile: Card[], c: Card) =>
   pile.length === 0 ? true : stacksAlternating(pile[pile.length - 1], c)
 
 export default function FreeCell() {
+  const [board, fit] = useFit(8, 10)
   const [g, setG] = useState<Game>(() => deal(newSeed()))
   const [won, setWon] = useState(false)
   const home = g.foundations.reduce((n, f) => n + f.length, 0)
@@ -132,7 +132,7 @@ export default function FreeCell() {
   const freeCount = g.free.filter((f) => f === null).length
 
   return (
-    <div className="game game--felt">
+    <div className="game game--felt" style={fit.style}>
       <div className="game__bar">
         <button className="game__btn" onClick={() => reset()}>
           New game
@@ -146,7 +146,7 @@ export default function FreeCell() {
         <span className="game__stat">Moves {g.moves}</span>
       </div>
 
-      <div className="game__board">
+      <div className="game__board" ref={board}>
         <div className="fc__top">
           {g.free.map((c, i) => (
             <div className="fc__cell" key={`c${i}`} data-drop={`c${i}`}>
@@ -172,7 +172,7 @@ export default function FreeCell() {
 
         <div className="fc__tableau">
           {g.tableau.map((pile, ti) => (
-            <div className="fc__col" key={ti} data-drop={`t${ti}`} style={{ minHeight: CH }}>
+            <div className="fc__col" key={ti} data-drop={`t${ti}`} style={{ minHeight: fit.ch }}>
               {pile.length === 0 ? <Slot /> : null}
               {pile.map((c, i) => {
                 const run = runLength(pile, i, false)
@@ -181,7 +181,7 @@ export default function FreeCell() {
                   <CardView
                     key={c.id}
                     card={c}
-                    style={{ top: i * FAN }}
+                    style={{ top: i * Math.round(fit.fanUp * 1.1) }}
                     className={live ? 'card--live' : ''}
                     onPointerDown={live ? (e) => start(e, pile.slice(i), `t${ti}`, i) : undefined}
                     onDoubleClick={
@@ -198,7 +198,7 @@ export default function FreeCell() {
       {drag ? (
         <div className="game__hand" style={{ left: drag.x - drag.dx, top: drag.y - drag.dy }}>
           {drag.cards.map((c, i) => (
-            <CardView key={c.id} card={c} style={{ top: i * FAN }} />
+            <CardView key={c.id} card={c} style={{ top: i * Math.round(fit.fanUp * 1.1) }} />
           ))}
         </div>
       ) : null}

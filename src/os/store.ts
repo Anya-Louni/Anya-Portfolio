@@ -129,7 +129,8 @@ interface OSState {
 }
 
 const CASCADE = 28
-/** below this width the OS goes near-fullscreen per window */
+/** at or below this width the OS goes near-fullscreen per window; the
+    stylesheet's phone breakpoint is the same number */
 const COMPACT = 768
 let seq = 0
 
@@ -224,7 +225,7 @@ export const useOS = create<OSState>((set, get) => ({
     const vp = viewport()
     const vw = vp.w
     const vh = vp.h
-    const compact = vw < COMPACT
+    const compact = vw <= COMPACT
     const w = compact ? Math.min(vw - 16, spec.w) : Math.min(spec.w, vw - 80)
     const h = compact ? Math.min(vh - 16, spec.h) : Math.min(spec.h, vh - 60)
     const n = wins.length
@@ -374,7 +375,7 @@ export const useOS = create<OSState>((set, get) => ({
   reflow: () =>
     set((s) => {
       const vp = viewport()
-      const compact = vp.w < COMPACT
+      const compact = vp.w <= COMPACT
       return {
         wins: s.wins.map((w) => {
           if (compact) {
