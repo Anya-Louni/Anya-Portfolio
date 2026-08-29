@@ -20,6 +20,7 @@ import PaintApp from '../apps/Paint'
 import Explorer from '../apps/Explorer'
 import { Calculator, Notepad, StickyNotes } from '../apps/Accessories'
 import Ipod from '../apps/Ipod'
+import Karaoke from '../apps/Karaoke'
 import TerminalApp from '../apps/Terminal'
 import SynthApp from '../apps/Synth'
 import ContactsApp from '../apps/Contacts'
@@ -138,6 +139,17 @@ export const APPS: AppDef[] = [
     minH: 520,
     resizable: false,
     Component: Ipod,
+  },
+  {
+    id: 'karaoke',
+    title: 'Karaoke',
+    icon: 'wmp',
+    blurb: 'The shared songbook, and a microphone if you want one',
+    w: 940,
+    h: 620,
+    minW: 560,
+    minH: 420,
+    Component: Karaoke,
   },
   {
     id: 'synth',

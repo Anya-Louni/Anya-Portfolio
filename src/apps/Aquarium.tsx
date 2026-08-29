@@ -136,13 +136,16 @@ export default function Aquarium() {
   /* ---------------- the trickle ---------------- */
   useEffect(() => {
     const id = window.setInterval(() => {
-      setSaveState((t) => {
-        const boost = t.fedUntil > Date.now() / 1000 ? FED_MULTIPLIER : 1
-        const gain = (ratePerSecond(t.owned) * boost) / 5
-        if (!gain) return t
-        payOut(gain)
-        return { ...t, earned: t.earned + gain }
-      })
+      /* The payout happens here rather than inside the updater. A state
+         updater can be called during render, and paying into the purse from
+         there sets state in every other component watching the balance —
+         which React rightly complains about. */
+      const t = saveRef.current
+      const boost = t.fedUntil > Date.now() / 1000 ? FED_MULTIPLIER : 1
+      const gain = (ratePerSecond(t.owned) * boost) / 5
+      if (!gain) return
+      payOut(gain)
+      setSaveState((prev) => ({ ...prev, earned: prev.earned + gain }))
     }, 200)
     return () => window.clearInterval(id)
   }, [])
