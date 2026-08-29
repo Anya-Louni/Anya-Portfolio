@@ -172,6 +172,14 @@ export function Avatar({
         <path d="M40.5 66.5 48 82l7.5-15.5c-4.5-1.6-10.5-1.6-15 0Z" fill="#f4f8fc" />
         <path d="M48 82v14" stroke={shade(shirt, -0.3)} strokeWidth="1.4" strokeLinecap="round" />
 
+        {/* Long hair falls behind the head, so it is drawn before it. */}
+        {a.hair % 4 === 1 ? (
+          <path
+            d="M26 46c0-16 9.5-25 22-25s22 9 22 25c0 13 2 21 3.5 30-8-4.5-16.5-6.5-25.5-6.5s-17.5 2-25.5 6.5c1.5-9 3.5-17 3.5-30Z"
+            fill={`url(#${id}hair)`}
+          />
+        ) : null}
+
         {/* head. No face, and no ears. */}
         <path d={HEAD} fill={`url(#${id}skin)`} />
         <path d={HEAD} fill="none" stroke={shade(skin, -0.32)} strokeWidth="1.1" />
@@ -195,8 +203,8 @@ export function Avatar({
               d="M30.5 48c0-14.5 7.5-25 17.5-25s17.5 10.5 17.5 25c0-7-3-11.5-8-13-3.5 2.5-16.5 2.5-20 0-5 1.5-7 6-7 13Z"
               fill={`url(#${id}hair)`}
             />
-            <path d="M31 43c-3 12-3 23 0 31 0-11 2-22 5-29Z" fill={`url(#${id}hair)`} />
-            <path d="M65 43c3 12 3 23 0 31 0-11-2-22-5-29Z" fill={`url(#${id}hair)`} />
+            <path d="M30.5 40c-2.5 11-2.5 22-1 33 2.5-11 3-22 6.5-29Z" fill={`url(#${id}hair)`} />
+            <path d="M65.5 40c2.5 11 2.5 22 1 33-2.5-11-3-22-6.5-29Z" fill={`url(#${id}hair)`} />
           </>
         ) : null}
         {a.hair % 4 === 2 ? (

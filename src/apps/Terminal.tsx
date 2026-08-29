@@ -31,18 +31,18 @@ function makeFS(): Node {
     anya: dir({
       'readme.txt': file(
         () =>
-          `This desktop is the portfolio.
-
-The projects are real repositories and the numbers come
-from their own READMEs. The games, the aquarium, the paint
-program and the rest were written for this machine.
-
-The aquarium earns while you are away. The games pay into
-the same purse. Fish with names on them were drawn by
-visitors.
-
-Try: ls projects, cat projects/galaxy-compass, apps, tank,
-coins, open chess`,
+          [
+            'Anya OS 6.1',
+            '',
+            'Portfolio desktop. Projects are real repositories.',
+            'Apps and games written for this machine.',
+            'Aquarium earns while closed. Games pay into the same purse.',
+            '',
+            'ls projects',
+            'cat projects/galaxy-compass',
+            'apps',
+            'tank',
+          ].join('\n'),
       ),
       projects: dir(
         Object.fromEntries(
@@ -158,6 +158,8 @@ export default function Terminal() {
           'apps             list the apps you can open',
           'tank             what is in the aquarium',
           'coins            what is in the purse',
+          'privacy          what is kept and what is sent',
+          'license          what this is built from',
           'echo <text>      say it back',
           'whoami           who is signed in',
           'date             the time right now',
@@ -279,9 +281,26 @@ export default function Terminal() {
       }
 
       case 'coins':
+        print(`  ${coinText(getCoins())} coins`, '')
+        break
+
+      case 'privacy':
         print(
-          `  balance   ${coinText(getCoins())}`,
-          '  Won at the games, or earned by the tank. Spent in the shop.',
+          '  No account, no tracking, no analytics.',
+          '  Settings, coins, the tank and any audio you add stay in this browser.',
+          '  Notes and fish go to the database, and only when you send them.',
+          '  Embeds (YouTube, archive.org, DuckDuckGo, Wokwi) set their own cookies.',
+          '  open privacy   for the whole thing',
+          '',
+        )
+        break
+
+      case 'license':
+        print(
+          '  React, Zustand, three.js, 7.css, XP.css, Supabase JS   MIT',
+          '  Hanken Grotesk, Fredoka, Azeret Mono                   OFL 1.1',
+          '  App icons are Windows 7 artwork, owned by Microsoft.',
+          '  Everything else was drawn for this machine.',
           '',
         )
         break

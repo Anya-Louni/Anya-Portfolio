@@ -6,6 +6,7 @@ import ProjectDoc from '../apps/ProjectDoc'
 import Aquarium from '../apps/Aquarium'
 import ControlPanel from '../apps/ControlPanel'
 import Computer from '../apps/Computer'
+import Privacy from '../apps/Privacy'
 import Games from '../apps/games/Games'
 import Klondike from '../apps/games/Klondike'
 import Spider from '../apps/games/Spider'
@@ -382,6 +383,17 @@ export const APPS: AppDef[] = [
     minH: 420,
     resizable: false,
     Component: Guestbook,
+  },
+  {
+    id: 'privacy',
+    title: 'Privacy',
+    icon: 'notes',
+    blurb: 'What is kept, what is sent, what it is built from',
+    w: 620,
+    h: 620,
+    minW: 420,
+    minH: 400,
+    Component: Privacy,
   },
   {
     id: 'computer',
