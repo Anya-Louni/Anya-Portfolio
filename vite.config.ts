@@ -1,7 +1,65 @@
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 
+/**
+ * Where the site lives. Used for the canonical link and the social card,
+ * both of which need an absolute URL. Override with VITE_SITE_URL if the
+ * domain changes; nothing else needs editing.
+ */
+const SITE_URL = (process.env.VITE_SITE_URL ?? 'https://anya-louni.github.io/Anya-Portfolio/')
+  .replace(/\/*$/, '/')
+
+/**
+ * What the page is allowed to load.
+ *
+ * Only applied to the built page. In development Vite serves modules and a
+ * hot reload socket that a policy this tight would cut off, and a policy that
+ * allowed them would not be the one that ships.
+ *
+ * frame-src is broad on purpose: Internet Explorer exists to load whatever
+ * address you type, so it can only be limited to https rather than to a list.
+ * It still refuses data: and javascript: frames, which is the part that
+ * matters.
+ */
+const CSP = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "object-src 'none'",
+  "form-action 'self'",
+  // the YouTube iframe API is fetched as a script by the iPod
+  "script-src 'self' https://www.youtube.com https://s.ytimg.com",
+  // inline style attributes are used throughout for positions and sizes
+  "style-src 'self' 'unsafe-inline'",
+  "font-src 'self'",
+  "img-src 'self' data: blob: https:",
+  "media-src 'self' data: blob:",
+  "connect-src 'self' https://api.open-meteo.com https://*.supabase.co",
+  'frame-src https:',
+  'upgrade-insecure-requests',
+].join('; ')
+
+function head(): Plugin {
+  return {
+    name: 'anya-head',
+    transformIndexHtml: {
+      order: 'pre',
+      handler(html, ctx) {
+        const out = html.replaceAll('%SITE_URL%', SITE_URL)
+        if (ctx.server) return out // dev: no policy, so hot reload survives
+        return out.replace(
+          '<meta charset="UTF-8" />',
+          `<meta charset="UTF-8" />\n    <meta http-equiv="Content-Security-Policy" content="${CSP}" />`,
+        )
+      },
+    },
+  }
+}
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), head()],
   server: { port: 5178, host: '127.0.0.1' },
+  build: {
+    // nothing here is worth handing out a map of
+    sourcemap: false,
+  },
 })

@@ -1,0 +1,7 @@
+# A portfolio. Crawling it is the point.
+User-agent: *
+Allow: /
+
+# Nothing here is generated per visitor, so there is nothing to keep out.
+# The one thing worth saying: the archived pages inside Internet Explorer
+# are fetched from archive.org at view time and are not part of this site.
