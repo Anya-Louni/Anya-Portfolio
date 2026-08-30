@@ -24,8 +24,7 @@ W, H = 1200, 630
 OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'public', 'og-v2.png')
 
 TITLE = 'OSnya'
-LINE = "Anya Louni's portfolio"
-SUB = 'Projects, experience, games and more'
+LINE = 'My Portfolio: Projects, experience, games and more'
 
 # ---------------------------------------------------------------- the sky
 x = np.arange(W, dtype=np.float32)
@@ -81,14 +80,18 @@ def font(name, size):
     return ImageFont.load_default()
 
 
-d.text((PX + 44, PY + 46), TITLE, font=font('segoeuib.ttf', 92), fill=(255, 255, 255))
-d.text((PX + 46, PY + 158), LINE, font=font('segoeui.ttf', 34), fill=(226, 240, 255))
-d.text((PX + 46, PY + 208), SUB, font=font('segoeui.ttf', 20), fill=(178, 205, 232))
+d.text((PX + 44, PY + 62), TITLE, font=font('segoeuib.ttf', 92), fill=(255, 255, 255))
 
-# Every line has to sit inside the pane, or the card ships with clipped text.
-for text, size, top in ((TITLE, 92, 46), (LINE, 34, 158), (SUB, 20, 208)):
-    w = d.textlength(text, font=font('segoeuib.ttf' if size > 80 else 'segoeui.ttf', size))
-    assert 44 + w < PW - 30, f'{text!r} is {int(w)}px, too wide for the {PW}px pane'
+# The strapline is one line, so it is measured and stepped down until it fits
+# rather than trusting a size that happened to work for older wording.
+room = PW - 44 - 34
+size = 34
+while size > 14 and d.textlength(LINE, font=font('segoeui.ttf', size)) > room:
+    size -= 1
+d.text((PX + 46, PY + 182), LINE, font=font('segoeui.ttf', size), fill=(226, 240, 255))
+print('strapline at', size, 'px')
+
+assert d.textlength(TITLE, font=font('segoeuib.ttf', 92)) < room, 'title too wide'
 
 # A flat sky compresses; the wallpaper's dither would triple the file for a
 # card nobody inspects that closely.
