@@ -94,7 +94,11 @@ function Gadget({
   const ref = useRef<HTMLDivElement>(null)
   const grab = useRef<{ dx: number; dy: number } | null>(null)
   /* a negative x means "hang off the right edge", which is where Windows put them */
-  const left = item.x < 0 ? window.innerWidth + item.x : item.x
+  const raw = item.x < 0 ? window.innerWidth + item.x : item.x
+  /* A phone is narrower than the offset assumes, so a gadget placed for a
+     desktop would hang off the side. Kept on screen either way. */
+  const left = Math.max(6, Math.min(raw, window.innerWidth - 60))
+  const top = Math.max(6, Math.min(item.y, window.innerHeight - 90))
 
   const down = (e: React.PointerEvent) => {
     if (e.button !== 0 || (e.target as HTMLElement).closest('.gad__close')) return
@@ -118,7 +122,7 @@ function Gadget({
       className="gad"
       data-kind={item.kind}
       ref={ref}
-      style={{ left, top: item.y }}
+      style={{ left, top }}
       onPointerDown={down}
       onPointerMove={move}
       onPointerUp={up}

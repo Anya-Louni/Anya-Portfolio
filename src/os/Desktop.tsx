@@ -30,7 +30,6 @@ const SHORTCUTS: Shortcut[] = [
   { id: 'sketchpad', label: 'Draw Music', icon: 'sketchpad', run: () => launch('sketchpad') },
   { id: 'synth', label: 'Synth', icon: 'synth', run: () => launch('synth') },
   { id: 'games', label: 'Games', icon: 'games', run: () => launch('games') },
-  { id: 'cv', label: 'CV', icon: 'notepad', run: () => launch('cv') },
   { id: 'contacts', label: 'Contacts', icon: 'contacts', run: () => launch('contacts') },
   { id: 'notes', label: 'Notes', icon: 'sticky', run: () => launch('notes') },
   { id: 'control', label: 'Control Panel', icon: 'control', run: () => launch('control') },

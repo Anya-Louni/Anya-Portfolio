@@ -62,6 +62,15 @@
 .gad:hover .gad__close {
   opacity: 1;
 }
+/* No hover on a touch screen, so the close is simply always there. */
+@media (pointer: coarse) {
+  .gad__close {
+    opacity: 1;
+    width: 22px;
+    height: 22px;
+    font-size: 15px;
+  }
+}
 .gad__close:hover {
   background: #e8574f;
   color: #fff;

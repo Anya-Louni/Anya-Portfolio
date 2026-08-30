@@ -38,7 +38,9 @@ export default function Privacy() {
     <div className="legal">
       <h2>Privacy</h2>
       <p className="legal__lede">
-        This site counts visits. That is the only thing it measures.
+        Short version: this site counts visits, keeps your settings on your own
+        device, and sends nothing else anywhere unless you press a button that
+        says it will.
       </p>
 
       <h3>Kept on your own device</h3>
@@ -91,17 +93,11 @@ export default function Privacy() {
 
       <h3>Counting visits</h3>
       <p>
-        Anya watches how the site is doing. Signing in records a visit.
-        Leaving records how long you stayed and which apps you opened. That is
-        the whole list.
-      </p>
-      <p>
-        The count stands on its own. Each visit lands as a fresh stranger and
-        the record forgets you the moment you close the tab. It is a tally.
-      </p>
-      <p>
-        Browsers sending Do Not Track or Global Privacy Control stay out of the
-        count.
+        Signing in records a visit. Leaving records how long you stayed and
+        which apps you opened. That is the whole list, and it is a tally rather
+        than a profile: each visit lands as a fresh stranger and the record
+        forgets you when the tab closes. Browsers sending Do Not Track or
+        Global Privacy Control stay out of it.
       </p>
 
       <h3>Cookies</h3>

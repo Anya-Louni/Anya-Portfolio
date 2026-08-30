@@ -27,7 +27,11 @@ export function StartMenu() {
           icon: 'github' as const,
         })),
       ]
-    : apps.map((a) => ({ kind: 'app' as const, id: a.id, name: a.title, desc: a.blurb, icon: a.icon }))
+    : apps
+        /* Quiet apps stay out of the list. Typing the name still finds them,
+           and Control Panel links to the one that matters. */
+        .filter((a) => !a.quiet)
+        .map((a) => ({ kind: 'app' as const, id: a.id, name: a.title, desc: a.blurb, icon: a.icon }))
 
   return (
     <div className="start" onPointerDown={(e) => e.stopPropagation()}>

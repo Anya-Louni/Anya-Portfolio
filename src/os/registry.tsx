@@ -7,7 +7,6 @@ import Aquarium from '../apps/Aquarium'
 import ControlPanel from '../apps/ControlPanel'
 import Computer from '../apps/Computer'
 import Privacy from '../apps/Privacy'
-import Resume from '../apps/Resume'
 import Games from '../apps/games/Games'
 import Klondike from '../apps/games/Klondike'
 import Spider from '../apps/games/Spider'
@@ -45,6 +44,8 @@ export interface AppDef {
   resizable?: boolean
   flush?: boolean
   multi?: boolean
+  /** kept out of the Start menu's list; search and the terminal still find it */
+  quiet?: boolean
   Component: ComponentType<{ winId: string; params?: Record<string, unknown> }>
 }
 
@@ -351,21 +352,11 @@ export const APPS: AppDef[] = [
     Component: Notes,
   },
   {
-    id: 'cv',
-    title: 'CV',
-    icon: 'notepad',
-    blurb: 'Read it or download the PDF',
-    w: 720,
-    h: 640,
-    minW: 400,
-    minH: 400,
-    Component: Resume,
-  },
-  {
     id: 'privacy',
     title: 'Privacy',
     icon: 'notes',
     blurb: 'What is kept and sent',
+    quiet: true,
     w: 620,
     h: 620,
     minW: 420,

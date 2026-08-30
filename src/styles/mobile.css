@@ -105,31 +105,10 @@
     display: none;
   }
 
-  /* The one gadget worth the room sits along the bottom edge. Dragging it is
-     a mouse idea and stops here. */
-  .gad__layer {
-    top: auto;
-    bottom: calc(var(--taskbar-h) + 10px);
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    gap: 10px;
-    padding: 0 10px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    overscroll-behavior-x: contain;
-    scrollbar-width: none;
-  }
-  .gad__layer::-webkit-scrollbar {
-    display: none;
-  }
+  /* The gadget stays where it was put and stays draggable. A flex strip was
+     tidier and took both away, which is not a trade worth making. */
   .gad {
-    position: static;
-    flex: none;
-    touch-action: pan-x;
-  }
-  .gad__close {
-    display: none;
+    max-width: calc(100vw - 20px);
   }
 
   .win {
