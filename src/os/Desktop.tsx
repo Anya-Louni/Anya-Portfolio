@@ -7,12 +7,15 @@ import { addGadget } from './Gadgets'
 import { Icon, type IconName } from '../ui/Icon'
 import { STICKIES, type Sticky } from '../content/notes'
 import { GITHUB_PROFILE } from '../content/projects'
+import { ARCADE } from '../content/arcade'
 import { coarse } from '../lib/touch'
 
 interface Shortcut {
   id: string
   label: string
   icon: IconName
+  /** cover art, for the guest games: their own picture beats a generic tile */
+  art?: string
   shortcut?: boolean
   run: () => void
 }
@@ -30,6 +33,15 @@ const SHORTCUTS: Shortcut[] = [
   { id: 'sketchpad', label: 'Draw Music', icon: 'sketchpad', run: () => launch('sketchpad') },
   { id: 'synth', label: 'Synth', icon: 'synth', run: () => launch('synth') },
   { id: 'games', label: 'Games', icon: 'games', run: () => launch('games') },
+  /* Guest games get their own icon, with their own cover on it. */
+  ...ARCADE.map((g) => ({
+    id: `arcade-${g.id}`,
+    label: g.title,
+    icon: 'arcade' as IconName,
+    art: g.cover,
+    shortcut: true,
+    run: () => launch('arcadegame', { id: g.id }),
+  })),
   { id: 'contacts', label: 'Contacts', icon: 'contacts', run: () => launch('contacts') },
   { id: 'notes', label: 'Notes', icon: 'sticky', run: () => launch('notes') },
   { id: 'control', label: 'Control Panel', icon: 'control', run: () => launch('control') },
@@ -198,7 +210,11 @@ export function Desktop() {
             }}
           >
             <span className="dicon__artwrap">
-              <Icon name={s.icon} className="dicon__art" />
+              {s.art ? (
+                <img className="dicon__art dicon__art--cover" src={s.art} alt="" />
+              ) : (
+                <Icon name={s.icon} className="dicon__art" />
+              )}
               {s.shortcut ? (
                 <svg className="dicon__badge" viewBox="0 0 16 16" aria-hidden>
                   <rect x="0.5" y="0.5" width="15" height="15" rx="1.5" fill="#f6f8fc" stroke="#6b7d94" />

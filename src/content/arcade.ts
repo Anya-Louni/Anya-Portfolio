@@ -6,11 +6,14 @@
  * in the window's title bar the whole time a game is open, so nobody can play
  * one of these and come away thinking it was Anya's.
  *
- * `frame` is the game itself. Leave it null and the card links out to itch.io
- * instead of playing here, which is the right default until the developer has
- * said yes: an embedded game skips their page, their download counts and
- * anything they are selling on it. Credit is not the same as permission.
- * Once they agree, put the URL in and it plays in the window.
+ * `frame` has to be an itch.io/embed-upload/<id> URL, which only the game's
+ * developer can produce, from Edit game > Embed options on their dashboard.
+ *
+ * Pointing it straight at html-classic.itch.zone does not work: itch detects
+ * the hotlink and serves "You should be using itch.io" in place of the game.
+ * Tested against both of these, twice. Null until a developer hands over
+ * their embed code, and the window shows the cover and a way through to their
+ * page in the meantime.
  */
 
 export interface ArcadeGame {
