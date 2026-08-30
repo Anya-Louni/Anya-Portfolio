@@ -234,6 +234,21 @@
     align-items: flex-start;
   }
 
+  /* Filling in a form through a 200px window with a click wheel taking up
+     the other half does not work. While Add Music is up the wheel steps
+     aside and the screen takes the whole body; the form carries its own
+     Back, so nothing is lost with the Menu key hidden. */
+  .ipod__body[data-screen='add'] .ipod__wheel {
+    display: none;
+  }
+  .ipod__body[data-screen='add'] .ipod__screen {
+    max-height: none;
+    margin-bottom: 0;
+  }
+  .ipod__body[data-screen='add'] {
+    height: min(100%, 560px);
+  }
+
   /* A tall window would stretch the iPod into a slab, so it keeps a sane
      height and sits in the middle. */
   .ipod {

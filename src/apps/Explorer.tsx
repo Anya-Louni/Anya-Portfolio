@@ -249,7 +249,9 @@ export default function Explorer() {
           <div className="ie__error">
             <h2>Internet Explorer cannot display the webpage</h2>
             <ul>
-              <li>The page may still be loading. The Internet Archive is often slow.</li>
+              <li>The snapshot may just be slow. Retry usually gets it.</li>
+              <li>Or there is no snapshot near that year. Try a different one on
+                  the time machine.</li>
               <li>Or the site refuses to be shown inside another page. Most sites
                   built after about 2010 do that on purpose.</li>
             </ul>
@@ -287,7 +289,7 @@ export default function Explorer() {
         )}
         {loading ? <div className="ie__progress" /> : null}
         {slow && loading ? (
-          <p className="ie__slow">Still opening. The Internet Archive takes its time.</p>
+          <p className="ie__slow">Still opening. Old snapshots can take a while.</p>
         ) : null}
         {src && !loading && !blocked && !framesFine ? (
           <p className="ie__hint">

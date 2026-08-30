@@ -404,7 +404,7 @@ export default function Ipod() {
         move(e.deltaY > 0 ? 1 : -1)
       }}
     >
-      <div className="ipod__body">
+      <div className="ipod__body" data-screen={screen}>
         <div className="ipod__screen">
           {/* Mounted once and shown whenever a link is the current track. It
               is never hidden while it is playing. */}
@@ -518,7 +518,12 @@ export default function Ipod() {
                       </label>
                     </>
                   )}
-                  <button className="ipod__addBtn" type="submit">Add it</button>
+                  <div className="ipod__addRow">
+                    <button className="ipod__addBack" type="button" onClick={back}>
+                      Back
+                    </button>
+                    <button className="ipod__addBtn" type="submit">Add it</button>
+                  </div>
                 </form>
               ) : null}
 

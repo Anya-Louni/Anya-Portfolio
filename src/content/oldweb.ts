@@ -27,10 +27,15 @@ export const YEARS = [1996, 1998, 2000, 2002, 2004, 2006, 2008, 2010, 2013, 2016
  * Wayback resolves `/web/<year>/<url>` to the nearest snapshot itself, so no
  * API call and no CORS dance. Snapshots send no `frame-ancestors`, which is
  * why they can be embedded at all.
+ *
+ * The `if_` suffix asks for the archived page without the Wayback toolbar
+ * bolted on top. That is a banner, a stylesheet and a good deal of script
+ * that we do not want in the window and that is a fair share of why a
+ * snapshot can take a while to appear.
  */
 export function waybackUrl(url: string, year: number) {
   const clean = url.trim().replace(/^https?:\/\//i, '')
-  return `https://web.archive.org/web/${year}0601000000/http://${clean}`
+  return `https://web.archive.org/web/${year}0601000000if_/http://${clean}`
 }
 
 /**

@@ -159,6 +159,20 @@
   color: #cfdcee;
 }
 .ipod__emptySub { font-size: 10.5px; color: #8ba0bd; line-height: 1.4; }
+.ipod__addRow {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+.ipod__addBack {
+  padding: 4px 13px;
+  border-radius: 4px;
+  border: 1px solid #3a4a63;
+  background: #172130;
+  color: #9fc0e0;
+  font-size: 11.5px;
+}
 .ipod__addBtn {
   justify-self: center;
   padding: 4px 13px;
