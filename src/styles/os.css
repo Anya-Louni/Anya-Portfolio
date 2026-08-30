@@ -621,6 +621,14 @@
   align-items: center;
   gap: 7px;
   padding: 8px 6px 12px;
+  width: 100%;
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+  transition: background 110ms linear, border-color 110ms linear;
+}
+.start__user:hover {
+  background: linear-gradient(180deg, rgba(190, 225, 255, 0.26), rgba(110, 155, 245, 0.18));
+  border-color: rgba(200, 232, 255, 0.5);
 }
 .start__avatar {
   width: 58px;

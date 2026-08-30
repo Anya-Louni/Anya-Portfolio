@@ -58,12 +58,17 @@ export function StartMenu() {
       </div>
 
       <div className="start__right">
-        <div className="start__user">
+        {/* Windows 7 opened your account from this tile. So does this one. */}
+        <button
+          className="start__user"
+          onClick={() => launch('avatar')}
+          title="Change your picture"
+        >
           <span className="start__avatar">
             <Avatar size={52} />
           </span>
           <span className="start__username">{userName || 'Guest'}</span>
-        </div>
+        </button>
         <button className="start__place" onClick={() => launch('finder')}>
           <Icon name="folderProjects" /> Projects
         </button>

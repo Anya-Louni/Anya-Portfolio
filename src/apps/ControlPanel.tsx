@@ -3,8 +3,9 @@ import { useOS, type SkinName, type ThemeName } from '../os/store'
 import { sound } from '../os/sound'
 import { Glyph } from '../ui/Icon'
 import { WALLPAPERS } from '../art/Wallpaper'
+import AvatarMaker from './AvatarMaker'
 
-type Section = 'appearance' | 'sound' | 'motion'
+type Section = 'appearance' | 'account' | 'sound' | 'motion'
 
 interface ThemeOption {
   id: string
@@ -76,9 +77,11 @@ export default function ControlPanel() {
         <strong>
           {section === 'appearance'
             ? 'Personalization'
-            : section === 'sound'
-              ? 'Sound'
-              : 'Ease of Access'}
+            : section === 'account'
+              ? 'User Accounts'
+              : section === 'sound'
+                ? 'Sound'
+                : 'Ease of Access'}
         </strong>
       </div>
 
@@ -88,6 +91,7 @@ export default function ControlPanel() {
           {(
             [
               ['appearance', 'Personalization', 'Theme, colour and desktop'],
+              ['account', 'User Accounts', 'Your name and your picture'],
               ['sound', 'Sound', 'Chime and interface clicks'],
               ['motion', 'Ease of Access', 'Animation and drift'],
             ] as const
@@ -161,6 +165,21 @@ export default function ControlPanel() {
                     <span className="wallcard__note">{w.note}</span>
                   </button>
                 ))}
+              </div>
+            </>
+          ) : null}
+
+          {section === 'account' ? (
+            <>
+              <h2 className="cpl__h">Change your picture</h2>
+              <p className="cpl__p">
+                This is you on the sign-in screen and in the Start menu. Build it here. It
+                saves as you click and stays in this browser.
+              </p>
+              {/* The same maker the Change Picture app opens, sitting in the
+                  pane rather than a second window. */}
+              <div className="cpl__account">
+                <AvatarMaker />
               </div>
             </>
           ) : null}

@@ -1149,6 +1149,14 @@
 .legal li { margin-bottom: 4px; }
 .legal b { color: var(--ink-strong); }
 .legal a { color: #2b6ea8; }
+/* Control Panel ▸ User Accounts holds the avatar maker itself. */
+.cpl__account {
+  min-height: 380px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--chrome-300);
+  overflow: hidden;
+}
+
 .legal__keys { margin: 0 0 10px; display: grid; gap: 3px; }
 .legal__keys > div {
   display: grid;
