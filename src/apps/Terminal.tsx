@@ -34,9 +34,9 @@ function makeFS(): Node {
           [
             'OSnya 6.1',
             '',
-            'Portfolio desktop. Projects are real repositories.',
-            'Apps and games written for this machine.',
-            'Aquarium earns while closed. Games pay into the same purse.',
+            'A portfolio desktop. Every project here is a real repository.',
+            'Every app and game was written for this machine.',
+            'The aquarium earns while it is closed. Games pay the same purse.',
             '',
             'ls projects',
             'cat projects/galaxy-compass',
@@ -67,8 +67,8 @@ function makeFS(): Node {
           `income    ${coinText(ratePerSecond(t.owned))}/s`,
           `stocked   ${stocked}`,
           '',
-          'This one is yours: it lives in this browser and is not',
-          'shared with anyone. The named fish are the shared half.',
+          'This tank is yours alone. It lives in this browser.',
+          'The named fish are the half everyone shares.',
         ].join('\n')
       }),
       repos: dir(
@@ -287,11 +287,10 @@ export default function Terminal() {
 
       case 'privacy':
         print(
-          '  No account, no advertising, nothing sold.',
-          '  Settings, coins, the tank and any audio you add stay in this browser.',
-          '  Notes and fish go to the database, and only when you send them.',
-          '  Visits are counted: how long, which apps. No name, no cookie.',
-          '  Embeds (YouTube, archive.org, DuckDuckGo, Wokwi) set their own cookies.',
+          '  Settings coins tank and audio stay in this browser.',
+          '  Notes and fish go to the database when you send them.',
+          '  Visits are counted. How long. Which apps. That is all.',
+          '  Embeds (YouTube archive.org Wiby Wokwi) set their own cookies.',
           '  open privacy   for the whole thing',
           '',
         )
@@ -316,7 +315,7 @@ export default function Terminal() {
         break
 
       case 'sudo':
-        print('This machine has no root and nothing worth guarding.', '')
+        print('Everything here is already yours.', '')
         break
 
       case 'exit':

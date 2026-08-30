@@ -3,8 +3,8 @@ import { launch } from '../../os/registry'
 
 const TILES: { id: string; name: string; desc: string; icon: IconName }[] = [
   { id: 'klondike', name: 'Solitaire', desc: 'Sort the whole deck', icon: 'cards' },
-  { id: 'spider', name: 'Spider Solitaire', desc: 'Build runs, clear suits', icon: 'spider' },
-  { id: 'freecell', name: 'FreeCell', desc: 'Sort it, nothing hidden', icon: 'freecell' },
+  { id: 'spider', name: 'Spider Solitaire', desc: 'Build runs. Clear suits.', icon: 'spider' },
+  { id: 'freecell', name: 'FreeCell', desc: 'Every card face up', icon: 'freecell' },
   { id: 'minesweeper', name: 'Minesweeper', desc: 'Find every hidden mine', icon: 'mine' },
   { id: 'chess', name: 'Chess', desc: 'Checkmate the other king', icon: 'games' },
   { id: 'nightline', name: 'The Night Line', desc: 'Find the culprit', icon: 'notes' },

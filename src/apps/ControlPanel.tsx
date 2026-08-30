@@ -109,8 +109,8 @@ export default function ControlPanel() {
             <>
               <h2 className="cpl__h">Change the visuals and sounds on your computer</h2>
               <p className="cpl__p">
-                Click a theme to change the desktop background, window colour and taskbar all at
-                once. Windows XP is included because it is where this all came from.
+                Click a theme. It changes the desktop the window colour and the taskbar at once.
+                Windows XP is here because this all came from there.
               </p>
               <div className="cpl__themes">
                 {THEMES.map((th) => (
@@ -141,8 +141,8 @@ export default function ControlPanel() {
 
               <h2 className="cpl__h cpl__h--sub">Desktop background</h2>
               <p className="cpl__p">
-                A theme comes with its own picture, but you can put any of these behind it.
-                The window colour stays where you left it.
+                Every theme brings its own picture. Put any of these behind it instead. The
+                window colour stays where you left it.
               </p>
               <div className="cpl__walls">
                 {WALLPAPERS.map((w) => (
@@ -169,8 +169,8 @@ export default function ControlPanel() {
             <>
               <h2 className="cpl__h">Sound</h2>
               <p className="cpl__p">
-                Two sounds ship: a sign-in chime and a soft interface click. Both are synthesised in
-                the browser, so nothing is downloaded.
+                Two sounds. A sign-in chime and a soft click. The browser makes both on the
+                spot.
               </p>
               <div className="cpl__row">
                 <input
@@ -196,8 +196,8 @@ export default function ControlPanel() {
             <>
               <h2 className="cpl__h">Make the screen easier to look at</h2>
               <p className="cpl__p">
-                Calm mode stills the wallpaper drift and shortens window transitions. Your system
-                setting for reduced motion is respected on its own.
+                Calm mode stills the wallpaper and shortens window transitions. Your system
+                setting for reduced motion already does the same.
               </p>
               <div className="cpl__row">
                 <input

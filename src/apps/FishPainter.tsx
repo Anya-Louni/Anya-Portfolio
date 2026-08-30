@@ -231,7 +231,7 @@ export default function FishPainter() {
       </div>
 
       <p className="fp__hint">
-        Paint inside the fish. Your strokes stop at the edge, and the eye is added when you let it go.
+        Paint inside the fish. Your strokes stop at the edge. The eye arrives when you let go.
       </p>
 
       <div className="fp__foot">
@@ -263,11 +263,11 @@ export default function FishPainter() {
         <p className="fp__ok">Swimming now. Open the Aquarium to see it.</p>
       ) : spent ? (
         <p className="fp__note">
-          You already released “{mine!.name}”. One fish per visitor, and a fish cannot be
-          repainted once it is in the water.
+          You already released “{mine!.name}”. One fish per visitor. A fish in the water stays
+          as it is.
         </p>
       ) : (
-        <p className="fp__note">One fish per visitor. Choose carefully, because it cannot be repainted.</p>
+        <p className="fp__note">One fish per visitor. Choose carefully. This one is final.</p>
       )}
     </form>
   )

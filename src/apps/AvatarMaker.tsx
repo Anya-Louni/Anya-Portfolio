@@ -108,8 +108,8 @@ export default function AvatarMaker() {
           <Avatar spec={spec} size={16} />
         </div>
         <p className="am__note">
-          Changes save straight away. This is already the picture on the sign-in screen and in
-          the Start menu.
+          Changes save straight away. This is already your picture on the sign-in screen and
+          in the Start menu.
         </p>
       </div>
 

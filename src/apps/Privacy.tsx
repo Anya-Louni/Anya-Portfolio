@@ -2,8 +2,8 @@ import { CONTACT } from '../content/contact'
 import { isRemote } from '../lib/notes'
 
 /**
- * What this site keeps, what it sends, and what it is built from.
- * Facts only. Nothing here is a promise the code does not keep.
+ * What this site keeps and what it sends.
+ * Every line here matches what the code does.
  */
 
 const LOCAL = [
@@ -18,12 +18,12 @@ const LOCAL = [
 ]
 
 const THIRD_PARTY = [
-  ['YouTube', 'Only if you add a link to the iPod and play it. The player is theirs and can set cookies.', 'https://policies.google.com/privacy'],
+  ['YouTube', 'Add a link to the iPod and play it. Their player sets their cookies.', 'https://policies.google.com/privacy'],
   ['Internet Archive', 'Internet Explorer loads old web pages from them.', 'https://archive.org/about/terms.php'],
-  ['DuckDuckGo', 'Searching in Internet Explorer sends the words you typed to them.', 'https://duckduckgo.com/privacy'],
-  ['Open-Meteo', 'The weather panel asks for Algiers. It never asks where you are.', 'https://open-meteo.com/en/terms'],
+  ['Wiby', 'Searching in Internet Explorer sends your words here.', 'https://wiby.me/about/'],
+  ['Open-Meteo', 'The weather panel asks for Algiers. Your location stays yours.', 'https://open-meteo.com/en/terms'],
   ['Wokwi', 'One project page shows a circuit simulation from them.', 'https://wokwi.com/legal/privacy'],
-  ['Supabase', 'Stores the notes you send, the fish you draw, and the visit count. Nothing else.', 'https://supabase.com/privacy'],
+  ['Supabase', 'Holds the notes you send. The fish you draw. The visit count.', 'https://supabase.com/privacy'],
 ]
 
 const BUILT_WITH = [
@@ -38,14 +38,13 @@ export default function Privacy() {
     <div className="legal">
       <h2>Privacy</h2>
       <p className="legal__lede">
-        There is no sign up, no advertising and nothing is ever sold. Visits
-        are counted, and that is the only thing measured here.
+        This site counts visits. That is the only thing it measures.
       </p>
 
       <h3>Kept on your own device</h3>
       <p>
-        This is saved in your browser and nowhere else. It goes away when you
-        clear your browsing data. It is never sent anywhere.
+        Your browser holds all of this. Clear your browsing data and it is
+        gone.
       </p>
       <dl className="legal__keys">
         {LOCAL.map(([k, v]) => (
@@ -56,28 +55,28 @@ export default function Privacy() {
         ))}
       </dl>
 
-      <h3>Sent away, and only if you send it</h3>
+      <h3>Sent when you send it</h3>
       <p>
-        Two things leave your device, and only when you choose to send them.
-        A note written in Notes, and a fish drawn for the aquarium.
-        {isRemote ? '' : ' Neither is switched on right now, so nothing leaves at all.'}
+        Two things leave your device. A note you write in Notes and a fish you
+        draw for the aquarium. You choose to send both.
+        {isRemote ? '' : ' Both are switched off right now and stay on this device.'}
       </p>
       <ul>
         <li>
-          <b>Notes</b> go to Anya and nobody else. They cannot be read back from
-          this site, not even by you, and there is no way to delete one here.
+          <b>Notes</b> go straight to Anya. The site keeps them out of reach
+          for everyone else including you.
         </li>
         <li>
-          <b>Fish</b> are public: the name you type and the small drawing you
-          make. Once you let one go you cannot edit or remove it.
+          <b>Fish</b> are public. Everyone sees the name you type and the
+          drawing you make. A released fish stays as it is.
         </li>
       </ul>
-      <p>Please do not put anything private in either one. Anya can see both.</p>
+      <p>Anya reads both. Keep private things out of them.</p>
 
       <h3>Other companies</h3>
       <p>
-        A few parts of this site load things from elsewhere. That only happens
-        when you open the app that needs it.
+        A few apps load things from elsewhere. Opening the app is what starts
+        it.
       </p>
       <dl className="legal__keys">
         {THIRD_PARTY.map(([name, what, url]) => (
@@ -92,25 +91,23 @@ export default function Privacy() {
 
       <h3>Counting visits</h3>
       <p>
-        Anya keeps a count of how the site is doing. When you sign in it
-        records that a visit happened, and when you leave it records how long
-        you stayed and which apps you opened. That is the whole list.
+        Anya watches how the site is doing. Signing in records a visit.
+        Leaving records how long you stayed and which apps you opened. That is
+        the whole list.
       </p>
       <p>
-        There is no name, no address, nothing you typed or drew, and no cookie
-        or code that stays on your device. Nothing joins one visit to another,
-        so coming back tomorrow looks like a different person. It is a tally,
-        not a profile.
+        The count stands on its own. Each visit lands as a fresh stranger and
+        the record forgets you the moment you close the tab. It is a tally.
       </p>
       <p>
-        If your browser sends Do Not Track or Global Privacy Control, you are
-        not counted at all.
+        Browsers sending Do Not Track or Global Privacy Control stay out of the
+        count.
       </p>
 
       <h3>Cookies</h3>
       <p>
-        This site sets none of its own. The videos and pages listed above may
-        set theirs once you open them, under their own rules.
+        This site sets none. The videos and pages listed above set their own
+        once you open them.
       </p>
 
       <h3>Made with</h3>
@@ -134,7 +131,7 @@ export default function Privacy() {
 
       <h3>Asking</h3>
       <p>
-        To have a note or a fish removed, email <b>{CONTACT.email}</b> and say
+        Email <b>{CONTACT.email}</b> to have a note or a fish taken down. Say
         which one.
       </p>
     </div>

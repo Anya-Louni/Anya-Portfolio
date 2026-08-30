@@ -64,8 +64,7 @@ export default function Guestbook() {
   return (
     <form className="gb" onSubmit={submit}>
       <p className="gb__lead">
-        Write something for Anya. Only she can read it. It is never shown on this site, not to
-        you and not to anyone else who visits.
+        Write something for Anya. She is the only one who reads it.
       </p>
 
       <div className="gb__note" data-tint={colour}>

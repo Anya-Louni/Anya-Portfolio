@@ -307,8 +307,8 @@ export default function Synth() {
       </div>
 
       <p className="sy__hint">
-        Play with the mouse, or the keyboard: <b>z s x d c…</b> for this octave, <b>q 2 w 3 e…</b> for the
-        one above. Up and down arrows shift octave.
+        Play with the mouse or the keyboard. <b>z s x d c…</b> for this octave. <b>q 2 w 3 e…</b> for the
+        one above. Arrows shift octave.
       </p>
     </div>
   )

@@ -340,7 +340,7 @@ export default function MediaPlayer() {
           </ul>
         ) : (
           <p className="wmp__empty">
-            No music yet. Add some files. They stay in this browser, and the iPod plays them too.
+            Add some files. They stay in this browser and the iPod plays them too.
           </p>
         )}
       </div>
