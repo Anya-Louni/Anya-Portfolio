@@ -64,9 +64,7 @@ export function LoginScreen() {
             <Glyph.arrowRight />
           </button>
         </form>
-        <p className="login__hint">
-          No password needed. Your name is only used to say hello.
-        </p>
+        <p className="login__hint">Your name is only used to say hello.</p>
       </div>
 
       <div className="login__bar">

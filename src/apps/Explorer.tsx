@@ -49,6 +49,14 @@ export default function Explorer() {
   const tab = tabs[active]
   const src = tab?.history[tab.at] ?? ''
 
+  /* A site that refuses to be framed still fires load, and what it leaves
+     behind cannot be read from out here: the frame is sandboxed, so even
+     about:blank inside it is a foreign origin. There is no way to ask whether
+     the page arrived. So rather than guess, the two addresses known to frame
+     are named, and everything else gets a line offering the way out. Saying
+     "this might be blank" is honest; claiming it failed would not be. */
+  const framesFine = /(^|\/\/)(web\.archive\.org|wiby\.me)/.test(src)
+
   const patch = useCallback(
     (fn: (t: Tab) => Tab) => setTabs((all) => all.map((t, i) => (i === active ? fn(t) : t))),
     [active],
@@ -280,6 +288,15 @@ export default function Explorer() {
         {loading ? <div className="ie__progress" /> : null}
         {slow && loading ? (
           <p className="ie__slow">Still opening. The Internet Archive takes its time.</p>
+        ) : null}
+        {src && !loading && !blocked && !framesFine ? (
+          <p className="ie__hint">
+            Blank? Most sites built after about 2010 refuse to open inside another page.
+            <a href={src} target="_blank" rel="noreferrer">
+              Open it in a real tab
+            </a>
+            or pick a year above to see it on the Internet Archive.
+          </p>
         ) : null}
       </div>
 

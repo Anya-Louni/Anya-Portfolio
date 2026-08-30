@@ -26,8 +26,12 @@ button, input, textarea, select { font: inherit; letter-spacing: inherit; color:
 /* min-width/min-height reset matters: 7.css puts min-width:75px and
    min-height:23px on every button, and a min-width beats a width, small
    controls (brush swatches, Minesweeper cells, colour chips) were being
-   silently inflated to 75px. Unlayered, so it wins over the vendor layer. */
-button {
+   silently inflated to 75px. Unlayered, so it wins over the vendor layer.
+
+   [role=button] is in the same vendor rule and needs the same reset, or a
+   span standing in for a button comes out 75px wide however it is sized. */
+button,
+[role='button'] {
   background: none;
   border: 0;
   padding: 0;
@@ -46,7 +50,9 @@ button {
    ::before or ::after declares its own content and wins on specificity: a
    class selector beats these two element selectors. */
 button::before,
-button::after { content: none; }
+button::after,
+[role='button']::before,
+[role='button']::after { content: none; }
 img, svg { display: block; max-width: 100%; }
 /* line glyphs carry no intrinsic size; without this an unsized one falls back
    to the SVG default of 300x150 and blows out its container */

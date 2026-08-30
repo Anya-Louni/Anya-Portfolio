@@ -302,6 +302,25 @@
   }
 }
 
+/* The tab close box stays the small square it always was, but on a touch
+   screen it gets an invisible margin so a fingertip can actually land on it. */
+@media (pointer: coarse) {
+  .ie__tabClose {
+    position: relative;
+  }
+  .ie__tabClose::after {
+    /* 7.css puts its own ::after on anything with role=button, sized to the
+       element and pushed behind it with z-index -1. All four have to be
+       overridden or this lands in the wrong place and takes no taps. */
+    content: '';
+    position: absolute;
+    inset: -8px;
+    width: auto;
+    height: auto;
+    z-index: 1;
+  }
+}
+
 /* Touch devices get the system cursor; the Aero pointers are a mouse affordance. */
 @media (pointer: coarse) {
   html,

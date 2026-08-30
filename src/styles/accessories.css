@@ -212,14 +212,15 @@
 .ie__tabClose {
   display: grid;
   place-items: center;
-  width: 15px;
-  height: 15px;
+  flex: none;
+  width: 14px;
+  height: 14px;
   border-radius: 2px;
   color: var(--ink-soft);
 }
 .ie__tabClose svg {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 .ie__tabClose:hover {
   background: #e8574f;
@@ -692,6 +693,29 @@
   padding: 30px;
   color: var(--ink-soft);
   font-size: 13px;
+}
+
+.ie__hint {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 12px;
+  border-radius: var(--r-sm);
+  background: rgba(20, 45, 90, 0.9);
+  color: #dbe9fb;
+  font-size: 11.5px;
+  line-height: 1.4;
+  text-align: center;
+}
+.ie__hint a {
+  color: #9fd2ff;
+  text-decoration: underline;
 }
 
 .ie__slow {

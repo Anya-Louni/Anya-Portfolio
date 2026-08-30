@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useOS } from './store'
+import { coarse } from '../lib/touch'
 
 /**
  * Desktop pet.
@@ -55,6 +56,8 @@ export function Pet() {
   })
   const [, force] = useState(0)
   const grab = useRef<{ dx: number; dy: number } | null>(null)
+  const hold = useRef<number | null>(null)
+  const from = useRef({ x: 0, y: 0 })
 
   const floor = useCallback(() => window.innerHeight - 46 - SIZE, [])
 
@@ -181,15 +184,39 @@ export function Pet() {
     grab.current = { dx: e.clientX - s.x, dy: e.clientY - s.y }
     s.state = 'held'
     ref.current?.setPointerCapture(e.pointerId)
+    /* There is no right button on a phone, so holding still for a moment
+       opens the same menu. Moving cancels it, or the pet could never be
+       picked up and carried anywhere. */
+    if (coarse) {
+      from.current = { x: e.clientX, y: e.clientY }
+      hold.current = window.setTimeout(() => {
+        grab.current = null
+        s.state = 'fall'
+        s.vy = 0
+        s.dropped = false
+        openPetMenu(e.clientX, e.clientY)
+      }, 450)
+    }
   }
   const move = (e: React.PointerEvent) => {
     const g = grab.current
     if (!g) return
     const s = st.current
+    if (
+      hold.current !== null &&
+      Math.hypot(e.clientX - from.current.x, e.clientY - from.current.y) > 6
+    ) {
+      window.clearTimeout(hold.current)
+      hold.current = null
+    }
     s.x = Math.max(0, Math.min(window.innerWidth - SIZE, e.clientX - g.dx))
     s.y = Math.max(0, e.clientY - g.dy)
   }
   const up = () => {
+    if (hold.current !== null) {
+      window.clearTimeout(hold.current)
+      hold.current = null
+    }
     if (!grab.current) return
     grab.current = null
     st.current.state = 'fall'
@@ -197,11 +224,10 @@ export function Pet() {
     st.current.dropped = true
   }
 
-  const menu = (e: React.MouseEvent) => {
-    e.preventDefault()
+  const openPetMenu = (x: number, y: number) => {
     useOS.getState().openMenu(
-      e.clientX,
-      e.clientY,
+      x,
+      y,
       [
         { id: 'head', label: 'Desktop pet', bold: true, disabled: true },
         { id: 'd0', divider: true },
@@ -215,6 +241,11 @@ export function Pet() {
         { id: 'hide', label: 'Send it away', run: () => setHidden(true) },
       ],
     )
+  }
+
+  const menu = (e: React.MouseEvent) => {
+    e.preventDefault()
+    openPetMenu(e.clientX, e.clientY)
   }
 
   if (phase !== 'desktop' || hidden) return null
@@ -231,7 +262,9 @@ export function Pet() {
       onPointerUp={up}
       onPointerCancel={up}
       onContextMenu={menu}
-      title={`${PETS.find((p) => p.id === kind)?.name}. Drag it, or right-click to swap`}
+      title={`${PETS.find((p) => p.id === kind)?.name}. Drag it, or ${
+        coarse ? 'hold it' : 'right-click'
+      } to swap`}
     >
       <PetArt kind={kind} state={s.state} blink={blinking} />
     </div>
@@ -285,16 +318,37 @@ function PetArt({ kind, state, blink }: { kind: PetKind; state: State; blink: bo
     )
   }
 
+  const id = `pet-${kind}-`
+
   return (
     <svg viewBox="0 0 52 52" width={52} height={52} aria-hidden>
       <defs>
-        <radialGradient id={`pet-${kind}`} cx="0.36" cy="0.28" r="0.8">
-          <stop offset="0" stopColor="#ffffff" stopOpacity="0.85" />
-          <stop offset="0.4" stopColor={BODY[kind][0]} />
-          <stop offset="1" stopColor={BODY[kind][1]} />
+        {/* A sphere, not a disc: a tight specular up and to the left, the
+            body colour through the middle, and a terminator that goes darker
+            than the body ever does. */}
+        <radialGradient id={`${id}body`} cx="0.34" cy="0.26" r="0.92">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0.92" />
+          <stop offset="0.2" stopColor={BODY[kind][0]} />
+          <stop offset="0.66" stopColor={BODY[kind][1]} />
+          <stop offset="1" stopColor={shade(BODY[kind][1], -0.34)} />
+        </radialGradient>
+        {/* Light coming back off the floor, which is what stops the underside
+            reading as a hole. */}
+        <radialGradient id={`${id}bounce`} cx="0.5" cy="0.96" r="0.6">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0.42" />
+          <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+        </radialGradient>
+        {/* The glass cap across the top half. */}
+        <linearGradient id={`${id}gloss`} x1="0" y1="0" x2="0.1" y2="1">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0.7" />
+          <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+        </linearGradient>
+        <radialGradient id={`${id}floor`}>
+          <stop offset="0" stopColor="#04143c" stopOpacity="0.4" />
+          <stop offset="1" stopColor="#04143c" stopOpacity="0" />
         </radialGradient>
       </defs>
-      <ellipse cx="26" cy="48" rx="14" ry="3" fill="rgba(4,20,50,0.28)" />
+      <ellipse cx="26" cy="48" rx="15" ry="3.6" fill={`url(#${id}floor)`} />
       <g transform={`translate(26 ${52 - 52 * squash}) scale(1 ${squash}) translate(-26 0)`}>
         {kind === 'cat' ? (
           <>
@@ -309,7 +363,22 @@ function PetArt({ kind, state, blink }: { kind: PetKind; state: State; blink: bo
             <path d="M40 30c5-2 8 2 6 6-2 3-6 2-8-1Z" fill={BODY.bird[1]} />
           </>
         ) : null}
-        <ellipse cx="26" cy="30" rx="17" ry="16" fill={`url(#pet-${kind})`} />
+        {/* Slightly see-through, so the desktop tints the edges. Only just:
+            any more and the eyes float over a ghost. */}
+        <g opacity="0.93">
+          <ellipse cx="26" cy="30" rx="17" ry="16" fill={`url(#${id}body)`} />
+          <ellipse cx="26" cy="30" rx="17" ry="16" fill={`url(#${id}bounce)`} />
+          <ellipse
+            cx="26"
+            cy="30"
+            rx="17"
+            ry="16"
+            fill="none"
+            stroke={shade(BODY[kind][1], -0.3)}
+            strokeOpacity="0.4"
+            strokeWidth="0.9"
+          />
+        </g>
         {kind === 'jelly' ? (
           <g stroke={BODY.jelly[1]} strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.9">
             <path d="M17 43q2 5 0 8" />
@@ -317,7 +386,16 @@ function PetArt({ kind, state, blink }: { kind: PetKind; state: State; blink: bo
             <path d="M35 43q2 5 0 8" />
           </g>
         ) : null}
-        <ellipse cx="21" cy="22" rx="9" ry="6" fill="#ffffff" opacity="0.35" />
+        <ellipse cx="24.5" cy="21" rx="12" ry="8" fill={`url(#${id}gloss)`} />
+        <ellipse
+          cx="19.5"
+          cy="19.5"
+          rx="3.2"
+          ry="2.1"
+          fill="#ffffff"
+          opacity="0.85"
+          transform="rotate(-20 19.5 19.5)"
+        />
         {eye(20)}
         {eye(32)}
         {kind === 'bird' ? <path d="M24 32h4l-2 3Z" fill="#ffb02e" /> : null}
@@ -340,6 +418,18 @@ function PetArt({ kind, state, blink }: { kind: PetKind; state: State; blink: bo
       ) : null}
     </svg>
   )
+}
+
+/** Mix a hex colour toward black (k < 0) or white (k > 0). */
+function shade(hex: string, k: number) {
+  const n = parseInt(hex.slice(1), 16)
+  const t = k < 0 ? 0 : 255
+  const p = Math.abs(k)
+  const ch = (sh: number) => {
+    const v = (n >> sh) & 255
+    return Math.round(v + (t - v) * p)
+  }
+  return `#${[ch(16), ch(8), ch(0)].map((v) => v.toString(16).padStart(2, '0')).join('')}`
 }
 
 const BODY: Record<PetKind, [string, string]> = {

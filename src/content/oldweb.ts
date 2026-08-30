@@ -33,10 +33,23 @@ export function waybackUrl(url: string, year: number) {
   return `https://web.archive.org/web/${year}0601000000/http://${clean}`
 }
 
+/**
+ * Search.
+ *
+ * Not DuckDuckGo, and not Google or any of the others: every one of them
+ * sends frame-ancestors or X-Frame-Options, so a search inside this window
+ * was a blank white page and nothing else. Wiby indexes small, plain,
+ * old-fashioned pages and lets itself be framed, which makes it both the
+ * only one that works here and the right one for a browser like this.
+ */
+export function searchUrl(query: string) {
+  return `https://wiby.me/?q=${encodeURIComponent(query.trim())}`
+}
+
 export function normalise(input: string) {
   const s = input.trim()
   if (!s) return ''
   if (/^https?:\/\//i.test(s)) return s
   if (/^[\w-]+(\.[\w-]+)+/.test(s)) return `https://${s}`
-  return `https://duckduckgo.com/?q=${encodeURIComponent(s)}`
+  return searchUrl(s)
 }
