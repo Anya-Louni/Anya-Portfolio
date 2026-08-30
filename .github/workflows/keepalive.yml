@@ -1,0 +1,43 @@
+name: Keep the database awake
+
+# Supabase pauses a free project that goes a week without a request, and
+# waking it up is a manual button in their dashboard. A portfolio can easily
+# go quiet for a week, so this makes one cheap read every other day and the
+# project never goes to sleep.
+#
+# It reads the fish table, which visitors read anyway, using the same public
+# anon key the site ships with. Nothing here needs a privileged key.
+
+on:
+  schedule:
+    # 06:00 UTC, every other day
+    - cron: '0 6 */2 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Touch the database
+        env:
+          URL: ${{ secrets.SUPABASE_URL || secrets.VITE_SUPABASE_URL }}
+          KEY: ${{ secrets.SUPABASE_ANON_KEY || secrets.VITE_SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$URL" ] || [ -z "$KEY" ]; then
+            echo "No Supabase secrets set. See README-NOTES.md, Keeping it awake."
+            exit 0
+          fi
+          code=$(curl -s -o /dev/null -w '%{http_code}' \
+            -H "apikey: $KEY" -H "Authorization: Bearer $KEY" \
+            "$URL/rest/v1/fish?select=id&limit=1")
+          echo "Supabase answered $code"
+          # 200 is awake. Anything else is worth seeing in the run log, but a
+          # red cross every other day would train you to ignore this, so it
+          # only fails when the project is actually gone.
+          if [ "$code" = "000" ] || [ "$code" = "404" ]; then
+            echo "::error::The project looks paused or deleted. Open the Supabase dashboard."
+            exit 1
+          fi
