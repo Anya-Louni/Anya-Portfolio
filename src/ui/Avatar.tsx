@@ -47,6 +47,9 @@ export const DEFAULT_AVATAR: AvatarSpec = {
   skin: 1, hair: 0, hairColour: 0, eyes: 0, shirt: 0, bg: 0, accessory: 0,
 }
 
+/** How many hair styles are drawn below. AvatarMaker's list must match. */
+export const HAIRS = 5
+
 const KEY = 'os.avatar'
 
 /** Mix a hex colour toward black (k < 0) or white (k > 0). */
@@ -172,6 +175,17 @@ export function Avatar({
         <path d="M40.5 66.5 48 82l7.5-15.5c-4.5-1.6-10.5-1.6-15 0Z" fill="#f4f8fc" />
         <path d="M48 82v14" stroke={shade(shirt, -0.3)} strokeWidth="1.4" strokeLinecap="round" />
 
+        {/* Long hair. One shape, drawn after the shoulders and before the
+            head, so the two falls lie over the shirt and the face sits in
+            front of the lot. The notch across the middle is hidden by the
+            head; it is what separates the falls from each other. */}
+        {a.hair % HAIRS === 4 ? (
+          <path
+            d="M48 21c-13 0-22 10-22 27 0 13-1 22-3 31 4.5-.5 8-2.5 10-6 -1.5-11-2-22-1-31 3.5 5.5 8.5 8 16 8s12.5-2.5 16-8c1 9 .5 20-1 31 2 3.5 5.5 5.5 10 6-2-9-3-18-3-31 0-17-9-27-22-27Z"
+            fill={`url(#${id}hair)`}
+          />
+        ) : null}
+
         {/* head. No face, and no ears. */}
         <path d={HEAD} fill={`url(#${id}skin)`} />
         <path d={HEAD} fill="none" stroke={shade(skin, -0.32)} strokeWidth="1.1" />
@@ -183,14 +197,14 @@ export function Avatar({
         />
 
         {/* hair. Matte: a shallow gradient for form, no highlight streak. */}
-        {a.hair % 4 === 0 ? (
+        {a.hair % HAIRS === 0 ? (
           <path
             d="M30.5 48c0-14.5 7.5-25 17.5-25s17.5 10.5 17.5 25c0-7-3-11.5-8-13-3.5 2.5-16.5 2.5-20 0-5 1.5-7 6-7 13Z"
             fill={`url(#${id}hair)`}
           />
         ) : null}
         {/* Bow: the same cap with two loops and a knot sitting on the crown. */}
-        {a.hair % 4 === 1 ? (
+        {a.hair % HAIRS === 1 ? (
           <>
             <path
               d="M30.5 48c0-14.5 7.5-25 17.5-25s17.5 10.5 17.5 25c0-7-3-11.5-8-13-3.5 2.5-16.5 2.5-20 0-5 1.5-7 6-7 13Z"
@@ -211,7 +225,7 @@ export function Avatar({
             <ellipse cx="48" cy="25.6" rx="3.4" ry="2.9" fill={shade(hair, -0.16)} />
           </>
         ) : null}
-        {a.hair % 4 === 2 ? (
+        {a.hair % HAIRS === 2 ? (
           <>
             <path
               d="M30.5 48c0-14.5 7.5-25 17.5-25s17.5 10.5 17.5 25c0-7-3-11.5-8-13-3.5 2.5-16.5 2.5-20 0-5 1.5-7 6-7 13Z"
@@ -221,9 +235,15 @@ export function Avatar({
             <circle cx="67" cy="30" r="7.5" fill={`url(#${id}hair)`} />
           </>
         ) : null}
-        {a.hair % 4 === 3 ? (
+        {a.hair % HAIRS === 3 ? (
           <path
             d="M30.5 49c0-15 7.5-26 17.5-26s17.5 11 17.5 26c-1-11-4-17-9-19-6 7-19 6-23 1-2.5 3.5-3.5 10-3 18Z"
+            fill={`url(#${id}hair)`}
+          />
+        ) : null}
+        {a.hair % HAIRS === 4 ? (
+          <path
+            d="M30.5 48c0-14.5 7.5-25 17.5-25s17.5 10.5 17.5 25c0-7-3-11.5-8-13-3.5 2.5-16.5 2.5-20 0-5 1.5-7 6-7 13Z"
             fill={`url(#${id}hair)`}
           />
         ) : null}

@@ -18,10 +18,10 @@ export const CONTACT = {
  */
 export const CONTACT_AVATAR: AvatarSpec = {
   skin: 1,
-  hair: 1,
-  hairColour: 0,
+  hair: 4, // long
+  hairColour: 0, // black
   eyes: 0,
-  shirt: 4,
+  shirt: 4, // purple
   bg: 4,
   accessory: 0,
 }

@@ -55,7 +55,7 @@ function Row({
   )
 }
 
-const HAIR = ['Short', 'Bow', 'Buns', 'Swept']
+const HAIR = ['Short', 'Bow', 'Buns', 'Swept', 'Long']
 const ACCESSORY = ['None', 'Visor', 'Headphones', 'Sparkle']
 
 export default function AvatarMaker() {
