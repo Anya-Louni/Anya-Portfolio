@@ -116,6 +116,7 @@ function Gadget({
   return (
     <div
       className="gad"
+      data-kind={item.kind}
       ref={ref}
       style={{ left, top: item.y }}
       onPointerDown={down}

@@ -12,7 +12,7 @@ const PALETTE = [
 ]
 const SIZES = [6, 14, 28]
 
-export default function FishPainter() {
+export default function FishPainter({ onDone }: { onDone?: () => void } = {}) {
   const userName = useOS((s) => s.userName)
   const pushToast = useOS((s) => s.pushToast)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -260,7 +260,16 @@ export default function FishPainter() {
 
       {error ? <p className="fp__error">{error}</p> : null}
       {state === 'saved' ? (
-        <p className="fp__ok">Swimming now. Open the Aquarium to see it.</p>
+        <p className="fp__ok">
+          Swimming now.{' '}
+          {onDone ? (
+            <button type="button" className="fp__back" onClick={onDone}>
+              Back to the tank
+            </button>
+          ) : (
+            'Open the Aquarium to see it.'
+          )}
+        </p>
       ) : spent ? (
         <p className="fp__note">
           You already released “{mine!.name}”. One fish per visitor. A fish in the water stays

@@ -171,3 +171,62 @@ export function youtubeApi(): Promise<YtApi> {
   })
   return pending
 }
+
+/* ============================================================
+   THE SHARED JUKEBOX
+   ============================================================
+
+   Everyone sees the same songs and anyone can add one. A shared track is a
+   YouTube id, a title and an artist, which is small enough to hand around.
+
+   Uploaded audio files stay local and always will. A shared library of files
+   means hosting other people's audio, which is a copyright problem, a storage
+   bill and a moderation queue. A link is a pointer to something YouTube is
+   already serving.
+
+   Insert and read only, like the fish. Nothing here can edit or remove a
+   track, so a bad one comes out through the SQL editor. See README-NOTES.md.
+   ============================================================ */
+
+import { supabase, isRemote as remote } from './notes'
+
+export interface SharedTrack {
+  id: string
+  title: string
+  artist: string
+  video_id: string
+  created_at: string
+}
+
+export const jukeboxOn = remote
+
+/** Everything anyone has ever added, newest first. */
+export async function listShared(): Promise<SharedTrack[]> {
+  const db = supabase()
+  if (!db) return []
+  const { data, error } = await db
+    .from('songs')
+    .select('id,title,artist,video_id,created_at')
+    .order('created_at', { ascending: false })
+    .limit(300)
+  if (error) return []
+  /* An eleven-character id is the only shape YouTube uses. Anything else in
+     the column is not a video and does not belong in a player. */
+  return ((data ?? []) as SharedTrack[]).filter((t) => /^[A-Za-z0-9_-]{11}$/.test(t.video_id))
+}
+
+export async function addShared(
+  videoId: string,
+  artist: string,
+  title: string,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const db = supabase()
+  if (!db) return { ok: false, error: 'The jukebox is not switched on.' }
+  if (!/^[A-Za-z0-9_-]{11}$/.test(videoId)) return { ok: false, error: 'That is not a YouTube link.' }
+  const t = clean(title, 60)
+  const a = clean(artist, 40)
+  if (!t) return { ok: false, error: 'Give the song a name.' }
+  const { error } = await db.from('songs').insert({ title: t, artist: a || 'Unknown', video_id: videoId })
+  if (error) return { ok: false, error: 'Could not add that. Try again in a moment.' }
+  return { ok: true }
+}

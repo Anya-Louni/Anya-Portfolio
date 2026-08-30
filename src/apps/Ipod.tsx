@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { PLAYLIST } from '../content/playlist'
 import {
-  addFile, addLink, listTracks, removeTrack, videoIdFrom, youtubeApi,
+  addFile, addLink, addShared, jukeboxOn, listShared, listTracks, removeTrack,
+  videoIdFrom, youtubeApi, type SharedTrack,
   type StoredTrack, type TrackKind, type YtPlayer,
 } from '../lib/tracks'
 import { Flourish } from '../art/Flourish'
@@ -57,6 +58,8 @@ export default function Ipod() {
   const analyserRef = useRef<AnalyserNode | null>(null)
 
   const [mine, setMine] = useState<StoredTrack[]>([])
+  /* The shared jukebox. Everyone sees these and anyone can add one. */
+  const [shared, setShared] = useState<SharedTrack[]>([])
   const [screen, setScreen] = useState<Screen>('menu')
   const [menuAt, setMenuAt] = useState(0)
   const [songAt, setSongAt] = useState(0)
@@ -80,6 +83,13 @@ export default function Ipod() {
     ...PLAYLIST.map((t, i) => ({
       id: `p${i}`, title: t.title, artist: t.artist, kind: 'file' as const, src: t.src,
     })),
+    ...shared.map((t) => ({
+      id: `s${t.id}`,
+      title: t.title,
+      artist: t.artist,
+      kind: 'youtube' as const,
+      videoId: t.video_id,
+    })),
     ...mine.map((t) => ({
       id: t.id,
       title: t.title,
@@ -97,6 +107,7 @@ export default function Ipod() {
 
   useEffect(() => {
     void listTracks().then(setMine)
+    void listShared().then(setShared)
     return () => urls.current.forEach((u) => URL.revokeObjectURL(u))
   }, [])
 
@@ -346,11 +357,20 @@ export default function Ipod() {
     if (!artist || !title) { setStatus('Both names, please'); return }
 
     if (file) {
+      /* A file stays on this machine. Sharing audio would mean hosting other
+         people's music, which is somebody else's copyright and my storage. */
       await addFile(file, artist, title)
     } else {
       const id = videoIdFrom(form.link)
       if (!id) { setStatus('That is not a YouTube link'); return }
-      await addLink(id, artist, title)
+      if (jukeboxOn) {
+        setStatus('Adding…')
+        const res = await addShared(id, artist, title)
+        if (!res.ok) { setStatus(res.error); return }
+        setShared(await listShared())
+      } else {
+        await addLink(id, artist, title)
+      }
     }
     setMine(await listTracks())
     setForm({ artist: '', title: '', link: '' })
@@ -422,7 +442,10 @@ export default function Ipod() {
                       <li key={t.id} className="ipod__item" data-on={i === songAt}>
                         <span className="ipod__song">
                           <b>{t.title}</b>
-                          <em>{t.artist}{t.kind === 'youtube' ? ' · link' : ''}</em>
+                          <em>
+                            {t.artist}
+                            {t.id.startsWith('s') ? ' · everyone' : t.mine ? ' · yours' : ''}
+                          </em>
                         </span>
                         {t.mine ? (
                           <button
@@ -441,7 +464,8 @@ export default function Ipod() {
                   <div className="ipod__empty">
                     <p>No songs yet.</p>
                     <p className="ipod__emptySub">
-                      Add a file from this machine, or paste a YouTube link.
+                      Paste a YouTube link and everyone gets it. Add a file and it
+                      stays on this machine.
                     </p>
                     <button className="ipod__addBtn" onClick={() => setScreen('add')}>
                       Add music

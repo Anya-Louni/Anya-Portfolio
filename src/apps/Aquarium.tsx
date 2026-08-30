@@ -25,7 +25,7 @@ import {
 import { coinText as coins, useCoins } from '../os/purse'
 import type { FishInput, Tank } from '../aquarium/tank3d'
 import { listFish } from '../lib/fish'
-import { launch } from '../os/registry'
+import FishPainter from './FishPainter'
 import { sound } from '../os/sound'
 
 export default function Aquarium() {
@@ -40,6 +40,9 @@ export default function Aquarium() {
   /* The shop takes most of a phone screen, so it starts shut there and the
      tank gets the room. On a mouse it is open, the way a sidebar is. */
   const [shopOpen, setShopOpen] = useState(!coarse)
+  /* The painter used to be its own window. It belongs to the tank, so it
+     opens over it and hands back when the fish is released. */
+  const [painting, setPainting] = useState(false)
 
   const caughtUp = useRef(false)
   const purse = useCoins()
@@ -265,13 +268,34 @@ export default function Aquarium() {
           </ul>
 
           <footer className="aq__shopFoot">
-            <button className="aq__add" onClick={() => launch('fishpainter')}>Draw a fish</button>
+            <button className="aq__add" onClick={() => setPainting(true)}>Draw a fish</button>
             <button className="aq__refresh" onClick={() => void loadDrawn()} title="Check for new fish">
               Refresh
             </button>
           </footer>
         </div>
       </aside>
+
+      {painting ? (
+        <div className="aq__painter">
+          <header className="aq__painterBar">
+            <b>Draw a fish</b>
+            <button
+              className="aq__painterClose"
+              aria-label="Back to the tank"
+              onClick={() => setPainting(false)}
+            >
+              ×
+            </button>
+          </header>
+          <FishPainter
+            onDone={() => {
+              setPainting(false)
+              void loadDrawn()
+            }}
+          />
+        </div>
+      ) : null}
 
       <p className="aq__hint">tap the glass to feed them and they pay double for {FED_FOR}s</p>
     </div>

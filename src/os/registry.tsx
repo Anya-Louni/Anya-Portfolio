@@ -7,6 +7,7 @@ import Aquarium from '../apps/Aquarium'
 import ControlPanel from '../apps/ControlPanel'
 import Computer from '../apps/Computer'
 import Privacy from '../apps/Privacy'
+import Resume from '../apps/Resume'
 import Games from '../apps/games/Games'
 import Klondike from '../apps/games/Klondike'
 import Spider from '../apps/games/Spider'
@@ -16,7 +17,6 @@ import BubbleBeat from '../apps/games/BubbleBeat'
 import Chess from '../apps/games/chess/Chess'
 import NightLine from '../apps/games/NightLine'
 import Notes from '../apps/Notes'
-import FishPainter from '../apps/FishPainter'
 import PaintApp from '../apps/Paint'
 import Explorer from '../apps/Explorer'
 import { Calculator } from '../apps/Accessories'
@@ -83,17 +83,6 @@ export const APPS: AppDef[] = [
     minH: 240,
     flush: true,
     Component: Aquarium,
-  },
-  {
-    id: 'fishpainter',
-    title: 'Draw a fish',
-    icon: 'aquarium',
-    blurb: 'Add one fish to the tank',
-    w: 620,
-    h: 560,
-    minW: 520,
-    minH: 500,
-    Component: FishPainter,
   },
   {
     id: 'control',
@@ -360,6 +349,17 @@ export const APPS: AppDef[] = [
     minW: 360,
     minH: 440,
     Component: Notes,
+  },
+  {
+    id: 'cv',
+    title: 'CV',
+    icon: 'notepad',
+    blurb: 'Read it or download the PDF',
+    w: 720,
+    h: 640,
+    minW: 400,
+    minH: 400,
+    Component: Resume,
   },
   {
     id: 'privacy',

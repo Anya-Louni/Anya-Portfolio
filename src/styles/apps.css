@@ -1149,6 +1149,133 @@
 .legal li { margin-bottom: 4px; }
 .legal b { color: var(--ink-strong); }
 .legal a { color: #2b6ea8; }
+/* ---- CV ---- */
+.cv {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100%;
+  background: var(--chrome-050);
+  color: var(--ink);
+}
+.cv__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 22px 16px;
+  background: linear-gradient(180deg, #ffffff, var(--chrome-100));
+  border-bottom: 1px solid var(--chrome-300);
+}
+.cv__head > div { flex: 1; min-width: 0; }
+.cv__get { flex: none; white-space: nowrap; }
+.cv__name {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: var(--track-tight);
+  color: var(--ink-strong);
+}
+.cv__title { margin: 3px 0 6px; font-size: 13px; color: var(--ink-soft); }
+.cv__meta { margin: 0; font-size: 12px; color: var(--ink-soft); }
+.cv__meta a { color: #2b80e6; }
+.cv__scroll { min-height: 0; overflow-y: auto; padding: 4px 22px 24px; }
+.cv section { padding-top: 18px; }
+.cv h2 {
+  margin: 0 0 8px;
+  padding-bottom: 5px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-strong);
+  border-bottom: 1px solid var(--chrome-300);
+}
+.cv p { margin: 0 0 8px; font-size: 13px; line-height: 1.55; }
+.cv__job { margin-bottom: 12px; }
+.cv__job h3 { margin: 0; font-size: 13.5px; color: var(--ink-strong); }
+.cv__job h3 span { font-weight: 400; font-style: italic; color: var(--ink-soft); }
+.cv__when { margin: 1px 0 5px; font-size: 11.5px; color: var(--ink-soft); }
+.cv ul { margin: 0; display: grid; gap: 4px; }
+.cv li {
+  position: relative;
+  padding-left: 14px;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.cv li::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 8px;
+  width: 4px;
+  height: 4px;
+  border-radius: 1px;
+  background: var(--ink-soft);
+}
+.cv__hint { color: var(--ink-soft); }
+.cv__hint a { color: #2b80e6; }
+.cv__skills { margin: 0; display: grid; gap: 4px; }
+.cv__skills > div {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 10px;
+  padding: 5px 8px;
+  border-radius: var(--r-xs);
+  background: var(--chrome-100);
+  font-size: 12.5px;
+}
+.cv__skills dt { font-weight: 600; color: var(--ink-strong); }
+.cv__skills dd { margin: 0; color: var(--ink-soft); }
+
+@media (max-width: 768px) {
+  .cv__head { flex-direction: column; padding: 14px 16px; }
+  .cv__scroll { padding: 4px 16px 20px; }
+  .cv__skills > div { grid-template-columns: minmax(0, 1fr); gap: 1px; }
+}
+
+/* The fish painter, opened over the tank rather than in its own window. */
+.aq__painter {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  background: linear-gradient(180deg, #0d2a4a, #061726);
+}
+.aq__painterBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  color: #eaf6ff;
+  font-size: 13px;
+}
+.aq__painterBar b {
+  flex: 1;
+  font-weight: 600;
+}
+.aq__painterClose {
+  width: 22px;
+  height: 22px;
+  border-radius: var(--r-xs);
+  color: #cfe6ff;
+  font-size: 15px;
+  line-height: 1;
+}
+.aq__painterClose:hover {
+  background: #e8574f;
+  color: #fff;
+}
+.aq__painter .fp {
+  min-height: 0;
+  overflow-y: auto;
+}
+.fp__back {
+  color: #2b80e6;
+  text-decoration: underline;
+  font: inherit;
+}
+
 /* Control Panel ▸ User Accounts holds the avatar maker itself. */
 .cpl__account {
   min-height: 380px;

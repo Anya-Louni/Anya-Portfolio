@@ -159,6 +159,7 @@ export default function Terminal() {
           'apps             list the apps',
           'tank             aquarium status',
           'coins            coin balance',
+          'cv               the CV, and where to get it',
           'privacy          privacy summary',
           'license          licences and credits',
           'echo <text>      repeat the text',
@@ -284,6 +285,38 @@ export default function Terminal() {
       case 'coins':
         print(`  ${coinText(getCoins())} coins`, '')
         break
+
+      case 'cv':
+      case 'resume': {
+        const file = `${import.meta.env.BASE_URL}Anya-Louni-CV.pdf`
+        print(
+          `  ${CONTACT.name}`,
+          `  ${CONTACT.line}`,
+          '',
+          '  AI and Web Developer. Fullstack Engineer.',
+          '  Applied Machine Learning Research.',
+          '',
+          '  B.Sc. Embedded Systems and AI, Numidia Institute of Technology',
+          '  A.S. Geographic Information Science, Portland Community College',
+          '',
+          `  email     ${CONTACT.email}`,
+          `  github    ${CONTACT.github}`,
+          `  linkedin  ${CONTACT.linkedin}`,
+          '',
+          '  opening the full one…',
+          '  cv --download   to save the pdf instead',
+          '',
+        )
+        if (arg.includes('--download') || arg.includes('-d')) {
+          const a = document.createElement('a')
+          a.href = file
+          a.download = 'Anya-Louni-CV.pdf'
+          a.click()
+        } else {
+          launch('cv')
+        }
+        break
+      }
 
       case 'privacy':
         print(

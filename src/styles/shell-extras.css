@@ -840,17 +840,25 @@
   display: grid;
   gap: 3px;
   width: 168px;
-  padding: 11px 12px 12px;
-  color: #eaf3ff;
+  padding: 12px 13px 13px;
+  color: #f4f9ff;
   text-decoration: none;
 }
-.gad__pin--wait { color: #9fbcd8; font-size: 11px; }
+/* Pale text on the frosted panel was the problem: the other gadgets are dark
+   text on light glass, this one is light text and needs its own dark card. */
+.gad[data-kind='pinned'] {
+  padding: 0;
+  background: linear-gradient(180deg, #12233d, #0a1626);
+  border-color: rgba(150, 190, 235, 0.45);
+  box-shadow: 2px 3px 12px 1px rgba(4, 20, 50, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+.gad__pin--wait { color: #b9d2e8; font-size: 11px; padding: 14px; }
 .gad__pinTop {
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #8fc4ea;
+  color: #7fc4f5;
 }
 .gad__pinName {
   font-size: 13.5px;
@@ -860,8 +868,8 @@
 }
 .gad__pinDesc {
   font-size: 10.5px;
-  line-height: 1.4;
-  color: #b6cee4;
+  line-height: 1.45;
+  color: #cfe0f2;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -874,7 +882,7 @@
   margin-top: 4px;
   font-size: 9.5px;
   font-style: normal;
-  color: #93b2ce;
+  color: #a8c4dd;
 }
 .gad__pinFoot i { font-style: normal; }
 .gad__pinLang { color: #ffd88a; }
