@@ -61,7 +61,9 @@ export default function Ipod() {
   const [menuAt, setMenuAt] = useState(0)
   const [songAt, setSongAt] = useState(0)
   const [playing, setPlaying] = useState(false)
-  const [current, setCurrent] = useState<number | null>(null)
+  /* Held as an id rather than a row number. The list re-sorts when a track
+     is added, and a row number would then point at somebody else's song. */
+  const [currentId, setCurrentId] = useState<string | null>(null)
   const [time, setTime] = useState(0)
   const [dur, setDur] = useState(0)
   const [status, setStatus] = useState('')
@@ -69,7 +71,11 @@ export default function Ipod() {
   const [form, setForm] = useState({ artist: '', title: '', link: '' })
   const [file, setFile] = useState<File | null>(null)
 
-  /* the built-in playlist plus whatever this visitor added */
+  /* The built-in playlist plus whatever this visitor added, in one list
+     sorted by song name. Always, for everyone: the order does not depend on
+     which tracks are Anya's, or on what order anything was added in.
+     localeCompare so accents and case sort where a reader expects, and
+     numeric so Track 2 comes before Track 10. */
   const tracks: Track[] = [
     ...PLAYLIST.map((t, i) => ({
       id: `p${i}`, title: t.title, artist: t.artist, kind: 'file' as const, src: t.src,
@@ -83,7 +89,11 @@ export default function Ipod() {
       videoId: t.videoId,
       mine: true,
     })),
-  ]
+  ].sort(
+    (a, b) =>
+      a.title.localeCompare(b.title, undefined, { sensitivity: 'base', numeric: true }) ||
+      a.artist.localeCompare(b.artist, undefined, { sensitivity: 'base', numeric: true }),
+  )
 
   useEffect(() => {
     void listTracks().then(setMine)
@@ -94,7 +104,8 @@ export default function Ipod() {
     tracks.filter((t) => t.mine && t.src).forEach((t) => urls.current.push(t.src!))
   })
 
-  const track = current !== null ? tracks[current] : null
+  const current = currentId ? tracks.findIndex((t) => t.id === currentId) : -1
+  const track = current >= 0 ? tracks[current] : null
 
   const skipRef = useRef<(d: number) => void>(() => {})
 
@@ -190,7 +201,7 @@ export default function Ipod() {
   const play = useCallback((index: number) => {
     const t = tracks[index]
     if (!t) return
-    setCurrent(index)
+    setCurrentId(t.id)
     setSongAt(index)
     setScreen('now')
     const el = audioRef.current
@@ -224,7 +235,7 @@ export default function Ipod() {
 
   const skip = useCallback((d: number) => {
     if (!tracks.length) return
-    const from = current ?? songAt
+    const from = current >= 0 ? current : songAt
     play((((from + d) % tracks.length) + tracks.length) % tracks.length)
   }, [tracks.length, current, songAt, play])
   skipRef.current = skip
