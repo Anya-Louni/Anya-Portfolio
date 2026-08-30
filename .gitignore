@@ -9,3 +9,7 @@ PRODUCT.md
 *.local
 
 *.tsbuildinfo
+
+# Notes to myself, not for anyone browsing the repository.
+README-NOTES.md
+DESIGN.md
