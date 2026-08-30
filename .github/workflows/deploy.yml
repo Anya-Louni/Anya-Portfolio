@@ -1,0 +1,59 @@
+name: Deploy
+
+# Builds the site and publishes it to GitHub Pages.
+#
+# The two VITE_ values are baked into the bundle at build time. That is fine
+# for both of them: the Supabase URL and the anon key are meant to be public,
+# and the database refuses everything they are not allowed to do. The service
+# role key is a different animal and must never appear here.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build
+        env:
+          # Leave VITE_BASE unset for a custom domain or a user page. For a
+          # project page set the repository variable to /<repo-name>/ .
+          VITE_BASE: ${{ vars.VITE_BASE }}
+          VITE_SITE_URL: ${{ vars.VITE_SITE_URL }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: npm run build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

@@ -55,7 +55,16 @@ function head(): Plugin {
   }
 }
 
+/**
+ * Where the site is served from. A user page or a custom domain is at the
+ * root and needs nothing. A GitHub project page is served under the
+ * repository name, and every absolute path in the build has to carry it, so
+ * set VITE_BASE=/Anya-Portfolio/ before building for one.
+ */
+const BASE = process.env.VITE_BASE ?? '/'
+
 export default defineConfig({
+  base: BASE,
   plugins: [react(), head()],
   server: { port: 5178, host: '127.0.0.1' },
   build: {
