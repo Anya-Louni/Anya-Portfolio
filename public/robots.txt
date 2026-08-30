@@ -1,7 +1,13 @@
 # A portfolio. Crawling it is the point.
 User-agent: *
 Allow: /
+Disallow: /notes
 
-# Nothing here is generated per visitor, so there is nothing to keep out.
-# The one thing worth saying: the archived pages inside Internet Explorer
-# are fetched from archive.org at view time and are not part of this site.
+# /notes is the owner's inbox. The database refuses to hand it to anyone
+# without a session, so this is tidiness rather than a lock: a sign-in form
+# in search results helps nobody.
+#
+# The archived pages inside Internet Explorer are fetched from archive.org at
+# view time and are not part of this site.
+
+Sitemap: https://osnya.netlify.app/sitemap.xml

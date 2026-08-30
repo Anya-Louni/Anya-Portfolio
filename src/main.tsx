@@ -33,6 +33,16 @@ const path = window.location.pathname.replace(/\/+$/, '')
 const route = base && path.startsWith(base) ? path.slice(base.length) : path
 const isOwnerRoute = route === '/notes' || window.location.hash === '#/notes'
 
+/* The inbox has no business in anyone's search results. robots.txt asks
+   politely; this tells a crawler that already has the URL. */
+if (isOwnerRoute) {
+  const meta = document.createElement('meta')
+  meta.name = 'robots'
+  meta.content = 'noindex, nofollow'
+  document.head.appendChild(meta)
+  document.title = 'Notes'
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>{isOwnerRoute ? <Pinboard /> : <App />}</StrictMode>,
 )

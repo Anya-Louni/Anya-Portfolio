@@ -30,7 +30,9 @@ const CSP = [
   "script-src 'self' https://www.youtube.com https://s.ytimg.com",
   // inline style attributes are used throughout for positions and sizes
   "style-src 'self' 'unsafe-inline'",
-  "font-src 'self'",
+  // Vite inlines the smaller font subsets as data: URLs, so refusing data:
+  // here blocks our own Cyrillic cut on every page load.
+  "font-src 'self' data:",
   "img-src 'self' data: blob: https:",
   "media-src 'self' data: blob:",
   "connect-src 'self' https://api.open-meteo.com https://*.supabase.co",
