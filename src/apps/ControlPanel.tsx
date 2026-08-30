@@ -230,27 +230,8 @@ export default function ControlPanel() {
             </>
           ) : null}
 
-          {/* Small, at the bottom, the way a footer link is. A privacy notice
-              has to be reachable or it is not a notice; it does not have to
-              be loud. */}
-          <p className="cpl__fine">
-            <button onClick={() => useOS.getState().open({ appId: 'privacy', ...privacyWin })}>
-              Privacy
-            </button>
-          </p>
         </div>
       </div>
     </div>
   )
-}
-
-/* Opened straight through the store, since importing launch from the registry
-   would close a cycle: the registry imports this file. */
-const privacyWin = {
-  title: 'Privacy',
-  icon: 'notes' as const,
-  w: 620,
-  h: 620,
-  minW: 420,
-  minH: 400,
 }

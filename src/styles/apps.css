@@ -1149,20 +1149,6 @@
 .legal li { margin-bottom: 4px; }
 .legal b { color: var(--ink-strong); }
 .legal a { color: #2b6ea8; }
-.cpl__fine {
-  margin: 28px 0 0;
-  padding-top: 10px;
-  border-top: 1px solid var(--chrome-200);
-  font-size: 11px;
-}
-.cpl__fine button {
-  color: var(--ink-soft);
-  opacity: 0.7;
-  text-decoration: underline;
-  font: inherit;
-}
-.cpl__fine button:hover { opacity: 1; color: #2b80e6; }
-
 /* The fish painter, opened over the tank rather than in its own window. */
 .aq__painter {
   position: absolute;

@@ -1,4 +1,5 @@
 import { Icon, type IconName } from '../../ui/Icon'
+import { ARCADE } from '../../content/arcade'
 import { launch } from '../../os/registry'
 
 const TILES: { id: string; name: string; desc: string; icon: IconName }[] = [
@@ -24,6 +25,21 @@ export default function Games() {
           <Icon name={t.icon} />
           <span className="arcade__name">{t.name}</span>
           <span className="arcade__desc">{t.desc}</span>
+        </button>
+      ))}
+
+      {/* Other people's games. Named, credited and linked on the tile itself,
+          so the shelf never reads as though these were made here. */}
+      <p className="arcade__shelf">From itch.io, by their makers</p>
+      {ARCADE.map((g) => (
+        <button
+          key={g.id}
+          className="arcade__tile arcade__tile--guest"
+          onClick={() => launch('arcadegame', { id: g.id })}
+        >
+          <img className="arcade__cover" src={g.cover} alt="" loading="lazy" />
+          <span className="arcade__name">{g.title}</span>
+          <span className="arcade__desc">by {g.studio}</span>
         </button>
       ))}
     </div>

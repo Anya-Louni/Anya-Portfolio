@@ -7,6 +7,7 @@ import Aquarium from '../apps/Aquarium'
 import ControlPanel from '../apps/ControlPanel'
 import Computer from '../apps/Computer'
 import Privacy from '../apps/Privacy'
+import ArcadeGame from '../apps/ArcadeGame'
 import Games from '../apps/games/Games'
 import Klondike from '../apps/games/Klondike'
 import Spider from '../apps/games/Spider'
@@ -44,7 +45,7 @@ export interface AppDef {
   resizable?: boolean
   flush?: boolean
   multi?: boolean
-  /** kept out of the Start menu's list; search and the terminal still find it */
+  /** kept out of the Start menu's list; typing the name still finds it */
   quiet?: boolean
   Component: ComponentType<{ winId: string; params?: Record<string, unknown> }>
 }
@@ -350,6 +351,19 @@ export const APPS: AppDef[] = [
     minW: 360,
     minH: 440,
     Component: Notes,
+  },
+  {
+    id: 'arcadegame',
+    title: 'Arcade',
+    icon: 'arcade',
+    blurb: 'A game by somebody else',
+    w: 900,
+    h: 640,
+    minW: 360,
+    minH: 320,
+    multi: true,
+    quiet: true,
+    Component: ArcadeGame,
   },
   {
     id: 'privacy',
