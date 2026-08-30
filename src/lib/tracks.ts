@@ -86,6 +86,9 @@ export function addLink(videoId: string, artist: string, title: string) {
   })
 }
 
+/** Removes one of the visitor's own tracks from their own browser. The
+    built-in playlist ships in the bundle and is not in here at all, so this
+    cannot touch it. */
 export async function removeTrack(id: string) {
   try {
     const db = await open()

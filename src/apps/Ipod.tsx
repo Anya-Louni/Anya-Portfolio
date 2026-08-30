@@ -349,7 +349,11 @@ export default function Ipod() {
     sound.click(1.1)
   }
 
+  /* Only a track this visitor added can be removed, and only from their own
+     browser. The built-in playlist is Anya's and the × never appears on it;
+     this refuses the call as well, so a stray id cannot reach the store. */
   const drop = async (id: string) => {
+    if (!mine.some((t) => t.id === id)) return
     await removeTrack(id)
     setMine(await listTracks())
   }
@@ -412,7 +416,8 @@ export default function Ipod() {
                         {t.mine ? (
                           <button
                             className="ipod__drop"
-                            aria-label={`Remove ${t.title}`}
+                            aria-label={`Remove ${t.title} from your browser`}
+                            title="Remove from your browser"
                             onClick={(e) => { e.stopPropagation(); void drop(t.id) }}
                           >
                             ×
