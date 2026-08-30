@@ -5,15 +5,20 @@ name: Keep the database awake
 # go quiet for a week, so this makes one cheap read every other day and the
 # project never goes to sleep.
 #
-# It reads the fish table, which visitors read anyway, using the same public
-# anon key the site ships with. That key is written in below rather than kept
-# as a secret, because it is already in the built bundle that every visitor
-# downloads: hiding it here would protect nothing. The database decides what
-# it may do, and reading fish is all a visitor may do. A secret of the same
-# name overrides it if you ever rotate the key.
+# It reads the fish table, which visitors read anyway, using the anon key.
 #
-# The service role key is the opposite and must only ever live in Actions
-# secrets. It is not used here.
+# The key lives in a repository variable, not in this file. The anon key is
+# public by design and ships inside the bundle, so writing it here leaked
+# nothing, but secret scanners cannot tell one JWT from another and flag it
+# as an incident. A variable keeps the scanners quiet and means rotating the
+# key never needs a commit.
+#
+# Settings > Secrets and variables > Actions > Variables:
+#   SUPABASE_URL       https://<your-project>.supabase.co
+#   SUPABASE_ANON_KEY  the anon public key
+#
+# The service role key is a real secret and belongs in Secrets, never in
+# Variables and never in this file. It is not used here.
 
 on:
   schedule:
@@ -30,9 +35,13 @@ jobs:
     steps:
       - name: Touch the database
         env:
-          URL: ${{ secrets.SUPABASE_URL || 'https://YOUR-PROJECT.supabase.co' }}
-          KEY: ${{ secrets.SUPABASE_ANON_KEY || '${{ secrets.SUPABASE_ANON_KEY }}' }}
+          URL: ${{ vars.SUPABASE_URL || secrets.SUPABASE_URL }}
+          KEY: ${{ vars.SUPABASE_ANON_KEY || secrets.SUPABASE_ANON_KEY }}
         run: |
+          if [ -z "$URL" ] || [ -z "$KEY" ]; then
+            echo "SUPABASE_URL and SUPABASE_ANON_KEY are not set. See README-NOTES.md."
+            exit 0
+          fi
           code=$(curl -s -o /dev/null -w '%{http_code}' \
             -H "apikey: $KEY" -H "Authorization: Bearer $KEY" \
             "$URL/rest/v1/fish?select=id&limit=1")
