@@ -1,0 +1,29 @@
+# Netlify build settings.
+#
+# The site is a single page app, so every address has to be answered with
+# index.html and let the app work out the route. Without the redirect, /notes
+# returns a 404 from the CDN before the app ever loads.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# The built assets are content hashed, so they can be cached forever.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# The pinned repo is rewritten by a scheduled Action and has to stay fresh.
+[[headers]]
+  for = "/pinned.json"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
