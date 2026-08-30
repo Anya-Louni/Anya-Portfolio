@@ -176,6 +176,15 @@
 /* ============================================================
    PINBOARD, the owner's private route at /notes
    ============================================================ */
+/* Undo the desktop's locked body: /notes is a page and scrolls like one. */
+html[data-route='notes'],
+html[data-route='notes'] body,
+html[data-route='notes'] #root {
+  height: auto;
+  min-height: 100%;
+  overflow: visible;
+}
+
 .pin {
   min-height: 100vh;
   padding: 26px clamp(16px, 5vw, 54px) 60px;

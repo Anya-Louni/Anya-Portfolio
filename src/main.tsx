@@ -36,6 +36,9 @@ const isOwnerRoute = route === '/notes' || window.location.hash === '#/notes'
 /* The inbox has no business in anyone's search results. robots.txt asks
    politely; this tells a crawler that already has the URL. */
 if (isOwnerRoute) {
+  /* The desktop never scrolls, so base.css pins the body. This page is an
+     ordinary document and has to, or a long inbox is unreachable on a phone. */
+  document.documentElement.dataset.route = 'notes'
   const meta = document.createElement('meta')
   meta.name = 'robots'
   meta.content = 'noindex, nofollow'

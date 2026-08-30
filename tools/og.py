@@ -24,8 +24,8 @@ W, H = 1200, 630
 OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'public', 'og-v2.png')
 
 TITLE = 'OSnya'
-LINE = 'The portfolio of Anya Louni'
-SUB = 'Machine learning, games and an aquarium, in a desktop you can open'
+LINE = "Anya Louni's portfolio"
+SUB = 'Projects, experience, games and more'
 
 # ---------------------------------------------------------------- the sky
 x = np.arange(W, dtype=np.float32)
