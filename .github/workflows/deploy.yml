@@ -2,14 +2,17 @@ name: Deploy
 
 # Builds the site and publishes it to GitHub Pages.
 #
+# Netlify is the live host, so this is a spare wheel and runs only when you
+# ask for it. Left in the repository because a second way to deploy costs
+# nothing and is worth having the day the first one is down. On push it would
+# fail every time until Pages is switched on, which is noise.
+#
 # The two VITE_ values are baked into the bundle at build time. That is fine
 # for both of them: the Supabase URL and the anon key are meant to be public,
 # and the database refuses everything they are not allowed to do. The service
 # role key is a different animal and must never appear here.
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:

@@ -11,8 +11,6 @@ on:
     # every six hours
     - cron: '0 */6 * * *'
   workflow_dispatch:
-  push:
-    branches: [main]
 
 permissions:
   contents: write
