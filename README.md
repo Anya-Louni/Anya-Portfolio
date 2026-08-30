@@ -7,7 +7,7 @@ inside it as real applications.
 Every window is draggable, resizable, snappable and minimisable. Every app is
 written from scratch. Nothing is a screenshot.
 
-**[anya-louni.netlify.app](https://anya-louni.netlify.app)**
+**[osnya.netlify.app](https://osnya.netlify.app)**
 
 ## What is in it
 

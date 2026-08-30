@@ -6,7 +6,7 @@ import react from '@vitejs/plugin-react'
  * both of which need an absolute URL. Override with VITE_SITE_URL if the
  * domain changes; nothing else needs editing.
  */
-const SITE_URL = (process.env.VITE_SITE_URL ?? 'https://anya-louni.github.io/Anya-Portfolio/')
+const SITE_URL = (process.env.VITE_SITE_URL ?? 'https://osnya.netlify.app/')
   .replace(/\/*$/, '/')
 
 /**
