@@ -140,3 +140,89 @@ export function noteApp(appId: string) {
   if (opened > 400) return // a stuck loop should not fill the row
   apps[appId] = (apps[appId] ?? 0) + 1
 }
+
+/* ---------------- the owner's side ---------------- */
+
+export interface VisitStats {
+  today: number
+  week: number
+  total: number
+  medianSeconds: number
+  apps: [string, number][]
+  from: [string, number][]
+  devices: [string, number][]
+}
+
+interface Row {
+  session: string
+  kind: 'start' | 'end'
+  seconds: number | null
+  apps: Record<string, number> | null
+  device: string | null
+  referrer: string | null
+  created_at: string
+}
+
+/**
+ * The numbers, for the owner's page.
+ *
+ * Row-level security only lets a signed-in owner read this table, so calling
+ * it as a visitor comes back empty rather than refused. The two rows of one
+ * visit are folded together here rather than in SQL, which keeps the table a
+ * plain append-only log.
+ */
+export async function visitStats(): Promise<VisitStats | null> {
+  const db = supabase()
+  if (!db) return null
+  const since = new Date(Date.now() - 30 * 86_400_000).toISOString()
+  const { data, error } = await db
+    .from('visits')
+    .select('session,kind,seconds,apps,device,referrer,created_at')
+    .gte('created_at', since)
+    .order('created_at', { ascending: false })
+    .limit(5000)
+  if (error) return null
+
+  const rows = (data ?? []) as Row[]
+  const byId = new Map<string, { at: string; seconds: number; apps: Record<string, number>; device: string | null; from: string | null }>()
+  for (const r of rows) {
+    const v = byId.get(r.session) ?? { at: r.created_at, seconds: 0, apps: {}, device: null, from: null }
+    if (r.kind === 'start') {
+      v.at = r.created_at
+      v.device = r.device
+      v.from = r.referrer
+    } else {
+      v.seconds = Math.max(v.seconds, r.seconds ?? 0)
+      for (const [k, n] of Object.entries(r.apps ?? {})) v.apps[k] = (v.apps[k] ?? 0) + n
+      if (!v.device) v.device = r.device
+    }
+    byId.set(r.session, v)
+  }
+
+  const all = [...byId.values()]
+  const day = Date.now() - 86_400_000
+  const week = Date.now() - 7 * 86_400_000
+  const stayed = all.map((v) => v.seconds).filter((s) => s > 0).sort((a, b) => a - b)
+
+  const tally = (pick: (v: (typeof all)[number]) => string | null) => {
+    const out: Record<string, number> = {}
+    for (const v of all) {
+      const k = pick(v)
+      if (k) out[k] = (out[k] ?? 0) + 1
+    }
+    return Object.entries(out).sort((a, b) => b[1] - a[1])
+  }
+
+  const apps: Record<string, number> = {}
+  for (const v of all) for (const [k, n] of Object.entries(v.apps)) apps[k] = (apps[k] ?? 0) + n
+
+  return {
+    today: all.filter((v) => new Date(v.at).getTime() > day).length,
+    week: all.filter((v) => new Date(v.at).getTime() > week).length,
+    total: all.length,
+    medianSeconds: stayed.length ? stayed[Math.floor(stayed.length / 2)] : 0,
+    apps: Object.entries(apps).sort((a, b) => b[1] - a[1]).slice(0, 12),
+    from: tally((v) => v.from),
+    devices: tally((v) => v.device),
+  }
+}

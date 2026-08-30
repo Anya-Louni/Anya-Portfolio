@@ -527,7 +527,6 @@ export default function BubbleBeat() {
         {!playing && !done ? (
           <p className="bb__hint">
             Catch the bubbles on the line with <b>D F J K</b>, the arrow keys, or by tapping a lane.
-            Every note you catch is a note you hear.
           </p>
         ) : null}
       </div>

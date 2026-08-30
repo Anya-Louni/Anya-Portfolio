@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { currentUser, isRemote, readNotes, signIn, signOut, type Note } from '../lib/notes'
+import { visitStats, type VisitStats } from '../lib/visits'
 
 /**
  * The owner's private inbox at /notes (or #/notes).
@@ -17,10 +18,14 @@ export function Pinboard() {
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const [notes, setNotes] = useState<Note[]>([])
+  const [stats, setStats] = useState<VisitStats | null>(null)
 
   const load = useCallback(async () => {
     try {
       setNotes(await readNotes())
+      /* The same sign-in that unlocks the notes unlocks the counter, so it
+         is read here rather than waiting on the daily email. */
+      setStats(await visitStats())
       setError('')
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not read the inbox.')
@@ -118,6 +123,27 @@ export function Pinboard() {
 
       {error ? <p className="pin__error">{error}</p> : null}
 
+      {stats ? (
+        <section className="pin__stats">
+          <div className="pin__figures">
+            <b>{stats.today}</b><span>visits today</span>
+            <b>{stats.week}</b><span>this week</span>
+            <b>{stats.total}</b><span>in 30 days</span>
+            <b>
+              {stats.medianSeconds >= 60
+                ? `${Math.floor(stats.medianSeconds / 60)}m ${stats.medianSeconds % 60}s`
+                : `${stats.medianSeconds}s`}
+            </b>
+            <span>typical stay</span>
+          </div>
+          <div className="pin__lists">
+            <Tally title="Apps opened" rows={stats.apps} empty="nothing opened yet" />
+            <Tally title="Arrived from" rows={stats.from} empty="typed the address" />
+            <Tally title="Devices" rows={stats.devices} empty="none yet" />
+          </div>
+        </section>
+      ) : null}
+
       {notes.length === 0 ? (
         <p className="pin__empty">Nothing yet.</p>
       ) : (
@@ -139,6 +165,26 @@ export function Pinboard() {
             </article>
           ))}
         </div>
+      )}
+    </div>
+  )
+}
+
+function Tally({ title, rows, empty }: { title: string; rows: [string, number][]; empty: string }) {
+  return (
+    <div className="pin__tally">
+      <h2>{title}</h2>
+      {rows.length ? (
+        <dl>
+          {rows.map(([k, n]) => (
+            <div key={k}>
+              <dt>{k}</dt>
+              <dd>{n}</dd>
+            </div>
+          ))}
+        </dl>
+      ) : (
+        <p className="pin__tallyEmpty">{empty}</p>
       )}
     </div>
   )

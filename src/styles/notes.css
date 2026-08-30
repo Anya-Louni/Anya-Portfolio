@@ -291,3 +291,68 @@
   font-size: 11px;
   opacity: 0.72;
 }
+
+/* ---- the counter, on the owner's page ---- */
+.pin__stats {
+  margin: 0 0 22px;
+  padding: 16px 18px;
+  border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.pin__figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 4px 18px;
+  align-items: baseline;
+}
+.pin__figures b {
+  font-size: 26px;
+  font-weight: 600;
+  color: #eaf3ff;
+  font-variant-numeric: tabular-nums;
+  grid-row: 1;
+}
+.pin__figures span {
+  grid-row: 2;
+  font-size: 11.5px;
+  color: #9fbcd8;
+}
+.pin__lists {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.pin__tally h2 {
+  margin: 0 0 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8fc4ea;
+}
+.pin__tally dl {
+  margin: 0;
+  display: grid;
+  gap: 2px;
+}
+.pin__tally dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12.5px;
+  color: #cfe0f2;
+}
+.pin__tally dd {
+  margin: 0;
+  color: #9fbcd8;
+  font-variant-numeric: tabular-nums;
+}
+.pin__tallyEmpty {
+  margin: 0;
+  font-size: 12px;
+  color: #7f9ab5;
+}
