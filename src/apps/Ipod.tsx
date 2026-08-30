@@ -41,7 +41,7 @@ interface Track {
 
 type Screen = 'menu' | 'songs' | 'now' | 'add'
 
-const MENU = ['Music', 'Now Playing', 'Shuffle Songs', 'Add Music', 'About'] as const
+const MENU = ['Music', 'Now Playing', 'Shuffle Songs', 'Add Music'] as const
 
 export default function Ipod() {
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -318,6 +318,15 @@ export default function Ipod() {
     pressed.current = null
   }
 
+  /* The wheel already turns a press into an action on pointerup, so leaving
+     a plain onClick on each key ran everything twice: one tap moved the
+     selection two rows and the menu appeared to skip every other entry. A
+     click made by the keyboard reports detail 0 and is the only one this
+     still handles. */
+  const keyClick = (e: React.MouseEvent, key: string) => {
+    if (e.detail === 0) press(key)
+  }
+
   const press = (key: string) => {
     if (key === 'menu') back()
     else if (key === 'prev') skip(-1)
@@ -338,7 +347,6 @@ export default function Ipod() {
         if (tracks.length) play(Math.floor(Math.random() * tracks.length))
         else setStatus('Nothing to shuffle yet')
       } else if (pick === 'Add Music') { setStatus(''); setScreen('add') }
-      else setStatus('')
     } else if (screen === 'songs') play(songAt)
     else if (screen === 'now') toggle()
   }
@@ -556,29 +564,29 @@ export default function Ipod() {
           onPointerUp={wheelUp}
           onPointerCancel={wheelUp}
         >
-          <button className="ipod__wkey ipod__wkey--menu" data-key="menu" onClick={() => press('menu')}>
+          <button className="ipod__wkey ipod__wkey--menu" data-key="menu" onClick={(e) => keyClick(e, 'menu')}>
             <span>MENU</span>
           </button>
-          <button className="ipod__wkey ipod__wkey--prev" data-key="prev" aria-label="Previous" onClick={() => press('prev')}>
+          <button className="ipod__wkey ipod__wkey--prev" data-key="prev" aria-label="Previous" onClick={(e) => keyClick(e, 'prev')}>
             <svg viewBox="0 0 16 16" aria-hidden>
               <path d="M13 3 6.5 8 13 13Z" fill="currentColor" />
               <rect x="3.5" y="3" width="2" height="10" rx="0.6" fill="currentColor" />
             </svg>
           </button>
-          <button className="ipod__wkey ipod__wkey--next" data-key="next" aria-label="Next" onClick={() => press('next')}>
+          <button className="ipod__wkey ipod__wkey--next" data-key="next" aria-label="Next" onClick={(e) => keyClick(e, 'next')}>
             <svg viewBox="0 0 16 16" aria-hidden>
               <path d="M3 3 9.5 8 3 13Z" fill="currentColor" />
               <rect x="10.5" y="3" width="2" height="10" rx="0.6" fill="currentColor" />
             </svg>
           </button>
-          <button className="ipod__wkey ipod__wkey--play" data-key="play" aria-label="Play or pause" onClick={() => press('play')}>
+          <button className="ipod__wkey ipod__wkey--play" data-key="play" aria-label="Play or pause" onClick={(e) => keyClick(e, 'play')}>
             <svg viewBox="0 0 22 16" aria-hidden>
               <path d="M2 3 8 8 2 13Z" fill="currentColor" />
               <rect x="12" y="3.5" width="2.2" height="9" rx="0.6" fill="currentColor" />
               <rect x="16" y="3.5" width="2.2" height="9" rx="0.6" fill="currentColor" />
             </svg>
           </button>
-          <button className="ipod__centre" data-key="centre" aria-label="Select" onClick={() => press('centre')} />
+          <button className="ipod__centre" data-key="centre" aria-label="Select" onClick={(e) => keyClick(e, 'centre')} />
           {/* Two invisible bands across the top and bottom of the centre
               button. Nothing is drawn for them; the button still looks like
               one piece. The middle band is the button itself, so select still
@@ -587,13 +595,13 @@ export default function Ipod() {
             className="ipod__nudge ipod__nudge--up"
             data-key="up"
             aria-label="Up"
-            onClick={() => press('up')}
+            onClick={(e) => keyClick(e, 'up')}
           />
           <button
             className="ipod__nudge ipod__nudge--down"
             data-key="down"
             aria-label="Down"
-            onClick={() => press('down')}
+            onClick={(e) => keyClick(e, 'down')}
           />
         </div>
       </div>
